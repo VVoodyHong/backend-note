@@ -1,7 +1,7 @@
 ---
 category: "네트워크/네트워크 운영"
 tags: ["network", "nat", "방화벽", "security"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -42,7 +42,7 @@ flowchart LR
 과거에는 Full Cone, Restricted Cone, Port Restricted Cone, Symmetric NAT라는 4분류(RFC 3489 기반)가 널리 쓰였지만, 실제 장비 동작이 이 분류에 깔끔하게 들어맞지 않는 경우가 많아 현재는 RFC 4787이 정의한 두 가지 축으로 NAT 동작을 더 정밀하게 설명한다.
 - **Mapping Behavior**: 같은 내부 IP:Port에서 나가는 트래픽에 대해, 목적지가 달라져도 항상 같은 외부 IP:Port를 재사용하는지(Endpoint-Independent) 아니면 목적지마다 다른 매핑을 새로 만드는지(Address/Port-Dependent).
 - **Filtering Behavior**: 외부에서 들어오는 패킷을 받아줄지 판단하는 기준이 기존 매핑에 대해 외부 송신자의 IP/포트와 관계없이 허용하는지(Endpoint-Independent), 내부에서 이전에 보낸 목적지 IP로 제한하는지(Address-Dependent), 그 IP와 포트 모두로 제한하는지(Address-and-Port-Dependent)로 나눈다.
-- 매핑/필터링이 목적지마다 새로 생성되는 방식(옛 용어로 Symmetric NAT에 가까움)일수록 P2P 연결 수립(NAT Traversal)이 어려워지고, STUN만으로는 외부에서 접근 가능한 주소를 예측할 수 없어 TURN 같은 중계 서버가 필요해진다.
+- 목적지 의존 매핑에서는 STUN 서버가 관측한 주소를 다른 피어와의 통신에 그대로 사용할 수 있다고 보장하지 않는다. P2P 연결 수립(NAT Traversal)은 상대의 주소·필터링·연결 검사 결과에도 좌우된다. 직접 경로가 성립하지 않을 때 사용할 TURN 중계 후보를 준비하되 NAT 유형만으로 직접 연결 불가를 확정하지 않는다.
 
 ### 방화벽 종류
 | 종류 | 판단 기준 | 특징 |
@@ -82,7 +82,9 @@ CloudWatch의 `IdleTimeoutCount`는 정상 종료되지 않은 연결이 350초 
 ## 심화 Q&A
 
 ### Q. Symmetric에 가까운 NAT 환경에서 WebRTC 같은 P2P 연결이 실패하는 이유는 무엇이고 어떻게 해결하는가?
-A. 매핑이 목적지별로 새로 생성되는 NAT(옛 용어로 Symmetric NAT)에서는, 내부 호스트가 STUN 서버로 나간 요청에 대해 관측된 외부 주소:포트가 실제로 상대방과 통신할 때 쓰일 주소:포트와 다르다. STUN은 "내가 밖에서 어떻게 보이는지"만 알려줄 뿐, 그 정보로 상대방이 직접 접근 가능하다는 보장을 해주지 못하는 것이다. 이 경우 두 피어가 직접 연결을 수립할 수 없으므로, TURN 서버를 중계 지점으로 두고 양쪽 모두 TURN을 거쳐 통신하는 방식으로 우회한다. ICE(Interactive Connectivity Establishment) 프레임워크가 STUN으로 먼저 직접 연결을 시도하고 실패하면 TURN으로 자동 전환하는 과정을 관리한다.
+A. 목적지 의존 매핑에서는 STUN 서버가 관측한 외부 주소:포트가 다른 피어와 통신할 때도 유지된다고 보장하지 않는다. 다만 상대가 공인 주소에서 수신 가능하거나 연결 검사 중 피어 반사(peer-reflexive) 후보를 학습하는 경로도 있어, 이 특성만으로 직접 연결이 불가능하다고 단정하지 않는다.
+
+ICE(Interactive Connectivity Establishment)는 호스트·서버 반사(server-reflexive)·중계 후보를 모으고 후보 쌍의 실제 연결 가능성을 검사해 사용할 경로를 선택한다. 허용된 직접 경로가 성립하지 않으면 TURN 중계 후보를 사용할 수 있도록 서버·자격 증명·접근 경로를 준비한다. 이를 STUN 실패 후에만 TURN을 알아보는 고정 순서로 해석하지 않는다.
 
 ### Q. Stateful 방화벽(보안 그룹)과 Stateless 방화벽(NACL)의 차이가 실무 설정에서 어떤 실수를 유발하는가?
 A. Stateful 방화벽은 나간 요청에 대한 응답 트래픽을 연결 상태 추적을 통해 자동으로 허용하므로 인바운드 규칙만 신경 쓰면 되는 경우가 많다. 반면 Stateless인 NACL은 상태를 기억하지 않으므로 인바운드를 열었어도 그에 대한 응답이 나가는 아웃바운드 규칙(대개 임시 포트 범위, ephemeral port range)을 별도로 열어줘야 한다. 이를 놓치면 요청은 서버에 도달하지만 응답이 클라이언트로 돌아가지 못해 클라이언트 쪽에서는 타임아웃으로만 보이는, 원인 파악이 까다로운 장애가 발생한다.
@@ -91,7 +93,7 @@ A. Stateful 방화벽은 나간 요청에 대한 응답 트래픽을 연결 상�
 A. NAT는 매핑 테이블 엔트리를 무한정 유지할 수 없어 일정 시간 트래픽이 없으면 해당 매핑을 회수한다. 애플리케이션 입장에서는 커넥션이 여전히 열려 있다고 믿고 있는데, NAT가 매핑을 지워버려 다음 패킷을 보낼 때 응답이 오지 않거나 연결이 끊긴 것처럼 동작하는 문제가 생긴다. 이는 [[HTTP Keep-Alive와 커넥션 풀링]]에서 다루는 "클라이언트와 서버 간 타임아웃 불일치" 문제와 유사한 구조이며, TCP 레벨 Keep-Alive(주기적인 소켓 유지 패킷)를 NAT 타임아웃보다 짧은 간격으로 보내도록 설정해 매핑이 회수되지 않게 하는 것이 표준 대응이다.
 
 ### Q. PAT 구조에서 SNAT 포트 고갈이 발생하는 원리와 이를 완화하는 방법은?
-A. PAT는 하나의 공인 IP 뒤에서 내부 호스트마다, 그리고 목적지 조합마다 서로 다른 포트를 할당해 구분한다. 사용 가능한 포트 수는 유한하므로, 짧은 시간에 매우 많은 아웃바운드 커넥션(예: 대량의 외부 API 병렬 호출, 커넥션 재사용 없이 매번 새 연결을 여는 안티패턴)이 발생하면 신규 매핑을 만들 포트가 부족해져 새 연결이 거부된다. 완화책은 공인 IP를 추가해 게이트웨이당 부담을 분산하거나, 애플리케이션 쪽에서 [[HTTP Keep-Alive와 커넥션 풀링]]으로 연결을 재사용해 애초에 필요한 신규 커넥션 수 자체를 줄이는 것이다.
+A. PAT는 내부 IP:포트를 외부 IP:포트에 매핑하며, 목적지가 달라도 같은 외부 포트를 재사용하는지는 매핑 방식에 따라 다르다. 사용 가능한 포트 수는 유한하므로, 짧은 시간에 매우 많은 아웃바운드 커넥션(예: 대량의 외부 API 병렬 호출, 커넥션 재사용 없이 매번 새 연결을 여는 안티패턴)이 발생하면 신규 매핑을 만들 포트가 부족해져 새 연결이 거부된다. 완화책은 공인 IP를 추가해 게이트웨이당 부담을 분산하거나, 애플리케이션 쪽에서 [[HTTP Keep-Alive와 커넥션 풀링]]으로 연결을 재사용해 애초에 필요한 신규 커넥션 수 자체를 줄이는 것이다.
 
 ### Q. 방화벽 규칙에서 순서(rule order)가 왜 중요한가?
 A. 평가 모델부터 구분한다. AWS NACL은 낮은 규칙 번호부터 첫 매치를 적용하지만 AWS Security Group은 적용된 그룹의 허용 규칙들을 합쳐 평가하며 명시적 deny와 first-match 순서가 없다. first-match 방식의 방화벽에서 넓은 범위를 차단하는 규칙을 세밀한 허용 규칙보다 앞에 두면, 뒤에 추가한 허용 규칙이 아무리 정확해도 절대 도달하지 못하고 무시된다. 규칙을 추가/변경할 때는 항상 전체 규칙 목록에서의 상대적 위치와 평가 방식을 함께 확인해야 한다.
@@ -116,3 +118,7 @@ A. 로컬 소켓 주소만으로 NAT 매핑된 외부 IP:Port를 알 수는 없�
 부분 재확인: 2026-09-23. [AWS EC2 Security Group Connection Tracking](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html)의 추적/비추적 연결 규칙 변경, NACL 차단, ENA conntrack 지표를 확인했다. 특정 인스턴스의 추적 용량이나 timeout 기본값을 일반화하지 않았다. 기존 NAT 명세·한도 전체는 재검증하지 않아 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [AWS NAT Gateway troubleshooting](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html)의 350초 유휴·재사용 시 RST와 [NAT gateway metrics](https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html)의 IdleTimeoutCount·ErrorPortAllocation 정의를 확인했다. 적용 범위는 조회일 AWS 관리형 NAT Gateway이며 일반 NAT 장비의 보편적인 timeout은 아니다. AWS 계정·실제 소켓·CloudWatch 지표를 실행 관측하지 않았고 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [RFC 5128 §3.2](https://www.rfc-editor.org/rfc/rfc5128.html#section-3.2)의 공개 피어로의 직접 연결 사례와 [RFC 8445 §2·§7.2.5.3.1](https://www.rfc-editor.org/rfc/rfc8445.html#section-7.2.5.3.1)의 ICE 후보 수집·연결 검사·피어 반사 후보 학습을 대조했다. RFC 5128은 정보 문서, RFC 8445는 UDP ICE 명세이며 모든 NAT 조합의 직접 연결을 보장하지 않는다. 실제 NAT·WebRTC·TURN 환경은 실행하지 않았고 기존 AWS 한도 전체도 재검증하지 않아 `verified`를 유지했다.
+
+같은 날 [RFC 4787 §4.1](https://www.rfc-editor.org/rfc/rfc4787.html#section-4.1)의 UDP 매핑 재사용 조건을 대조해 PAT Q&A의 목적지별 다른 포트 할당 단정을 본문과 맞췄다. TCP나 특정 장비의 포트 할당 정책 전체를 재검증한 것은 아니다.

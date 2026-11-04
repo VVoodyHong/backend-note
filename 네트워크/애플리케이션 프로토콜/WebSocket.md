@@ -1,7 +1,7 @@
 ---
 category: "네트워크/애플리케이션 프로토콜"
 tags: ["network", "websocket", "실시간통신", "stomp", "rfc6455"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -17,15 +17,15 @@ WebSocket(RFC 6455)은 하나의 TCP 연결 위에서 클라이언트와 서버�
 sequenceDiagram
     participant C as Client
     participant S as Server
-    C->>S: GET /chat HTTP/1.1<br/>Upgrade: websocket<br/>Connection: Upgrade<br/>Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==<br/>Sec-WebSocket-Version: 13
-    S->>C: HTTP/1.1 101 Switching Protocols<br/>Upgrade: websocket<br/>Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+    C->>S: GET /chat HTTP/1.1<br/>Host: server.example.com<br/>Origin: https://example.com<br/>Upgrade: websocket<br/>Connection: Upgrade<br/>Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==<br/>Sec-WebSocket-Version: 13
+    S->>C: HTTP/1.1 101 Switching Protocols<br/>Upgrade: websocket<br/>Connection: Upgrade<br/>Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
     Note over C,S: 이후 동일 TCP 연결 위에서<br/>WebSocket 프레임으로 양방향 통신
     C->>S: 프레임(텍스트/바이너리)
     S->>C: 프레임(텍스트/바이너리)
     S->>C: 프레임(서버가 임의 시점에 push)
 ```
-- 클라이언트는 일반 HTTP GET 요청에 `Upgrade: websocket`, `Connection: Upgrade`, `Sec-WebSocket-Key`(무작위 16바이트를 base64로 인코딩한 값)를 담아 보낸다.
-- 서버는 `Sec-WebSocket-Key`에 고정 GUID(`258EAFA5-E914-47DA-95CA-C5AB0DC85B11`)를 붙여 SHA-1 해시 후 base64 인코딩한 값을 `Sec-WebSocket-Accept`로 응답하며 상태 코드 `101 Switching Protocols`를 반환한다.
+- 클라이언트는 HTTP GET 요청에 `Host`, `Upgrade: websocket`, `Connection: Upgrade`, `Sec-WebSocket-Version: 13`, `Sec-WebSocket-Key`(무작위 16바이트를 base64로 인코딩한 값)를 담아 보낸다. 브라우저 클라이언트는 `Origin`도 포함한다. 도식의 키는 명세의 예제이며 실제 연결마다 새 무작위 값을 사용한다.
+- 서버는 `Sec-WebSocket-Key`에 고정 GUID(`258EAFA5-E914-47DA-95CA-C5AB0DC85B11`)를 붙여 SHA-1 해시 후 base64 인코딩한 값을 `Sec-WebSocket-Accept`로 응답한다. 성공 응답에는 `101` 상태와 `Upgrade: websocket`, `Connection: Upgrade`가 필요하다. 클라이언트는 이 헤더들과 Accept 값을 검증하므로 상태 코드만 101이라고 연결이 성립하지 않는다.
 - 이 핸드셰이크가 일반 HTTP 요청 형태이기 때문에 기존 웹 인프라(포트 80/443, 프록시, 로드밸런서)를 그대로 통과할 수 있다는 것이 설계 의도다.
 
 ### 프레임 구조
@@ -73,7 +73,7 @@ WebSocket은 핸드셰이크 이후 데이터를 프레임(frame) 단위로 주�
 기존 웹 인프라(방화벽, 리버스 프록시, 로드밸런서, 포트 80/443)는 HTTP 트래픽을 통과시키도록 설계돼 있다. 완전히 새로운 프로토콜이 새 포트를 쓴다면 방화벽 정책 변경 없이는 통과하지 못하는 경우가 많다. HTTP GET + Upgrade 헤더로 시작하면 기존 HTTP 인프라를 그대로 통과한 뒤 연결만 프로토콜을 전환하므로 배포 마찰이 훨씬 적다.
 
 ### Q. WebSocket과 SSE(Server-Sent Events)의 차이는 무엇이고 언제 SSE를 선택하는가?
-SSE는 HTTP 위에서 서버→클라이언트 단방향 스트림만 지원하며(`text/event-stream`), 클라이언트는 일반 HTTP 요청으로만 응답할 수 있다. 반면 WebSocket은 양방향 통신을 지원한다. 클라이언트가 서버에 자주 데이터를 보낼 필요가 없고(알림, 실시간 피드, 진행률 표시 등) 단순한 재연결/이벤트 ID 기반 복구(Last-Event-ID)가 필요하다면 SSE가 구현이 단순하고 기존 HTTP 인프라(프록시, 캐시, 로드밸런서)와 궁합이 좋다. 채팅처럼 양방향 상호작용이 핵심이면 WebSocket이 적합하다.
+SSE는 HTTP 위에서 서버→클라이언트 단방향 스트림만 지원하며(`text/event-stream`), 클라이언트의 입력은 별도 HTTP 요청 등으로 보낸다. 반면 WebSocket은 양방향 통신을 지원한다. 알림·실시간 피드·진행률처럼 서버 푸시가 주된 기능이면 SSE의 `EventSource` 재연결 기능을 활용할 수 있다. 마지막 이벤트 ID가 있으면 재연결 요청에 `Last-Event-ID`를 보내지만, 유실 이벤트의 자동 복구까지 보장하지는 않는다. 서버가 해당 ID 이후의 이벤트를 보관·재전송하거나 보존 기간을 벗어났을 때 전체 상태를 다시 조회하는 계약이 필요하다. 채팅처럼 양방향 상호작용이 핵심이면 WebSocket이 적합하다.
 
 ### Q. WebSocket과 롱폴링(long polling)의 근본적 차이는 무엇인가?
 롱폴링은 여전히 매 응답마다 새 HTTP 요청-응답 사이클을 반복한다(서버가 데이터를 줄 때까지 연결을 붙잡고 있다가 응답 후 클라이언트가 즉시 재요청). WebSocket은 한 번 연결을 맺으면 그 연결 위에서 매번 HTTP 헤더를 보내지 않고 WebSocket 프레임 헤더와 함께 메시지를 주고받으므로, 메시지 빈도가 높을수록 오버헤드 차이가 커진다. 다만 롱폴링은 순수 HTTP이므로 인프라 호환성 문제가 거의 없다는 장점이 있다.
@@ -104,3 +104,5 @@ gRPC 스트리밍은 강타입 스키마(protobuf)와 서비스 간 RPC 의미�
 부분 재검증: 2026-09-22. [Spring Framework 외부 브로커](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/handle-broker-relay.html)와 [성능·확장 안내](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/configuration-performance.html)의 simple broker 다중 인스턴스 한계와 broker relay 역할을 대조해 본문을 기존 Q&A와 일치시켰다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
 
 부분 재검증: 2026-10-04. [OWASP WebSocket Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)의 세션 수명 관리·로그아웃 시 연결 종료·메시지별 인가 권고를 확인했다. 적용 범위는 WebSocket 애플리케이션의 인증·인가 설계이며 특정 Spring 버전이 이를 자동 제공한다는 의미가 아니다. 실제 세션 만료·권한 회수·다중 인스턴스 전파 시험은 수행하지 않았고, 기존 Spring 예제 전체를 재검증하지 않아 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [RFC 6455 §4.1·4.2.2](https://www.rfc-editor.org/rfc/rfc6455.html#section-4.1)의 HTTP/1.1 핸드셰이크 필수 헤더와 클라이언트 검증을 도식·본문에 반영했다. Temurin 25.0.4.1+1-LTS의 `HttpClient`와 loopback 서버에서 정상 101 수락, Connection 누락·Upgrade 누락·Accept 불일치 거부의 4조건을 재현했다. [WHATWG HTML §9.2.3–9.2.4](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header)의 재연결·Last-Event-ID 전달 범위를 대조했다. 서버 이벤트 보관·복구는 이 전달 기능을 이용한 애플리케이션 설계다. 실제 브라우저·프록시·SSE 재연결 시험이나 Spring 전체 재검증은 하지 않아 `verified`는 유지한다.

@@ -2,7 +2,7 @@
 category: "데이터베이스/고급 쿼리와 모델링"
 tags: ["database", "cte", "recursive-query", "sql", "mysql", "postgresql"]
 aliases: ["CTE", "Common Table Expression"]
-updated: 2026-10-22
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -121,7 +121,7 @@ SELECT id, status, finished_at FROM moved;
 
 - **가독성 vs 서브쿼리**: 다단계 집계를 순차적으로 표현할 때 중첩 서브쿼리보다 CTE가 훨씬 읽기 쉽다. 코드 리뷰나 유지보수 관점에서 큰 이점이 있다.
 - **계층 구조 조회**: 조직도, 카테고리 트리, 댓글의 대댓글 구조처럼 깊이가 가변적인 계층은 재귀 CTE 없이는 애플리케이션 코드에서 반복 조회하거나 깊이를 고정해 여러 번 `JOIN`해야 한다. 재귀 CTE는 이를 DB 레벨에서 한 번에 해결한다.
-- **PostgreSQL의 최적화 장벽(옛 동작) 주의**: PostgreSQL 11 이하에는 CTE가 항상 최적화 장벽(optimization fence)으로 동작해, CTE 내부 쿼리가 통째로 먼저 물질화(materialize)된 뒤 바깥 쿼리와 결합됐다. PostgreSQL 12부터는 비재귀·부작용 없는 SELECT CTE가 한 번 참조되면 기본적으로 인라인(inline)되어 일반 서브쿼리처럼 최적화된다. 강제로 물질화하고 싶으면 `AS MATERIALIZED`, 병합을 요청하려면 `AS NOT MATERIALIZED`를 명시할 수 있다. 재귀 CTE나 volatile 함수가 있는 CTE에는 이 요청이 적용되지 않는다.
+- **PostgreSQL의 최적화 장벽(옛 동작) 주의**: PostgreSQL 11에서는 SELECT CTE를 부모 쿼리와 병합하지 않아 외부 조건의 푸시다운이 제한됐다. 이를 최적화 장벽(optimization fence)이라고 하지만 결과 전체를 반드시 먼저 계산한다는 뜻은 아니다. SELECT CTE는 부모가 요구하는 행만 평가하고 중단할 수 있다. PostgreSQL 12부터는 비재귀·부작용 없는 SELECT CTE가 한 번 참조되면 기본적으로 인라인(inline)되어 일반 서브쿼리처럼 최적화된다. 강제로 물질화(materialization)하려면 `AS MATERIALIZED`, 병합을 요청하려면 `AS NOT MATERIALIZED`를 명시할 수 있다. 재귀 CTE나 volatile 함수가 있는 CTE에는 `NOT MATERIALIZED` 요청이 적용되지 않는다.
 - **MySQL의 처리 방식**: MySQL 8.0은 비재귀 CTE를 대체로 서브쿼리처럼 취급해 조건에 따라 파생 테이블처럼 병합(merge)하거나 물질화한다. 다만 재귀 CTE는 항상 임시 테이블에 물질화된다.
 - **무한 루프 위험**: 재귀 조건이나 순환 방지 로직을 빠뜨리면 재귀 CTE가 끝나지 않거나 매우 오래 걸릴 수 있다. MySQL은 `cte_max_recursion_depth` 시스템 변수(기본값 1000)로 재귀 깊이를 제한해 폭주를 방지한다. PostgreSQL은 별도의 깊이 제한이 없어 애플리케이션/쿼리 레벨에서 종료 조건과 순환 방지를 직접 책임져야 한다.
 - **흔한 실수**: 재귀 CTE에서 재귀 멤버 안에 `GROUP BY`, `ORDER BY`, 집계 함수, `LIMIT`(엔진별로 제약 다름)를 섞으려다 문법 오류가 나는 경우가 많다. MySQL 8.4 재귀 멤버는 집계·윈도우 함수·GROUP BY·ORDER BY 등이 제한되지만 `LIMIT`은 지원한다. 엔진별 지원 문법을 확인한다.
@@ -167,3 +167,5 @@ PostgreSQL은 버전에 따라 다르다. `MATERIALIZED`로 강제하거나 옵�
 부분 재검증: 2026-10-22. MySQL 8.4의 재귀 CTE 타입 추론·비엄격 모드 잘림·엄격 모드 오류·앵커 CAST를 확인했다. 추가 SQL은 문서와 대조했으며 MySQL에서 실행하지 않았다. 다른 엔진과 기존 `verified`는 유지한다.
 
 - [MySQL 8.4 Recursive CTEs](https://dev.mysql.com/doc/refman/8.4/en/with.html#common-table-expressions-recursive) — 앵커 기준 결과 타입과 재귀 문자열 확장 조건.
+
+부분 재검증: 2026-11-04. [PostgreSQL 11 WITH §7.8.1](https://www.postgresql.org/docs/11/queries-with.html), [PostgreSQL 12 WITH](https://www.postgresql.org/docs/12/queries-with.html), [PostgreSQL 18 물질화](https://www.postgresql.org/docs/18/queries-with.html#QUERIES-WITH-CTE-MATERIALIZATION)를 대조해 최적화 장벽과 SELECT CTE의 조기 평가 종료를 구분했다. 정렬·조인 등 부모 연산에 따라 전체 결과가 필요할 수 있으며, 데이터 변경 CTE의 끝까지 실행하는 규칙과는 다르다. 이번에는 PostgreSQL 실행 계획을 실제 측정하지 않았고 기존 `verified`는 유지한다.
