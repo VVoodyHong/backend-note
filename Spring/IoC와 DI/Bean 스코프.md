@@ -1,7 +1,7 @@
 ---
 category: "Spring/IoC와 DI"
 tags: ["spring", "bean", "scope", "ioc"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -68,6 +68,7 @@ prototype을 스코프 프록시로 감싸면 프록시를 통해 위임하는 �
 - 프로토타입 스코프는 소멸 콜백을 컨테이너가 관리하지 않으므로([[Bean 생명주기]] 참고), 무분별하게 쓰면 리소스 정리 누락으로 이어질 수 있다.
 - 스코프 프록시에는 대상 조회와 위임 비용이 있다. 클래스 기반 프록시는 CGLIB의 상속 제약 때문에 `final` 클래스와 `final` 메서드를 가로챌 수 없다. 인터페이스 기반 프록시는 구현 클래스가 final이어도 사용할 수 있지만 프록시 인터페이스에 노출된 메서드로 접근한다.
 - Servlet 스코프를 포함해 단독 검증한다면 `RequestContextHolder`에 테스트용 요청 속성을 바인딩하고 finally에서 해제하거나, Spring의 웹 테스트 지원을 사용한다. 객체의 비즈니스 로직만 검사하는 단위 테스트라면 객체를 직접 생성할 수 있다.
+- **선택적 조회와 후보 중복**: `ObjectProvider.getIfAvailable()`은 후보가 없을 때 null을 반환하지만, 후보가 여러 개이고 선택할 수 없으면 `NoUniqueBeanDefinitionException`을 던진다. 기본값 supplier도 이 모호성을 해결하지 않는다. `getIfUnique()`는 우선 후보가 없는 일반적인 중복에는 null을 반환하고, 하나만 `@Primary`라면 그 빈을 선택한다. 다만 Framework 7.0.9에서 같은 팩토리의 두 후보가 모두 Primary인 구성 오류는 `getIfUnique()`와 supplier형도 예외를 던진다. 선택적 조회를 모든 구성 오류를 기본값으로 바꾸는 기능으로 해석하지 않는다.
 
 ## 심화 Q&A
 
@@ -104,3 +105,5 @@ DI 컨테이너는 싱글톤 Bean을 초기화할 때 딱 한 번 의존성 그�
 부분 재검증: 2026-10-04. Java SE 25의 ThreadLocal get/set/remove 계약과 같은 날 대표 노트의 중첩 복원 실행 결과를 반영했다. 빈 스코프의 모든 설명을 재검증한 것은 아니다.
 
 - [ThreadLocal Java SE 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — 현재 스레드 값의 교체·삭제 범위.
+
+부분 재검증: 2026-11-04. [ObjectProvider 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/ObjectProvider.html)와 [DefaultListableBeanFactory 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-beans/src/main/java/org/springframework/beans/factory/support/DefaultListableBeanFactory.java)의 후보 선택을 대조했다. Temurin 25.0.4.1+1·Framework 7.0.9에서 후보 부재·일반 중복의 getIfAvailable 예외/getIfUnique null·단일 Primary 선택 4조건과, 두 Primary 충돌 시 팩토리 직접 조회/주입된 provider 각각의 getIfUnique·supplier형 예외 4조건을 실행했다. 웹 스코프와 전체 생명주기는 이번 실행 범위 밖이며 `verified`는 유지한다.

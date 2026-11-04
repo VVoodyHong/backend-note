@@ -1,7 +1,7 @@
 ---
 category: "Java/언어 핵심"
 tags: ["java", "equals", "hashcode", "객체지향", "컬렉션"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -10,7 +10,7 @@ verified: 2026-09-08
 ## 핵심 정의
 `equals()`는 두 객체의 논리적 동등성(logical equality)을 판단하는 메서드이고, `hashCode()`는 객체를 해시 기반 자료구조(`HashMap`, `HashSet` 등)에서 빠르게 찾기 위한 정수 해시값을 반환하는 메서드다. 둘 다 `Object` 클래스에 정의되어 있으며 Object.equals의 기본 구현은 참조 동일성(reference equality, ==)을 비교한다. 기본 hashCode는 내용 기반이 아니지만 다른 객체에 다른 값이나 메모리 주소를 보장하지 않는다.
 
-두 메서드는 반드시 함께 재정의(override)해야 한다. `equals()`만 재정의하고 `hashCode()`를 그대로 두면 해시 기반 컬렉션에서 동등한 객체를 다른 객체로 취급하는 문제가 생긴다.
+`equals()`로 값 동등성을 새로 정의한다면, 상속한 `hashCode()`도 그 기준을 만족하는지 확인하고 필요하면 함께 재정의(override)한다. 요구사항은 "동등한 객체는 같은 해시"라는 계약이다. 참조 동등성이 의도라면 둘 다 상속할 수 있고, `hashCode()`만 재정의해도 일관성과 동등성 계약을 지키면 허용된다. 단순히 두 메서드의 재정의 여부만으로 오류를 판단하지 않는다.
 
 ## 동작 원리 / 구조
 `Object` 명세는 `equals`-`hashCode` 계약(contract)을 정의한다.
@@ -102,3 +102,7 @@ Java SE 25 BigDecimal의 scale 기반 equals·수치 기반 compareTo와 Objects
 - [Java SE 25 Arrays](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html) — 배열 동등성과 대응 해시 계약.
 
 실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 BigDecimal의 HashSet/TreeSet 차이·Objects.hash 단일 인자 차이을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode())의 동등한 객체에 대한 동일 해시·호출 간 일관성 계약을 확인했다. Temurin 25.0.4.1+1에서 hashCode만 상수로 재정의한 객체가 참조 동등성을 유지하며 서로 다른 키로 저장되는 경우와, 상위 타입에서 두 메서드를 올바르게 상속한 키의 조회를 실행 확인했다. 두 메서드의 선언 여부보다 계약 준수가 기준이며, 기존 전체 verified는 유지한다.

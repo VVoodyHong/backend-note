@@ -1,7 +1,7 @@
 ---
 category: "인프라와 운영/컨테이너"
 tags: ["operations", "docker", "container", "이미지빌드", "devops"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -56,6 +56,12 @@ BuildKit 시크릿 마운트의 내용은 빌드 캐시 체크섬에 포함되�
 
 새 인증 정보로 단계를 다시 실행해야 한다면 비밀이 아닌 교체 리비전을 캐시 무효화용 build argument로 전달하거나 필요한 단계의 캐시를 비활성화한다. 실제 시크릿 값을 ARG에 넣어 무효화하지 않는다. 또한 시크릿 마운트는 명령 실행 중 전달 수단이다. 빌드 명령이 그 값을 로그에 출력하거나 결과 파일에 복사하면 그 출력까지 보호해 주지 않으므로, 이미지·빌드 로그·산출물을 따로 확인한다.
 
+### ENTRYPOINT 형식은 종료 신호 전달에도 영향을 준다
+
+위 예제의 exec 형식 `ENTRYPOINT ["java", "-jar", "app.jar"]`는 셸을 거치지 않고 JVM을 실행한다. Linux 컨테이너에서 `ENTRYPOINT java -jar app.jar` 같은 셸 형식으로 바꾸면 `/bin/sh -c`가 앞에 남아 종료 신호가 JVM에 전달되지 않을 수 있다. 애플리케이션에 우아한 종료(graceful shutdown)를 설정했어도 신호를 받지 못하면 종료 유예 시간 뒤 강제 종료될 수 있으므로, 실행 설정도 [[Kubernetes 프로브와 안전한 종료]]와 함께 점검한다.
+
+초기화 스크립트를 진입점으로 쓸 때는 마지막에 `exec java -jar /app/app.jar`처럼 주 프로세스로 교체하거나 신호 전달·자식 프로세스 회수를 명시적으로 처리한다. exec 형식은 셸의 환경변수 치환도 수행하지 않으므로 `"$JAVA_OPTS"`를 JSON 인자로 넣으면 하나의 리터럴 인자가 된다. JVM 옵션을 전달하는 경로와 실제 프로세스 인자를 확인하고, 셸 확장을 추가하려다 신호 전달을 다시 끊지 않도록 한다.
+
 ## 심화 Q&A
 
 ### Q. `COPY`와 `ADD`는 캐시 무효화 관점에서 어떻게 다른가?
@@ -91,3 +97,5 @@ A. 쓰기 가능 레이어는 컨테이너에 귀속되며 재시작(`docker res
 - [Spring Boot Dockerfiles](https://docs.spring.io/spring-boot/reference/packaging/container-images/dockerfiles.html) — 4.1.1·jarmode=tools·layer extraction. 확인: 2026-09-08.
 
 부분 재검증: 2026-10-04. [Docker Build cache invalidation](https://docs.docker.com/build/cache/invalidation/)과 [Build secrets](https://docs.docker.com/build/building/secrets/)에서 시크릿 내용/속성의 캐시 참여 차이와 RUN 시크릿 마운트 수명을 확인했다. 적용 범위는 문서의 Dockerfile frontend `docker/dockerfile:1` 및 BuildKit 시크릿 마운트이며 Engine·BuildKit 패치 버전별 재현은 하지 않았다. 로그·산출물 유출 경계는 마운트가 명령의 출력물을 정화하지 않는다는 설계상의 확인 항목이다. 실제 이미지 빌드·토큰 교체 시험은 수행하지 않았고 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [Dockerfile reference: ENTRYPOINT](https://docs.docker.com/reference/dockerfile/#entrypoint)와 [exec 형식 변수 치환](https://docs.docker.com/reference/dockerfile/#variable-substitution)의 셸 경유·PID 1·신호 전달·리터럴 인자 규칙을 확인했다. 적용 범위는 Linux 컨테이너의 Dockerfile 실행 설정이며 Windows 컨테이너에 일반화하지 않는다. 실제 Docker 빌드·stop·Kubernetes 종료 시험은 하지 않았고 `verified`는 유지했다.

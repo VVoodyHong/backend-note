@@ -1,7 +1,7 @@
 ---
 category: "컴퓨터 과학/운영체제"
 tags: ["computer-science", "운영체제", "cpu스케줄링", "프로세스", "성능"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -21,7 +21,7 @@ CPU 스케줄링(CPU scheduling)은 실행 준비가 된 여러 프로세스/스
 | FCFS (First-Come First-Served) | 도착 순서대로 처리 | 구현 단순, convoy effect(짧은 작업이 긴 작업 뒤에서 대기) 발생 |
 | SJF (Shortest Job First) | 실행 시간이 짧은 작업 우선 | 동시 도착·burst 길이 기지 등 가정에서 평균 대기 시간 최소화, 실행 시간 예측 필요, 기아(starvation) 가능 |
 | Round Robin | 고정된 타임 슬라이스(time quantum)만큼 순환 할당 | 준비 큐에 순환 실행 기회 제공, 타임 슬라이스가 너무 작으면 컨텍스트 스위칭 오버헤드 증가, 너무 크면 FCFS와 유사해짐 |
-| Priority Scheduling | 우선순위가 높은 프로세스 우선 | 우선순위 역전(priority inversion), 낮은 우선순위 기아 문제 → 에이징(aging)으로 보완 |
+| Priority Scheduling | 우선순위가 높은 프로세스 우선 | 낮은 우선순위 기아는 에이징(aging) 등으로 완화; 락 의존성에 따른 우선순위 역전(priority inversion)은 우선순위 상속 등으로 별도 대응 |
 | Multilevel Feedback Queue | 여러 큐를 두고 CPU 사용 패턴에 따라 큐 간 이동 | CPU 바운드/I/O 바운드를 동적으로 구분해 처리, 대표적인 교육·설계 모델; OS별 구현 상이 |
 | CFS (Completely Fair Scheduler) | Linux의 이전 fair scheduler, vruntime(가상 실행 시간) 기준 red-black tree로 관리 | 각 프로세스가 "공정한 몫"의 CPU 시간을 받도록 vruntime이 가장 작은 프로세스를 선택 |
 
@@ -49,7 +49,7 @@ CFS는 nice 값(우선순위, -20~19)에 따라 가중치를 부여해 vruntime 
 - 애플리케이션 개발자가 OS 스케줄러 알고리즘을 직접 바꿀 일은 거의 없지만, **스레드 우선순위 설정, 컨테이너 CPU 쿼터(cgroup) 설정, 스레드 풀 크기**를 통해 사실상 스케줄링에 영향을 준다.
 - 컨테이너 환경(쿠버네티스)에서 resources.limits.cpu을 너무 낮게 잡으면 CFS bandwidth controller에 의해 스로틀링(throttling)되어, CPU 사용률 그래프상으로는 여유가 있어 보여도 애플리케이션 레이턴시가 튀는 현상이 발생한다. 이는 실무에서 흔히 겪는 "CPU는 안 바쁜데 응답이 느린" 장애의 대표 원인 중 하나다.
 - Java 애플리케이션에서 GC 스레드나 JIT 컴파일 스레드가 애플리케이션 스레드와 CPU를 경쟁하면 응답 시간 튐(jitter)이 발생할 수 있다. 컨테이너의 CPU 코어 수를 낮게 잡았는데 JVM이 호스트의 전체 코어 수를 오인식(구버전 JVM/컨테이너 인식 이슈)해 GC 스레드 수를 과도하게 설정하는 문제가 과거에 있었다(최신 JVM은 cgroup 인식 개선으로 대부분 해결됨).
-- 우선순위 역전(priority inversion) 사례: 낮은 우선순위 스레드가 락을 잡고 있는데 높은 우선순위 스레드가 그 락을 기다리며 중간 우선순위 스레드에게 계속 CPU를 뺏기는 상황. 이를 막기 위한 기법이 우선순위 상속(priority inheritance)이다.
+- 우선순위 역전(priority inversion) 사례: 낮은 우선순위 스레드가 락을 잡고 있는데 높은 우선순위 스레드가 그 락을 기다리는 동안 중간 우선순위 스레드가 락 소유자의 실행을 지연시키는 상황. 우선순위 상속(priority inheritance)은 락 소유자에게 대기자의 높은 우선순위를 일시적으로 전달해 이 지연을 줄인다. 대기 시간에 따라 실행 우선순위를 올려 기아를 완화하는 에이징과 목적·적용 대상이 다르며, 상속을 지원하는 락과 스케줄링 구성이 필요하다.
 
 ## 심화 Q&A
 
@@ -93,3 +93,7 @@ EEVDF의 가상 마감 시각(virtual deadline)은 실시간 완료 보장이나
 Linux 커널 EEVDF·CFS bandwidth 및 cgroup v2 문서의 가상 마감·CPU 시간 예산·계층적 제한을 확인했다. EEVDF 도입 범위는 Linux 6.6 이후이며 배포 커널의 세부 패치는 별도 확인 대상이다. 기존 전체 검증일은 유지한다.
 
 - [Linux CFS Bandwidth Control](https://docs.kernel.org/scheduler/sched-bwc.html) — 다중 CPU에서 합산 쿼터 소비·계층적 throttle; 파일명 예시는 v1이고 본문의 cpu.max는 v2.
+
+### 2026-11-04 부분 재검증
+
+[Linux RT-mutex 문서](https://docs.kernel.org/locking/rt-mutex.html)의 높은 우선순위 대기자→락 소유자 우선순위 상속과 해제 시 복원, [OSTEP MLFQ §8.3](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf)의 우선순위 상향에 의한 기아 완화를 대조했다. 확인 기준은 2026-11-04 공개 공식 커널 문서와 저자 공개 교재이며, 두 문제의 대응을 표와 본문에서 구분했다. Linux 스케줄링·실시간 락 실험은 하지 않았고 EEVDF·cgroup 설명 전체도 재검증하지 않아 verified는 유지한다.

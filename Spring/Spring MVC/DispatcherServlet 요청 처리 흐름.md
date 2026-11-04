@@ -1,7 +1,7 @@
 ---
 category: "Spring/Spring MVC"
 tags: ["spring", "spring-mvc", "dispatcherservlet", "handlermapping", "front-controller"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -58,7 +58,7 @@ sequenceDiagram
 - **HandlerMapping 우선순위**: 여러 `HandlerMapping`이 동시에 등록될 수 있으며(`RequestMappingHandlerMapping`, `SimpleUrlHandlerMapping`, `BeanNameUrlHandlerMapping` 등) `Ordered` 순서에 따라 매칭을 시도한다. 정적 리소스 매핑과 API 매핑이 충돌하면 이 순서 문제로 디버깅이 어려워질 수 있다.
 - **예외 처리 우선순위 실수**: `@ControllerAdvice`에 여러 `@ExceptionHandler`가 있을 때 더 구체적인 예외 타입이 우선한다고 가정하고 순서를 잘못 설계하면, 의도한 것과 다른 핸들러가 예외를 가로채는 장애가 흔히 발생한다.
 - **인터셉터 vs 필터 선택**: 인증/인가처럼 서블릿 레벨에서 끊어야 하는 로직은 [[Filter와 Interceptor]]에서 다루는 `Filter`로, 컨트롤러 실행 컨텍스트(핸들러 정보, `@PathVariable` 등)가 필요한 로직은 `Interceptor`로 구현하는 것이 일반적이다.
-- **비동기 처리**: `Callable`/`DeferredResult`를 반환하는 비동기 컨트롤러는 `preHandle`/`postHandle`이 아닌 `AsyncHandlerInterceptor`의 콜백을 별도로 고려해야 하며, 일반 인터셉터를 그대로 쓰면 `afterCompletion` 타이밍이 기대와 다르게 동작할 수 있다.
+- **비동기 처리**: `Callable`/`DeferredResult`도 최초 요청의 `preHandle`은 실행된다. 비동기가 시작되면 `postHandle`·`afterCompletion` 대신 `AsyncHandlerInterceptor.afterConcurrentHandlingStarted`를 호출하고, 정상 완료 재디스패치에서는 `preHandle`부터 다시 실행한다. 요청당 한 번이라고 생각한 로깅·카운터가 두 번 실행되지 않도록 REQUEST와 ASYNC를 구분한다. 재디스패치는 완료 결과 처리를 재개하는 것이며 원래 컨트롤러 메서드를 다시 호출하는 것은 아니다.
 - **404 처리**: Framework 6.1부터 DispatcherServlet은 핸들러가 없으면 기본적으로 NoHandlerFoundException을 던진다. 정적 리소스 핸들러에 매칭된 뒤 파일이 없으면 NoResourceFoundException 경로다. 구버전의 throw-exception-if-no-handler-found 설정을 관성적으로 추가하거나 404를 위해 정적 리소스 매핑을 무조건 끄지 않는다.
 
 ## 심화 Q&A
@@ -99,3 +99,5 @@ A. 동기 요청은 처리·렌더링이 끝난 뒤 완료 콜백이 실행된�
 - [AsyncHandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 재디스패치·타임아웃 예외.
 - [DispatcherServlet API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html) — 전략과 no-handler 예외.
 - [MVC Validation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html) — 인자 검증 경로.
+
+부분 재검증: 2026-11-04. [AsyncHandlerInterceptor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html)의 최초 요청·정상 재디스패치 콜백을 확인했다. Framework 7.0.9 MockMvc에서 DeferredResult의 비동기 시작, 최초 preHandle→afterConcurrentHandlingStarted, 재디스패치의 preHandle→postHandle→afterCompletion, 컨트롤러 1회 호출과 최종 응답을 4조건으로 실행했다. 실제 Servlet 컨테이너의 timeout·네트워크 오류는 이번 범위 밖이며 `verified`는 유지한다.

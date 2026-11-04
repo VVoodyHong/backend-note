@@ -1,7 +1,7 @@
 ---
 category: "네트워크/애플리케이션 프로토콜"
 tags: ["network", "grpc", "protocolbuffers", "rpc", "http2", "msa"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -70,6 +70,19 @@ proto3에서 새 필드를 추가한 메시지를 구버전 코드가 읽으면,
 
 ProtoJSON은 바이너리와 같은 unknown field 보존 계약이 없다. 기본적으로 모르는 필드를 거부하며, 무시 옵션을 켜도 그 값을 다음 홉에 보존한다는 뜻은 아니다. REST 변환 게이트웨이가 있으면 필드 번호만 유지하는 것으로 호환성 검토를 끝내지 말고, 필드·enum 이름과 구버전 파서의 처리 정책까지 확인한다. 신버전 메시지를 구버전 중계 경로로 왕복시킨 뒤 새 필드가 유지되는지 검증한다.
 
+### 기본값으로 변경하는 요청에는 필드 존재 여부가 필요하다
+
+proto3의 기본형 단일 필드에서 `optional`을 생략하면 암시적 존재(implicit presence)를 사용한다. 예를 들어 `bool enabled`는 미전달과 명시적인 `false`를 구분하지 못하고, 기본값은 직렬화와 `mergeFrom`에서 생략된다. 기존 값이 `true`인 자원에 이 메시지를 그대로 병합하면 `false`로 끄려던 요청이 반영되지 않을 수 있다.
+
+```protobuf
+syntax = "proto3";
+message UpdateNotificationRequest {
+  optional bool enabled = 1;
+}
+```
+
+명시적 존재(explicit presence)를 쓰는 `optional`은 미전달과 `false`를 구분한다. 갱신 API는 존재 여부 또는 `FieldMask`로 변경 대상을 결정하고, 필드 미전달·기본값 설정·초기화의 의미를 계약으로 정한다. `optional` 전환은 바이너리 형식이 호환되어도 업무 의미가 항상 보존되는 변경은 아니다. 중간의 구버전 서비스가 같은 필드를 암시적 존재로 읽고 다시 직렬화하면 명시한 기본값의 존재 정보가 사라질 수 있으므로 롤링 배포 경로까지 확인한다.
+
 ## 심화 Q&A
 
 ### Q. 내부 마이크로서비스 통신에서 gRPC가 REST/JSON보다 유리한 이유는 구체적으로 무엇인가?
@@ -109,3 +122,5 @@ gRPC는 애플리케이션 레벨의 성공/실패를 HTTP 상태 코드가 아�
 부분 재검증: 2026-10-04. [Protocol Buffers proto3 — Unknown Fields](https://protobuf.dev/programming-guides/proto3/#unknowns)의 바이너리 보존·JSON/필드별 복사 시 손실과 [ProtoJSON Format](https://protobuf.dev/programming-guides/json/)의 unknown field 기본 거부·무시 옵션·JSON wire safety를 확인했다. 적용 범위는 proto3/ProtoJSON 공식 가이드 계약이며 특정 언어 런타임의 기본 옵션 전체를 일반화하지 않는다. gRPC-Web/JSON 게이트웨이 통합과 기존 Spring gRPC 버전은 재검증하지 않아 `verified`는 유지했다.
 
 실행 확인: 2026-10-04, JDK 25.0.4와 protobuf-java/protobuf-java-util 4.33.1의 DynamicMessage·JsonFormat으로 동일 proto3 메시지의 구·신 스키마 왕복을 검증했다. 바이너리는 새 필드 값을 보존했고, 구버전 JSON 출력·필드별 복사는 잃었다. 기본 JSON 파서는 새 필드를 거부하며 `ignoringUnknownFields()`는 허용하되 보존하지 않는 것을 assertion으로 확인했다. [v33.1 JsonFormat 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/util/src/main/java/com/google/protobuf/util/JsonFormat.java)의 파서 동작도 대조했다. 이 시험은 메모리 내 메시지 변환이며 실제 RPC 전송·protoc 생성 코드·다른 언어 런타임은 실행하지 않았다.
+
+부분 재검증: 2026-11-04. [Protocol Buffers Field Presence](https://protobuf.dev/programming-guides/field_presence/)의 proto3 기본값·병합·optional 전환 계약과 [v33.1 DynamicMessage 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/core/src/main/java/com/google/protobuf/DynamicMessage.java)의 기본값 제거 조건을 확인했다. JDK 25.0.4.1과 protobuf-java 4.33.1의 DynamicMessage로 미전달/false 동등성, 암시적 기본값 병합 생략, optional false 직렬화·병합, 암시적 중계 후 존재 정보 손실을 5개 assertion으로 실행 확인했다. 실제 RPC·protoc 생성 코드·FieldMask 적용·다른 언어 런타임은 시험하지 않았으며 `verified`는 유지했다.

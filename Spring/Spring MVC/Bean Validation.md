@@ -1,7 +1,7 @@
 ---
 category: "Spring/Spring MVC"
 tags: ["spring", "spring-mvc", "bean-validation", "jakarta-validation", "hibernate-validator"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -79,6 +79,7 @@ public class UserController {
 - **그룹 추가 후 필수 입력 검증 누락**: 그룹을 생략한 제약은 `Default` 그룹에 속한다. `@Validated(OnCreate.class)`로 바꾸면 `Default` 제약까지 자동으로 실행되는 것이 아니다. 두 그룹을 명시하거나 `OnCreate extends Default`로 포함하고, 기존 필수 필드가 여전히 거부되는지 회귀 테스트한다. `@Valid` 중첩 검증에도 요청한 그룹이 전파되므로 자식 DTO의 그룹도 맞추거나 `@ConvertGroup`으로 변환한다. `@GroupSequence`는 앞 그룹의 위반이 있으면 뒤 그룹을 실행하지 않는다. 이를 모든 오류를 한 번에 수집하는 옵션으로 해석하지 않는다.
 - **중첩 컬렉션 검증**: 필드 @Valid List<ChildDto> 또는 List<@Valid ChildDto>로 요소 객체를 cascade 검증한다. 컬렉션의 NotEmpty, 요소의 NotNull, 요소 내부 제약은 서로 다른 조건이다.
 - **서비스 계층 검증 누락**: 컨트롤러 진입점에서만 검증하고 내부 서비스 메서드나 배치/메시지 컨슈머 진입점에서는 검증을 생략하는 경우가 많아, API가 아닌 경로로 들어오는 데이터에 대해 검증 공백이 생긴다. 서비스 계층에도 `@Validated` + 메서드 검증을 적용해 방어선을 이중화하는 것이 안전하다.
+- **인터페이스와 구현체의 제약 위치**: 상위 타입의 메서드를 구현·재정의하면서 구현체의 파라미터에만 `@NotNull` 등을 추가하면 입력 계약을 강화하므로 표준 규칙을 위반한다. 상위 선언에 제약이 없어도 마찬가지이며, 기본 Hibernate Validator에서는 `ConstraintDeclarationException`이 발생한다. 공통 입력 제약은 상위 계약에 선언하고 구현체에서 상속받는다. 반환값 제약은 강화할 수 있으므로 두 방향을 구분한다. 같은 메서드를 서로 상속 관계가 아닌 여러 인터페이스에서 받는 경우에는 파라미터 제약에 추가 제한이 있으므로 계약을 합치기 전에 확인한다.
 - **에러 응답 포맷 표준화**: `MethodArgumentNotValidException`을 그대로 노출하면 스택트레이스나 내부 필드명이 그대로 클라이언트에 전달될 수 있다. `@RestControllerAdvice`에서 `BindingResult.getFieldErrors()`를 순회해 필드명-메시지 맵으로 재구성한 표준 에러 응답을 만드는 것이 일반적이다.
 - **국제화(i18n)**: 메시지는 기본적으로 `ValidationMessages.properties`에서 로드되며, Spring의 `MessageSource`와 연동하면 로케일별 메시지 커스터마이징이 가능하다.
 - **DB 검증의 한계**: ConstraintValidator의 DB 호출은 지연을 늘리고 사전 중복 조회 뒤 동시 INSERT의 경쟁을 막지 못한다. 유일성은 DB UNIQUE 제약으로 최종 보장하고 충돌을 변환한다. Validator는 여러 호출에서 재사용될 수 있으므로 요청별 상태를 인스턴스 필드에 보관하지 않는다.
@@ -114,7 +115,7 @@ A. 서비스 계층의 메서드 검증은 `MethodValidationPostProcessor`가 �
 
 부분 재검증: 2026-10-04. Jakarta Validation 3.1의 그룹 상속·연쇄 검증·그룹 순서를 확인했다. Hibernate Validator 9.1.3.Final에서 명시 그룹의 Default 제외/상속, 중첩 객체에 그룹 전파, 순서 지정 시 후속 그룹 중단을 3개 JUnit 테스트로 재현했다. 다른 MVC·AOP 설명의 전체 검증일은 유지한다.
 
-- [Jakarta Validation 3.1 — 그룹](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1#constraintdeclarationvalidationprocess-groupsequence) — §5.4 그룹·상속·순서 및 그룹 변환.
+- [Jakarta Validation 3.1 — 그룹](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-groupsequence) — §5.4 그룹·상속·순서 및 그룹 변환.
 
 부분 재검증: 2026-09-22. Spring Framework 7.0.9의 입력·반환값 검증 실패 상태 코드를 확인했다. MockMvc와 Hibernate Validator 9.1.3.Final로 입력 제약 위반 400·반환값 제약 위반 500을 실행 검사했다.
 
@@ -124,4 +125,6 @@ A. 서비스 계층의 메서드 검증은 `MethodValidationPostProcessor`가 �
 
 - [MVC Validation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html) — 인자 검증과 메서드 검증·BindingResult.
 - [Spring Bean Validation](https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html) — DI와 AOP 메서드 검증.
-- [Jakarta Validation 3.1 명세](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1) — 제약·null·객체 그래프·그룹.
+- [Jakarta Validation 3.1 명세](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html) — 제약·null·객체 그래프·그룹.
+
+부분 재검증: 2026-11-04. [Jakarta Validation 3.1 §5.6.5](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-methodlevelconstraints-inheritance)와 [Hibernate Validator 9.1.3.Final 고정 문서](https://github.com/hibernate/hibernate-validator/blob/9.1.3.Final/documentation/src/main/asciidoc/reference/_ch03.adoc)의 메서드 상속 규칙을 확인했다. Temurin 25.0.4.1+1·Hibernate Validator 9.1.3.Final에서 구현체 입력 제약 추가의 선언 오류, 인터페이스 입력 제약 상속과 정상값 통과, 구현체 반환값 제약 강화의 4조건을 실행했다. 검증 API 직접 호출이며 MVC·AOP 통합이나 공급자별 규칙 완화 옵션은 실행하지 않았다. 명세 링크의 누락된 `.html`도 바로잡고 `verified`는 유지한다.

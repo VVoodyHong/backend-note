@@ -1,7 +1,7 @@
 ---
 category: "데이터베이스/NoSQL"
 tags: ["database", "mongodb", "document-db", "wiredtiger", "복제셋"]
-updated: 2026-10-22
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -100,7 +100,7 @@ const result = db.inventory.updateOne(
 - 스키마가 자주 바뀌는 도메인(상품 속성이 카테고리마다 다른 커머스, 로그성 데이터)에 적합하다. 반대로 여러 엔티티 간 강한 참조 무결성과 다중 문서 트랜잭션이 핵심인 도메인(정산, 결제 원장)은 신중히 검토해야 한다. MongoDB도 다중 문서 ACID 트랜잭션을 지원하지만 일반적으로 단일 문서 쓰기보다 비용이 크므로, 함께 변경할 데이터를 embedding해 트랜잭션 범위를 줄일 수 있는지 검토한다. 제품 종류만으로 RDB보다 느리다고 단정하지 않는다.
 - 인덱스 설계가 성능의 대부분을 좌우한다. 복합 인덱스(compound index)의 필드 순서, 커버드 쿼리(covered query) 여부, `explain()`을 통한 실행 계획 확인은 운영 초기부터 습관화해야 한다.
 - 흔한 실수: 배열 필드가 무한정 커지는 embedding 설계(예: 게시글 문서에 댓글을 계속 push). BSON 문서 크기 제한(16 MiB)에 걸리거나, 큰 문서의 전송·갱신·인덱스 유지 비용이 커진다. WiredTiger가 모든 수정에서 문서 전체를 반드시 재기록한다고 일반화할 수는 없다.
-- 흔한 실수 2: 샤드 키를 단조 증가 값(예: 생성 시각, auto-increment 유사 값)으로 잡아 최신 데이터가 항상 같은 청크/샤드에 몰리는 핫스팟을 만드는 패턴. 해시 기반 샤드 키(hashed shard key)나 카디널리티가 높은 복합 키로 완화한다.
+- 흔한 실수 2: 범위 샤딩(ranged sharding)에서 단조 증가 값(예: 생성 시각)을 샤드 키로 잡으면 최신 쓰기가 최상위 범위의 청크/샤드에 몰릴 수 있다. MongoDB 8.0의 샤드 키 선택 기준은 카디널리티·빈도·단조성 모두를 본다. `{createdAt: 1, eventId: 1}`처럼 증가하는 선두 필드 뒤에 고유 ID를 붙여도 키 전체가 시간순으로 증가하면 핫스팟이 남는다. 접미 필드 추가는 낮은 카디널리티 개선과 단조성 해소를 같은 것으로 만들지 않는다. 충분히 다양한 값을 가진 해시 샤드 키나 hashed prefix 등을 검토하되 범위 조회의 scatter-gather 비용과 실제 청크 분포를 확인한다.
 - 튜닝 포인트: WiredTiger 캐시 크기(기본값은 `(RAM - 1GB)의 50%`와 `0.256GB` 중 큰 값), 읽기 선호도와 읽기 관심(read concern) 조합, 쓰기 확인(write concern) 수준(w: 1 vs majority)은 일관성-지연-내구성 트레이드오프를 직접 조절하는 지점이다.
 - Java/Spring 환경에서는 Spring Data MongoDB를 통해 `MongoTemplate` 또는 Repository 인터페이스로 접근하는 경우가 많은데, 이 경우도 내부적으로 생성되는 쿼리와 인덱스 사용 여부를 `explain()`으로 별도 확인해야 한다. Repository 추상화가 비효율적인 쿼리를 감출 수 있다.
 
@@ -157,3 +157,8 @@ MongoDB 8.3의 `write concern: majority`는 정해진 수의 데이터 보유 �
 
 - [MongoDB 8.0 Atomicity and Transactions](https://www.mongodb.com/docs/v8.0/core/write-operations-atomicity/) — 갱신 시 필터 재검사, 읽기 후 덮어쓰기 경쟁, 단일 문서와 여러 문서의 원자성 경계.
 - [MongoDB 8.0 updateOne](https://www.mongodb.com/docs/v8.0/reference/method/db.collection.updateOne/) — `acknowledged`·`matchedCount` 반환값.
+
+부분 재검증: 2026-11-04. MongoDB 8.0 공식 문서의 카디널리티·빈도·단조성 구분과 compound hashed key의 선두 해시 용도를 확인했다. createdAt+eventId 사례는 단조 증가 범위 키의 라우팅 규칙에 적용한 분석이며 실제 샤딩·리샤딩 시험은 아니다. 기존 단일 문서 갱신·8.3·Search 서술의 `verified`는 유지한다.
+
+- [MongoDB 8.0 Choose a Shard Key](https://www.mongodb.com/docs/v8.0/core/sharding-choose-a-shard-key/) — 높은 카디널리티만으로 균등 분산을 보장하지 않으며 단조성을 별도 평가.
+- [MongoDB 8.0 Hashed Sharding](https://www.mongodb.com/docs/v8.0/core/hashed-sharding/) — hashed prefix의 단조성 대응, 충분한 키 다양성과 범위 조회 비용.

@@ -1,7 +1,7 @@
 ---
 category: "Java/테스트와 진단"
 tags: ["java", "junit5", "jupiter", "테스트전략", "확장모델"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -68,7 +68,7 @@ Stream<DynamicTest> dynamicPricingTests() {
 `@ParameterizedTest`도 `@MethodSource`·`@ArgumentsSource` 등으로 런타임에 입력을 생성한다. 차이는 파라미터화 테스트가 같은 테스트 메서드를 인자별로 호출하는 반면 `@TestFactory`는 실행할 테스트 자체를 동적으로 만든다는 점이다. 파라미터화 호출마다 BeforeEach/AfterEach가 적용되지만, 개별 DynamicTest에는 적용되지 않고 factory 메서드를 둘러싸고 한 번 적용된다.
 
 ## 실무 관점
-- `PER_CLASS`는 무거운 초기화(예: Testcontainers 컨테이너 기동)를 클래스당 1회로 줄여 속도를 높이지만, 인스턴스 필드를 가변 상태로 쓰면 테스트 순서에 따라 결과가 달라지는 취약한 테스트(flaky test)를 만든다. 기본은 `PER_METHOD`를 유지하고 무거운 리소스만 `@BeforeAll`(static) 또는 확장(Extension)의 `Store`로 캐싱하는 편이 안전하다.
+- `PER_CLASS`는 테스트 인스턴스를 공유하며, `@BeforeEach`의 초기화를 자동으로 1회로 바꾸지는 않는다. 공통 초기화는 `@BeforeAll` 등 실제 자원 생명주기에 맞는 경계로 옮긴다. Testcontainers 2.0.5의 Jupiter 확장은 static `@Container`를 클래스 단위로 공유하고 인스턴스 필드는 테스트 메서드마다 시작·종료하므로, PER_CLASS만 바꿔 기동 횟수가 줄어든다고 가정하지 않는다. 공유된 가변 필드는 테스트 오염을 만들 수 있으므로 자원 공유와 테스트 상태 격리를 구분한다.
 - `@Tag("unit")`, `@Tag("integration")`로 태깅해 Maven Surefire의 `groups` 설정(예: `-Dgroups=unit`)이나 Gradle `useJUnitPlatform { includeTags("unit") }`로 필터링하면, 빠른 단위 테스트와 느린 통합 테스트를 파이프라인 단계별로 분리할 수 있다.
 - 병렬 기능을 활성화(`junit.jupiter.execution.parallel.enabled=true`)한 뒤 실행 모드도 `concurrent` 또는 `@Execution(CONCURRENT)`로 선택해야 실제 동시 실행된다. 기본 mode는 same_thread다. 동시 실행은 속도를 높일 수 있지만, static 필드·싱글턴 목(mock)·공유 데이터베이스 스키마 같은 전역 상태를 공유하는 테스트는 경쟁 조건(race condition)으로 간헐적 실패가 난다. 리소스 잠금(`@ResourceLock`)으로 충돌 지점을 명시해야 한다.
 - 흔한 실수: Vintage 엔진에 의존해 JUnit 4 스타일(`@Before`, `@RunWith(SpringRunner.class)`)과 JUnit 5 스타일을 섞어 쓰다가 확장 동작이 기대와 다르게 나오는 경우. 신규 코드는 Jupiter 확장(`@ExtendWith(SpringExtension.class)` 또는 `@SpringBootTest`)으로 통일한다.
@@ -123,3 +123,7 @@ A. BDD 스타일로 상황(context)별 테스트를 그룹화하는 데는 유�
 부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
 
 - [JUnit 5.13.4 User Guide](https://docs.junit.org/5.13.4/user-guide/#writing-tests-assertions) — preemptive assertion의 ThreadLocal·Spring 트랜잭션 경계와 @Timeout thread mode. [5.13.4 AssertTimeoutPreemptively 소스](https://raw.githubusercontent.com/junit-team/junit5/r5.13.4/junit-jupiter-api/src/main/java/org/junit/jupiter/api/AssertTimeoutPreemptively.java) — Future 취소·실행기 shutdownNow 경로. JUnit Jupiter 5.13.4/Platform Console 1.13.4, Oracle JDK 25.0.4에서 스레드·ThreadLocal 차이, 비선점 timeout의 본문 완료, 인터럽트를 무시한 본문의 잔존과 명시적 종료를 확인했다. 실제 Spring DB 롤백은 재현하지 않았다.
+
+### 2026-11-04 부분 재검증
+
+[JUnit 5.13.4 User Guide §2.12](https://docs.junit.org/5.13.4/user-guide/#writing-tests-test-instance-lifecycle)의 인스턴스 생명주기·BeforeEach와 [Testcontainers 2.0.5 TestcontainersExtension](https://raw.githubusercontent.com/testcontainers/testcontainers-java/2.0.5/modules/junit-jupiter/src/main/java/org/testcontainers/junit/jupiter/TestcontainersExtension.java)의 static 공유·인스턴스 재시작 경로를 확인했다(Context7 JUnit 문서 검색 병행). 캐시된 JUnit Jupiter/Platform 6.0.3과 Temurin 25.0.4.1+1로 두 테스트를 실행해 생성자·BeforeAll 각 1회, BeforeEach·AfterEach 각 2회를 확인했다. JUnit 5.13.4 바이너리와 실제 Testcontainers/Docker는 실행하지 않았고, 버전 전체 호환성·기타 확장은 이번 검증 범위 밖이므로 verified를 유지한다.

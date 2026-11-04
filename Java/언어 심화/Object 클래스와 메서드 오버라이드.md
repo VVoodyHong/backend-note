@@ -1,7 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "object", "tostring", "clone", "concurrency"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -19,7 +19,7 @@ public String toString() {
 }
 ```
 
-**clone()** — `Cloneable` 인터페이스를 구현하지 않고 `clone()`을 호출하면 `CloneNotSupportedException`이 발생한다. 기본 구현은 필드를 그대로 복사하는 얕은 복사(shallow copy)라서, 참조 타입 필드는 원본과 복사본이 같은 객체를 공유한다.
+**clone()** — `Object.clone()` 구현은 수신 객체가 `Cloneable`을 구현하지 않으면 `CloneNotSupportedException`을 던진다. 재정의한 메서드가 `super.clone()` 대신 생성자 등으로 직접 복사하는 경우까지 이 조건이 강제되지는 않는다. `Object.clone()`은 필드를 그대로 복사하는 얕은 복사(shallow copy)라서, 참조 타입 필드는 원본과 복사본이 같은 객체를 공유한다.
 ```java
 public class Box implements Cloneable {
     private List<String> items = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Box implements Cloneable {
 
 **getClass()** — 런타임 실제 타입을 반환하며 `final` 메서드라 재정의할 수 없다. 리플렉션(reflection) 기반 로직이나 `equals()` 구현에서 타입 비교에 쓰인다.
 
-**wait() / notify() / notifyAll()** — 모니터(monitor) 락(lock)을 가진 스레드가 대기 집합(wait set)에 들어가거나 깨어나게 하는 저수준 동시성 원시 연산(primitive)이다. 반드시 `synchronized` 블록 안에서, 그리고 조건을 `while` 루프로 재검사하며 호출해야 한다(spurious wakeup 대응).
+**wait() / notify() / notifyAll()** — 호출 대상 객체의 모니터(monitor)를 소유한 스레드가 대기 집합(wait set)에 들어가거나 대기 중인 스레드를 깨우는 저수준 동시성 원시 연산(primitive)이다. 대상에 대한 `synchronized` 블록뿐 아니라 그 객체의 동기화 인스턴스 메서드에서도 호출할 수 있다. 다른 객체의 락을 가진 것만으로는 부족하며 소유권이 없으면 `IllegalMonitorStateException`이 발생한다. `wait()`는 조건을 `while`로 재검사하는 루프 안에서 호출한다(spurious wakeup 대응).
 ```java
 synchronized (lock) {
     while (!condition) {
@@ -112,3 +112,7 @@ flowchart TD
 ### 2026-09-23 부분 재검증
 
 [Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html)의 toString·배열 clone·wait 소유권 범위를 확인했다. OpenJDK 25.0.2에서 hashCode만 재정의한 출력, 중첩 배열의 내부 공유, ThreadMXBean으로 wait 중 다른 모니터가 유지됨을 확인하고 시험 스레드를 정상 종료했다. 기존 finalization·로깅 설명 전체를 재검증한 것은 아니다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html)의 clone 구현 조건과 wait/notify의 대상 모니터 소유 계약을 확인했다. Temurin 25.0.4.1+1에서 Cloneable 없는 직접 복사의 성공·super.clone의 거부, 동기화 인스턴스 메서드의 wait/notify 성공·모니터 소유권 없는 notify의 거부를 실행 확인했다. 기존 finalize·Cleaner·복사 성능 전체는 재검증하지 않아 verified를 유지한다.

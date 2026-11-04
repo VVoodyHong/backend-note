@@ -2,7 +2,7 @@
 category: "Spring/데이터 접근과 트랜잭션"
 tags: ["spring", "jpa", "hibernate", "영속성컨텍스트", "orm"]
 aliases: ["Persistence Context", "영속성 컨텍스트"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -106,7 +106,7 @@ AUTO 모드의 쿼리가 변경된 데이터의 영향을 받으면 provider가 
 
 검증일: 2026-09-08. 적용 범위: Jakarta Persistence 3.2, Hibernate ORM 7.1, Spring의 트랜잭션 범위 EntityManager 사용.
 
-- [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2) — 3.3 엔티티 생명주기·merge, 3.11 flush, 7장 EntityManager 범위.
+- [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 3.3 엔티티 생명주기·merge, 3.11 flush, 7장 EntityManager 범위.
 - [Hibernate ORM User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — 영속 상태, flushing, 식별자 생성과 배치.
 - [JpaTransactionManager API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/orm/jpa/JpaTransactionManager.html) — EntityManager 바인딩과 트랜잭션 통합.
 - [Boot properties](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — open-in-view 기본값.
@@ -114,7 +114,7 @@ AUTO 모드의 쿼리가 변경된 데이터의 영향을 받으면 provider가 
 부분 재검증: 2026-09-23. Jakarta Persistence 공식 버전 목록에서 3.2와 개발 중인 4.0을 구분하고, 3.2 §3.4.3의 rollback·detach·Java 상태·생성 값 재사용 제한을 대조했다. 아래 H2 실행은 명세 중 일부 사례를 확인한 것이며 PostgreSQL/MySQL은 실행하지 않았다. 기존 전체 `verified`는 유지한다.
 
 - [Jakarta Persistence 버전 목록](https://jakarta.ee/specifications/persistence/) — 확인일 3.2 정식 명세와 4.0 개발 상태.
-- [Jakarta Persistence 3.2 §3.4.3](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#a2049) — 롤백 후 분리, 객체 값·버전·생성 식별자의 불일치와 merge 재사용 경계.
+- [Jakarta Persistence 3.2 §3.4.3](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html#a2049) — 롤백 후 분리, 객체 값·버전·생성 식별자의 불일치와 merge 재사용 경계.
 
 추가 실행 확인: 2026-09-23. Hibernate ORM 7.4.5.Final·H2 2.4.240에서 변경 엔티티를 flush 후 rollback해도 Java 필드는 변경값을 유지하고 새 세션의 DB 조회는 원래 값을 반환했다. IDENTITY 신규 엔티티는 rollback 후 ID가 남았지만 해당 행은 DB에 없었다. 버전 값 불일치·merge 실패·rollback 자체의 detach 시점은 이 실행에서 검증하지 않았다.
 

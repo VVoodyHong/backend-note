@@ -1,7 +1,7 @@
 ---
 category: "데이터베이스/NoSQL"
 tags: ["database", "nosql", "데이터모델링", "분산시스템", "cap-theorem"]
-updated: 2026-09-08
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -45,7 +45,7 @@ flowchart LR
 
 ## 실무 관점
 
-- 캐시, 세션 저장소, 카운터처럼 단순 조회가 대부분이면 Key-Value가 가장 단순하고 빠르다. 복잡한 쿼리가 필요해지는 순간 병목이 되므로 초기 설계 단계에서 쿼리 요구사항을 명확히 해야 한다.
+- 캐시, 세션 저장소, 카운터처럼 키 중심 접근이면 Key-Value 모델을 검토한다. 조회가 단순하다는 이유만으로 다른 모델보다 빠르다고 단정할 수는 없다. 필요한 검색·원자적 갱신·만료·내구성 조건과 실제 부하로 판단한다.
 - 스키마가 자주 바뀌거나 엔티티마다 필드 구성이 다른 경우(상품 카탈로그, 로그, 설정값) Document 모델이 적합하다. 다만 강한 일관성의 다중 문서 트랜잭션이 필요하면 RDB 대비 설계 복잡도가 올라간다.
 - 시계열 데이터, IoT 센서 데이터, 쓰기 처리량이 극도로 높은 경우 Column-family(Cassandra)가 유리하다. 대신 임의 조건 조회(ad-hoc query)가 취약해 조회 패턴을 미리 모델링(query-first design)해야 한다.
 - 추천 시스템, 소셜 네트워크, 사기 탐지처럼 관계 자체가 핵심 자산이면 Graph DB를 검토한다. RDB의 다중 조인으로 처리하면 조인 폭발(join explosion)이 발생하는 지점에서 Graph가 강점을 보인다.
@@ -70,7 +70,9 @@ Cassandra는 리더가 없는(leaderless) 구조로 설계되어 있어 파티�
 장점은 각 데이터 특성에 최적화된 저장소를 쓸 수 있다는 것이다(세션은 Redis, 상품 카탈로그는 MongoDB, 추천 그래프는 Neo4j). 단점은 운영 복잡도가 저장소 수만큼 곱해진다는 점이다. 각 시스템마다 백업/복구, 모니터링, 장애 대응, 팀의 학습 곡선이 별도로 필요하고, 시스템 간 데이터 정합성을 맞추는 이벤트 기반 동기화(CDC 등) 설계 비용도 추가된다. 초기 단계에서는 검증된 하나의 저장소로 시작하고, 명확한 병목이 확인된 부분만 특화 저장소로 분리하는 점진적 접근이 일반적으로 안전하다.
 
 ### Q. MongoDB 같은 Document DB에서 "정규화 대신 embedding"을 선택할 때 판단 기준은?
-자주 함께 조회되고(1:1 조회 패턴), 갱신 빈도가 낮으며, 하위 문서가 부모 없이 독립적으로 존재할 필요가 없는 관계라면 embedding이 유리하다(예: 주문과 주문 항목). 반대로 하위 데이터가 독립적으로 자주 갱신되거나, 여러 부모 문서에서 참조되거나(다대다), 문서 크기가 무한정 커질 수 있는 경우(예: 댓글이 수만 개까지 늘어나는 게시글)에는 참조(reference)로 분리해야 한다. 문서 크기 상한(예: MongoDB 16 MiB BSON 제한)도 embedding 여부를 결정하는 실질적 제약이 된다.
+자주 함께 조회·변경되고 하위 데이터가 부모와 수명을 공유한다면 embedding을 검토한다(예: 주문과 제한된 수의 주문 항목). MongoDB 8.0 공식 가이드는 자주 **함께** 갱신되는 데이터도 embedding 대상으로 본다. 낮은 갱신 빈도나 1:1 관계만이 조건은 아니며 한 문서의 원자적 변경 범위가 필요할 때도 유리하다.
+
+반대로 쓰기가 많은 상황에서 하위 데이터가 서로 다른 시점에 독립적으로 갱신되거나, 여러 부모에서 공유되거나, 배열이 무한히 자라면 참조(reference) 분리를 검토한다. 변경 빈도만 세지 말고 같은 문서의 쓰기 경합·중복 데이터 동기화·전송 크기를 비교한다. MongoDB의 16 MiB BSON 문서 상한은 embedding 설계의 추가 제약이다.
 
 ## 관련 개념
 - [[MongoDB 기본 구조]]
@@ -88,3 +90,7 @@ Cassandra는 리더가 없는(leaderless) 구조로 설계되어 있어 파티�
 - [Cassandra Data Modeling](https://cassandra.apache.org/doc/stable/cassandra/developing/data-modeling/intro.html) — query-first 모델링과 CQL 스키마.
 - [MongoDB Data Modeling](https://www.mongodb.com/docs/manual/data-modeling/) — 문서 모델과 embedding 선택.
 - [MongoDB Read Concern majority](https://www.mongodb.com/docs/manual/reference/read-concern-majority/) — 문서 모델과 일관성 구분.
+
+부분 재검증: 2026-11-04. MongoDB 8.0 공식 모델링 지침의 함께 조회·갱신·보관하는 embedding 조건과 독립 갱신·무한 증가 시 reference 조건을 대조했다. 모델별 속도 우열은 이 지침만으로 입증할 수 없어 단정 표현도 제거했다. 실제 워크로드·DB 실행은 하지 않았으며 Cassandra·DynamoDB·그래프의 기존 `verified`는 유지한다.
+
+- [MongoDB 8.0 Data Modeling Best Practices](https://www.mongodb.com/docs/v8.0/data-modeling/best-practices/) — 자주 함께 갱신하는 데이터의 embedding, 쓰기 집약 환경의 독립 갱신과 참조 선택.

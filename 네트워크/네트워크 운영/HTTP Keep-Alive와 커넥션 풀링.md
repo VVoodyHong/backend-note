@@ -1,7 +1,7 @@
 ---
 category: "네트워크/네트워크 운영"
 tags: ["network", "http", "keepalive", "connection-pool"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -75,6 +75,10 @@ Apache HttpClient5나 OkHttp 같은 동기 클라이언트도 동일한 개념(`
   - 톰캣(Tomcat) 등 WAS의 `maxKeepAliveRequests`를 넘겨서까지 커넥션을 재사용하려는 클라이언트가 갑작스러운 연결 종료를 자주 겪는 경우, 원인 파악 없이 재시도 로직만 늘리는 미봉책으로 대응하는 경우가 흔하다.
 - **관련 설정/튜닝 포인트**: Tomcat `server.tomcat.keep-alive-timeout`, `server.tomcat.max-keep-alive-requests`, Reactor Netty `ConnectionProvider`의 `maxConnections`/`maxIdleTime`/`maxLifeTime`/`pendingAcquireTimeout`, Apache HttpClient5의 `PoolingHttpClientConnectionManager`.
 
+### 풀 수명과 요청 timeout을 구분한다
+
+위 예제의 `pendingAcquireTimeout`은 풀 획득 대기만 제한하며, `maxIdleTime`·`maxLifeTime`은 진행 중 요청의 강제 취소 기한이 아니다. Reactor Netty 1.3.8의 `responseTimeout`도 요청 전송 후 **네트워크 읽기 사이의 최대 간격**을 제한하므로, 데이터가 계속 도착하면 전체 응답 수신은 더 오래 걸릴 수 있다. 호출 전체 제한과 재시도 시 남은 시간 전달은 [[HTTP 호출 타임아웃과 재시도 예산]]을 참고한다.
+
 ### idle timeout과 연결 최대 수명의 차이
 
 유휴 시간 제한(idle timeout)은 데이터가 오가지 않은 시간을, 연결 최대 수명은 연결 생성 이후의 경과 시간을 제한한다. AWS ALB의 `idle_timeout.timeout_seconds`와 `client_keep_alive.seconds`도 서로 다르다. 후자는 클라이언트 연결에 적용되고 트래픽이 있어도 수명이 다시 시작되지 않으며, 만료 후 추가 요청 하나에 응답하면서 HTTP/1.x는 `Connection: close`, HTTP/2는 `GOAWAY`로 정상 종료를 알린다. 설정을 바꿔도 기존 연결에는 처음 부여한 값이 남는다.
@@ -116,3 +120,5 @@ A. FIFO(First In First Out)는 가장 오래 쉰 커넥션을 우선 재사용�
 부분 재검증: 2026-09-22. [Tomcat 11.0.26 HTTP Connector](https://tomcat.apache.org/tomcat-11.0-doc/config/http.html)의 NIO/NIO2 next-request 대기 방식과 maxConnections/maxThreads 구분을 대조했다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
 
 부분 재검증: 2026-10-04. [AWS ALB attributes](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-load-balancer-attributes.html) — 관리형 서비스 문서(별도 제품 버전 없음), idle timeout과 client keepalive duration의 차이·기존 연결의 값 유지·HTTP/2 PING 및 정상 종료 방식을 확인했다. [RFC 9112 §9.3.2](https://www.rfc-editor.org/rfc/rfc9112.html#section-9.3.2)의 HTTP/1.1 pipelining 허용과 응답 순서 제약도 대조해 기존 본문과 Q&A를 맞췄다. 실제 ALB 스트리밍·재연결·HTTP/1.1 pipelining 시험과 Reactor Netty 등의 기존 설정 기본값은 이번에 재검증하지 않아 `verified`를 유지했다.
+
+부분 재검증: 2026-11-04. [Reactor Netty 1.3.8 HTTP Client reference §17](https://projectreactor.io/docs/netty/release/reference/http-client.html#timeout-configuration)와 [v1.3.8 HttpClient 고정 소스](https://raw.githubusercontent.com/reactor/reactor-netty/v1.3.8/reactor-netty-http/src/main/java/reactor/netty/http/client/HttpClient.java)의 responseTimeout 읽기 간격·설치/제거 시점과 pool/connection/TLS timeout 구분을 확인했다. 전체 호출 예산은 대표 노트로 연결했다. 실제 Reactor Netty·WebClient 지연 응답·풀 대기·재시도 시험은 하지 않았고 기존 풀 기본값 등을 다시 확정하지 않아 `verified`는 유지했다.

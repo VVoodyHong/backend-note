@@ -1,7 +1,7 @@
 ---
 category: "인프라와 운영/클라우드"
 tags: ["operations", "aws", "vpc", "network", "보안그룹"]
-updated: 2026-10-08
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -92,7 +92,9 @@ A. Peering은 전이 라우팅을 지원하지 않으므로 A-B와 B-C만으로 
 A. 보안 그룹에서 인바운드 허용 규칙 하나만 넣으면 그에 대한 응답 트래픽은 아웃바운드 규칙 없이도 자동으로 나간다. 반면 NACL은 인바운드에서 특정 포트를 허용해도, 응답 트래픽이 임시 포트(ephemeral port, 보통 1024~65535)로 돌아오는 경로를 아웃바운드 규칙에 별도로 열어주지 않으면 차단된다. NACL 설정 시 클라이언트 임시 포트 범위를 아웃바운드에 허용하지 않아 특정 프로토콜만 간헐적으로 실패하는 문제가 흔한 원인 중 하나다.
 
 ### Q. Lambda를 VPC 안에 넣을지 말지는 어떤 기준으로 판단하는가?
-A. RDS, ElastiCache처럼 VPC 내부에서만 접근 가능한 사설 리소스를 직접 호출해야 하면 VPC 연결이 필수다. 반대로 순수하게 다른 AWS 서비스(S3, DynamoDB, 외부 인터넷 API)만 호출한다면 VPC에 넣지 않는 것이 ENI 관리 오버헤드와 서브넷 IP 소모를 피하는 길이다. VPC에 넣어야 한다면 인터넷 접근이 필요한 경우 NAT Gateway 경로까지 함께 고려해야 하고, 그렇지 않다면 필요한 서비스에 대한 Interface Endpoint를 구성해 NAT 없이 처리하는 것도 가능하다.
+A. RDS, ElastiCache처럼 VPC 내부에서만 접근 가능한 사설 리소스를 직접 호출해야 하면 VPC 연결이 필요하다. 반대로 공용 AWS 서비스 엔드포인트나 외부 API만 호출한다면 기본 Lambda 네트워크로 충분한지 먼저 검토한다. 조직의 네트워크 통제 요구가 있다면 공용 API 호출만으로 VPC 연결이 불필요하다고 단정하지 않는다.
+
+VPC 연결 Lambda의 일반 IPv4 인터넷 송신에서는 퍼블릭 서브넷을 선택해도 퍼블릭 IP가 생기지 않아 IGW 경로만으로 인터넷에 나갈 수 없다. 프라이빗 서브넷에서 public NAT Gateway와 IGW로 이어지는 경로를 구성하고 SG·NACL·DNS도 확인한다. AWS 서비스만 호출한다면 S3/DynamoDB Gateway Endpoint나 해당 서비스 Interface Endpoint로 NAT 경로를 대체할 수 있지만, 그 Endpoint가 임의의 외부 인터넷 API까지 중계하지는 않는다. IPv6 송신은 dual-stack 서브넷·Lambda 허용 설정·IPv6 라우팅을 따로 확인한다.
 
 ### Q. 서브넷 CIDR 크기를 설계할 때 IP 고갈 외에 EKS/ECS 환경에서 특히 주의할 점은?
 A. EKS의 기본 VPC CNI(Container Network Interface)는 파드(pod)마다 VPC 내 실제 IP를 하나씩 소비하는 구조라, 노드당 파드 밀도가 높아지면 일반 EC2보다 훨씬 빠르게 서브넷 IP가 고갈된다. 이런 환경에서는 서브넷을 더 크게 잡거나, 파드 전용 보조 CIDR(secondary CIDR, 예: 100.64.0.0/16 같은 별도 대역)을 추가해 기본 VPC 대역과 분리하는 구성이 흔히 쓰인다.
@@ -116,3 +118,5 @@ A. EKS의 기본 VPC CNI(Container Network Interface)는 파드(pod)마다 VPC �
 - [Direct Connect Encryption](https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html) — 기본비암호화·MACsec/VPN. 확인: 2026-09-08.
 
 부분 재확인: 2026-09-23. [AWS Interface Endpoint 설정](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html)의 private DNS 전제와 [Endpoint policy](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)의 기본 허용·서비스별 지원·다른 인가 정책과의 관계를 확인했다. 네트워크 경로별 진단은 이를 적용한 운영 절차다. 기존 NAT·Lambda·CIDR 한도 전체는 재검증하지 않아 `verified`는 유지한다.
+
+부분 재검증: 2026-11-04. [Lambda VPC 연결](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html)과 [인터넷 접근](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html)의 public subnet 선택 시 public IP 미할당·인터넷 접근 불가, private subnet의 NAT/IGW 경로와 dual-stack 전제를 확인했다. 적용 범위는 AWS Lambda VPC 연결의 조회일 문서이며 IPv4와 선택적 IPv6 송신을 구분했다. 실제 Lambda 호출·NAT·Endpoint 구성은 하지 않았고 `verified`는 유지했다.

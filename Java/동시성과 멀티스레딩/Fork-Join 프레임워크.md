@@ -1,7 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "forkjoin", "parallelism", "concurrency", "work-stealing"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -75,7 +75,7 @@ long total = ForkJoinPool.commonPool().invoke(new SumTask(data, 0, data.length))
 ## 심화 Q&A
 
 ### Q. 작업 훔치기(work-stealing)가 일반 스레드 풀의 공유 큐 방식보다 확장성이 좋은 이유는?
-`ThreadPoolExecutor`는 모든 워커가 하나의 공유 큐에 접근하므로 큐 자체가 경합 지점(contention point)이 되어 스레드가 늘어날수록 락 경합 비용이 커진다. Fork-Join은 워커마다 자신만의 큐를 가지고 자신의 작업은 그 큐에서만 꺼내므로 대부분의 접근이 락 없는(lock-free) 로컬 연산이 되고, 훔치기가 필요할 때만 다른 워커의 큐 `base` 쪽에 접근한다. 경합 지점이 훨씬 적기 때문에 코어 수가 많아져도 확장성이 유지된다.
+`ThreadPoolExecutor`에서는 공유 작업 큐 접근이 경합 지점(contention point)이 될 수 있으며, 비용은 선택한 큐 구현과 제출·소비 패턴에 따라 다르다. Fork-Join은 워커별 큐에서 로컬 작업을 처리하고 필요할 때 다른 큐에서 훔쳐 공유 큐 하나에 접근을 집중하는 비용을 줄인다. 실제 확장성은 작업 크기·분할·외부 제출량과 공유 데이터 경합을 함께 측정해야 한다.
 
 ### Q. 한쪽을 fork한 뒤 다른 쪽을 compute하는 것과 바로 join하는 것은 어떻게 다른가?
 `left.fork(); right.compute(); left.join();`은 왼쪽을 다른 워커가 가져갈 기회를 주고 현재 워커도 오른쪽 계산을 진행한다. 반면 `left.fork(); left.join(); right.compute();`는 왼쪽이 끝난 뒤 오른쪽을 시작하므로 이 두 분기의 실행이 겹치지 않는다. `join()` 중 워커가 작업을 도울 수 있어도 아직 시작하지 않은 오른쪽 분기까지 병렬화해 주지는 않는다. 양쪽을 먼저 fork하고 join하는 방식도 병렬 실행이 가능하지만 큐 연산이 늘 수 있다. 여러 작업을 join할 때는 보통 마지막에 fork한 작업부터 join하거나 `invokeAll()`을 사용한다.
@@ -84,7 +84,7 @@ long total = ForkJoinPool.commonPool().invoke(new SumTask(data, 0, data.length))
 공용 풀은 애플리케이션 전체에서 하나만 존재하므로, 한 곳에서 제출한 작업이 오래 걸리거나 블로킹되면 풀의 제한된 워커 스레드가 모두 그 작업에 묶여 다른 병렬 스트림이나 `CompletableFuture.supplyAsync()` 콜백이 실행되지 못하고 대기하는 현상이 생긴다. 이는 스레드 풀이 부족해서가 아니라 하나의 공유 자원을 여러 용도가 암묵적으로 나눠 쓰다가 서로를 굶기는(starvation) 전형적인 사례로, 원인 파악이 어려운 간헐적 지연 장애로 나타나는 경우가 많다.
 
 ### Q. `RecursiveTask`와 `RecursiveAction`을 넘어 일반 `Runnable`/`Callable`을 `ForkJoinPool`에 제출하면 작업 훔치기의 이점을 그대로 받는가?
-`ForkJoinPool`은 `ExecutorService`이기도 해서 일반 `Runnable`/`Callable`도 `submit()`으로 받을 수 있지만, 이렇게 제출된 작업은 재귀적으로 `fork()`/`join()`을 호출하지 않으므로 작업 훔치기의 핵심인 "세분화된 하위 작업 분산"이라는 이점을 온전히 누리지 못한다. 단일 단위 작업으로 취급되어 일반 스레드 풀에 제출한 것과 큰 차이가 없어지며, 독립 작업도 부하 분산을 활용할 수 있다. 재귀 분할은 유용한 대표 사례이며 join하지 않는 이벤트형 작업에는 asyncMode도 있다.
+`Runnable`/`Callable`로 제출한 작업도 풀의 워커들이 분산 처리하므로, 재귀 분할을 하지 않는다는 이유만으로 작업 훔치기의 이점이 사라지지는 않는다. 공식 API는 외부에서 많은 작은 작업을 제출하는 경우도 활용 대상으로 설명한다. 제출한 Runnable 안에서 하위 `ForkJoinTask`를 fork/join하는 것도 가능하다. 실제 이득은 제출 API의 타입보다 작업 크기·블로킹 여부·분할과 경합에 달려 있으며, join하지 않는 이벤트형 작업에는 asyncMode도 검토한다.
 
 ### Q. Fork-Join 기반 병렬 스트림이 항상 순차 스트림보다 빠르지 않은 이유는?
 병렬화에는 작업 분할, 스레드 간 조율, 결과 병합에 드는 고정 오버헤드가 있다. 데이터 크기가 작거나, 요소당 처리 비용이 매우 낮거나(단순 덧셈 등), 소스 자료구조가 분할하기 어려운 구조(예: `LinkedList`처럼 크기 파악과 분할이 비싼 컬렉션)라면 병렬화 오버헤드가 이득을 초과해 순차 스트림보다 느려진다. 병렬 스트림은 대용량 데이터 + 계산 비용이 큰 연산 + 분할이 쉬운 자료구조(배열, `ArrayList`) 조합에서 이득을 기대하기 쉬우며 실제 병목과 오버헤드를 측정해야 한다.
@@ -118,3 +118,7 @@ A. Java SE 25의 ForkJoinTask 기본 취소 구현은 `mayInterruptIfRunning` �
 
 - [Java SE 25 ForkJoinTask.cancel](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinTask.html#cancel(boolean)) 및 같은 문서의 adaptInterruptible — 기본 취소에서 인터럽트 인자를 무시하는 계약과 인터럽트 가능한 어댑터의 차이·도입 버전을 확인했다. OpenJDK 25.0.2+10-69에서 실행 중 RecursiveTask가 취소 상태가 된 후에도 대기하다 별도 신호로 종료하는 사례와 adaptInterruptible의 인터럽트를 재현했다.
 - [OpenJDK jdk-25-ga ForkJoinPool](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/concurrent/ForkJoinPool.java) — WorkQueue의 push/pop은 top, steal/poll은 base를 사용하고 FIFO 모드는 로컬 poll을 사용하는 소스에 맞춰 큐 방향 용어를 교정했다. 나머지 성능·컨테이너·Stream 설명은 기존 검증 날짜를 유지한다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 ForkJoinPool](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)의 외부 제출 작업에 대한 work-stealing과 Runnable/Callable 지원을 확인했다(Context7 공식 API 검색 병행). Temurin 25.0.4.1+1에서 Runnable 두 개의 서로 다른 워커 실행과 제출된 Runnable 내부의 하위 작업 fork/join을 확인했다. 이는 처리량 비교나 코어 수에 따른 선형 확장성 검증이 아니며, 공통 풀 취소·병렬 스트림·ManagedBlocker 전체는 재검증하지 않아 verified를 유지한다.

@@ -1,7 +1,7 @@
 ---
 category: "메시지 큐/RabbitMQ"
 tags: ["messaging", "rabbitmq", "ack", "consumer-acknowledgement", "publisher-confirm", "reliability"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -42,7 +42,7 @@ sequenceDiagram
 `basic.qos(prefetch_count=N)`는 `basic.consume` 구독에서 컨슈머가 ACK를 보내지 않은 상태로 동시에 받을 수 있는 미확인(unacknowledged) 메시지 수를 제한한다. 직접 가져오는 `basic.get`에는 수동 ACK 모드라도 prefetch가 적용되지 않으므로 애플리케이션이 미완료 작업 수를 제한해야 한다. AMQP 0-9-1에서 0은 무제한을 뜻하지만 RabbitMQ 4.3 quorum queue는 최대 2,000으로 제한한다. RabbitMQ의 기본 QoS 범위는 소비자별이며 global QoS는 quorum queue에서 지원하지 않는다. prefetch가 크면 미확인 작업과 클라이언트 메모리가 증가한다. prefetch를 너무 크게 잡으면 한 컨슈머가 메시지를 몰아 받은 채 느리게 처리해 다른 컨슈머는 굶는 불균형이 생기고, 너무 작게 잡으면(특히 1) 왕복 지연 때문에 처리량이 떨어진다.
 
 ### Publisher Confirm 흐름
-채널에서 `confirm.select`를 호출하면 confirm 모드로 전환되고, 이후 발행되는 메시지마다 브로커와 클라이언트가 1부터 순차 증가하는 시퀀스 번호를 카운트한다. 브로커는 메시지를 큐에 라우팅(또는 디스크에 영속화)한 뒤 `basic.ack`(단건 또는 `multiple=true`로 구간 일괄)를 비동기로 돌려준다.
+채널에서 `confirm.select`를 호출하면 confirm 모드로 전환되고, 이후 발행되는 메시지마다 브로커와 클라이언트가 1부터 순차 증가하는 시퀀스 번호를 카운트한다. 브로커는 라우팅 결과·큐 유형·메시지 영속성에 따른 수락 조건이 충족되면 `basic.ack`(단건 또는 `multiple=true`로 구간 일괄)를 비동기로 돌려준다. 아무 큐에도 라우팅하지 못한 발행에도 confirm ACK가 가능하다.
 
 ```mermaid
 sequenceDiagram
@@ -71,6 +71,8 @@ template.setConfirmCallback((correlation, ack, cause) -> {
 });
 template.setReturnsCallback(returned -> { /* 라우팅 실패 처리 */ });
 ```
+
+위 두 콜백은 서로 배타적인 성공·실패 알림이 아니다. RabbitMQ 4.4에서도 `mandatory` 발행이 라우팅되지 않으면 `basic.return` 뒤 confirm ACK가 올 수 있다. ACK만 보고 아웃박스 발행 완료로 기록하면 반환된 메시지를 놓친다. Spring AMQP 4.1.2의 발행별 `CorrelationData`를 전달하면 confirm future 완료 시 `getReturned()`도 함께 확인할 수 있으며, returns와 confirms를 모두 켠 경우 반환 정보가 ACK future 완료 전에 채워진다. 업무 이벤트 ID에 연결해 반환·nack·응답 불확실성을 한 발행 상태로 관리한다. 반환 없음과 ACK도 의도한 모든 큐의 존재나 소비자의 업무 완료를 증명하지 않는다([[Exchange와 Queue 바인딩]]).
 
 컨슈머 측 acknowledge mode는 `SimpleMessageListenerContainer`(또는 `@RabbitListener` 설정)에서 `NONE`(auto-ack), `AUTO`(리스너가 예외 없이 반환하면 자동 ACK, 예외·오류 처리 정책에 따라 reject/nack·requeue·복구 결정), `MANUAL`(리스너 안에서 `Channel.basicAck`를 직접 호출) 중 선택한다. 실무에서는 `AUTO`로 두고 예외 처리 전략(재시도, DLX)을 `RetryTemplate`/`MessageRecoverer`에 위임하는 경우가 많다.
 
@@ -140,3 +142,10 @@ prefetch=1은 컨슈머 간 작업 분배(work distribution)가 균등해져 느
 부분 재검증: 2026-10-04. RabbitMQ 4.3 Consumers 문서에서 quorum 전용 전달 확인 timeout·기본 30분·1분 검사·채널 종료와 재큐잉 범위를 확인했다. 실제 브로커 timeout·Spring AMQP 컨테이너 복구는 시험하지 않았고 기존 `verified`는 유지한다.
 
 - [RabbitMQ 4.3 Delivery Acknowledgement Timeout](https://www.rabbitmq.com/docs/consumers#acknowledgement-timeout) — 적용 큐 종류·시간 경계·채널에 속한 다른 전달의 영향.
+
+부분 재검증: 2026-11-04. 확인일 RabbitMQ 4.4의 unroutable return→confirm ACK 순서와 Spring AMQP 4.1.2의 CorrelationData 반환 정보·future 완료 순서를 대조했다. 아웃박스 완료 판정은 이 계약에서 도출한 운영 지침이다. 브로커·Spring 콜백을 실행하지 않았으며 기존 RabbitMQ 4.3 큐별 동작의 `verified`는 유지한다.
+
+- [RabbitMQ Publisher Confirm Conditions](https://www.rabbitmq.com/docs/confirms#when-publishes-are-confirmed) — 4.4: 라우팅 실패에도 confirm하고 mandatory return을 먼저 전송.
+- [Spring AMQP Correlated Publisher Confirms and Returns](https://docs.spring.io/spring-amqp/reference/amqp/template.html#template-confirms) — 4.1.2: CorrelationData.getReturned와 ACK future 완료 순서.
+
+- [CorrelationData 4.1.2 고정 소스](https://github.com/spring-projects/spring-amqp/blob/v4.1.2/spring-rabbit/src/main/java/org/springframework/amqp/rabbit/connection/CorrelationData.java) — 실제 조회 API는 `getReturned()`이며 반환 정보는 future 완료 전에 채워진다.

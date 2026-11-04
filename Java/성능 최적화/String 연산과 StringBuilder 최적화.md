@@ -1,7 +1,7 @@
 ---
 category: "Java/성능 최적화"
 tags: ["java", "string", "stringbuilder", "메모리최적화", "jep280"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -64,7 +64,7 @@ String result = sb.toString();
 그렇다. 문자열에 Latin-1 범위를 벗어나는 문자(한글, 이모지, 일부 특수문자 등)가 하나라도 포함되면 해당 문자열 전체가 `UTF16` 인코딩(코드 유닛당 2바이트, 보충 문자는 2개 코드 유닛)으로 저장된다. 한글 위주의 로그/데이터를 다루는 백엔드에서는 컴팩트 스트링의 메모리 절감 효과를 거의 기대하기 어렵고, 오히려 `StringBuilder`가 append 도중 인코딩을 승격(inflate)하는 비용이 추가로 든다는 점도 고려 대상이다.
 
 ### Q. `StringBuilder`와 `StringBuffer`의 성능 차이는 실제로 얼마나 크며, 언제 `StringBuffer`가 필요한가?
-`StringBuffer`는 모든 가변 메서드에 `synchronized`가 걸려 있어 단일 스레드 환경에서는 불필요한 락 획득/해제 오버헤드가 매 호출마다 발생한다(단, JIT의 락 제거(lock elision)로 메서드 로컬 사용에서는 상당 부분 상쇄될 수 있다). 여러 스레드가 동일한 빌더 인스턴스에 동시에 `append`해야 하는 극히 드문 경우가 아니면 `StringBuilder`를 쓰는 것이 표준이며, 실무에서 `StringBuffer`를 신규로 선택할 이유는 거의 없다.
+`StringBuffer`는 필요한 연산을 동기화하며, 모든 변경 메서드 선언에 synchronized가 붙어 있어야 하는 것은 아니다. OpenJDK 25의 `insert(int, int)`처럼 다른 동기화 메서드에 위임하는 경로도 있다. 단일 스레드에서 쓰는 가변 문자열에는 동기화 없는 StringBuilder를 우선 사용한다. 동기화 비용은 JIT의 락 제거(lock elision) 등 최적화와 경합에 따라 달라지므로 호출마다 고정 비용이 발생한다고 단정하지 않는다.
 
 ### Q. `String.format()`이나 `Formatter`를 대량 반복 호출하면 왜 `StringBuilder`보다 느린가?
 `String.format()`은 내부적으로 포맷 문자열을 매 호출마다 파싱하고, 가변 인자(varargs) 변환이나 기본형 인자의 박싱 비용이 생길 수 있다. 배열을 직접 전달하거나 캐시된 래퍼를 쓰면 매 호출의 새 배열·래퍼 생성이 필수는 아니다. 반면 `StringBuilder.append()`는 타입별 오버로드(`append(int)`, `append(long)` 등)로 오토박싱 없이 직접 값을 문자로 변환한다. 형식 지정이 복잡하지 않은 대량 결합은 `StringBuilder`가 비용을 줄일 수 있지만, 성능 우열은 대상 JDK와 입력으로 측정해야 한다.
@@ -79,7 +79,7 @@ String result = sb.toString();
 A. OpenJDK 25는 길이를 줄여도 배열 용량을 유지한다. 요청별 ThreadLocal 빌더를 무제한 재사용하면 드물게 만든 큰 문자열의 버퍼가 스레드 수만큼 오래 남을 수 있다. 용량 상한을 두어 큰 인스턴스는 교체하고 재사용 효과와 보존 메모리를 함께 측정한다. 길이 초기화가 민감한 내용의 안전한 메모리 삭제를 보장하는 API도 아니다.
 
 ### Q. StringBuffer이면 여러 append를 묶은 메시지도 원자적인가?
-A. 각 호출의 동기화와 호출 묶음은 다르다. `append(prefix).append(body)` 사이에 다른 스레드의 append가 끼어들 수 있다. 하나의 메시지 단위가 필요하면 그 전체를 같은 잠금으로 묶거나 스레드별로 완성한 문자열을 별도의 안전한 출력 경로로 전달한다. 동기화된 클래스라는 이유로 애플리케이션 연산 전체가 원자화되지 않는다.
+A. 각 호출의 동기화와 호출 묶음은 다르다. `append(prefix).append(body)` 사이에 다른 스레드의 append가 끼어들 수 있다. 하나의 메시지 단위가 필요하면 그 전체를 같은 잠금으로 묶거나 스레드별로 완성한 문자열을 별도의 안전한 출력 경로로 전달한다. 또한 append/insert의 동기화는 대상 StringBuffer를 보호하며 인자로 받은 가변 CharSequence의 변경까지 막지 않는다. 공유 입력을 쓰는 쪽과 잠금 규칙을 맞추거나 불변 문자열 스냅샷을 전달해야 한다.
 
 ## 관련 개념
 - [[String과 String Pool]]
@@ -103,3 +103,7 @@ Java SE 25 StringBuilder·StringBuffer API, OpenJDK jdk-25-ga AbstractStringBuil
 - [Java SE 25 StringBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuffer.html) — 메서드 수준 동기화.
 
 실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 setLength(0) 이후 capacity 유지을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 StringBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuffer.html)의 필요한 연산 동기화·입력 시퀀스 보호 책임과 [OpenJDK jdk-25+36 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/lang/StringBuffer.java)의 insert 위임 경로를 확인했다. Temurin 25.0.4.1+1에서 insert(int,int)와 append(int)의 synchronized 선언 차이, 사용자 정의 CharSequence를 읽을 때 대상 모니터만 보유함을 확인했다. 실제 동시 변경 경합·JIT 락 제거·문자열 연결 성능은 측정하지 않아 verified를 유지한다.

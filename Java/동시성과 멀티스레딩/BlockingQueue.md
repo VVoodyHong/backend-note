@@ -1,7 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "blockingqueue", "concurrency", "producer-consumer", "backpressure"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -65,7 +65,7 @@ sequenceDiagram
 
 ## 실무 관점
 - 무제한 큐(`LinkedBlockingQueue` 기본 생성자, `PriorityBlockingQueue`, `DelayQueue`)를 그대로 쓰면 소비 속도가 생산 속도를 못 따라갈 때 큐가 무한정 자라 메모리 부족(OOM)으로 이어진다. 이는 [[ExecutorService와 스레드 풀]]에서 다룬 스레드 풀 큐 문제와 같은 원인이다. `LinkedBlockingQueue`처럼 상한을 지정할 수 있는 구현체는 용량을 제한한다. `PriorityBlockingQueue`의 initialCapacity는 상한이 아니며 `DelayQueue`도 용량 제한 기능이 없으므로, 필요하면 진입 허가나 별도 유한 버퍼로 대기 작업 수를 제한한다.
-- `SynchronousQueue`는 버퍼가 전혀 없어 `put()`한 생산자는 소비자가 `take()`로 직접 받아갈 때까지 블로킹된다. `Executors.newCachedThreadPool()`이 이 큐를 쓰는 이유가 여기 있다. 작업을 큐에 쌓지 않고 즉시 처리할 스레드가 없으면 새 스레드를 만들도록 유도하는 설계다.
+- `SynchronousQueue`는 버퍼가 전혀 없어 `put()`한 생산자는 소비자가 `take()`·`poll()` 같은 제거 연산으로 직접 받아갈 때까지 기다린다. 대기 중 인터럽트로 중단될 수도 있다. `Executors.newCachedThreadPool()`은 이 큐의 비블로킹 `offer()`로 작업을 인계하려 하고, 받을 스레드가 없으면 새 스레드 생성을 시도한다. 실행기가 작업을 제출할 때 `put()`으로 기다리는 구조는 아니다.
 - 생산자와 소비자의 처리 속도 차이가 크게 벌어지는 상황(버스트 트래픽)에서는 유한 용량 큐 + 적절한 백오프/재시도 또는 `offer(timeout)`을 이용한 명시적 실패 처리가 무한 대기보다 안전하다. `put()`만 쓰면 큐가 가득 찼을 때 생산자 스레드가 통제 불가능하게 오래 블로킹될 수 있다.
 - `take()`/`put()`은 인터럽트에 반응하는 메서드이므로, 스레드 종료 로직에서 `InterruptedException`을 단순히 무시하지 말고 `Thread.currentThread().interrupt()`로 인터럽트 상태를 복원하거나 루프를 빠져나가는 처리를 해야 한다. 이를 빼먹으면 종료 신호가 무시되고 소비자 스레드가 애플리케이션 셧다운을 막는 원인이 된다.
 - `PriorityBlockingQueue`는 우선순위가 같은 요소 간 순서(FIFO)를 보장하지 않는다는 점, 그리고 요소가 `Comparable`이거나 별도 `Comparator`가 필요하다는 점을 놓치기 쉽다.
@@ -82,7 +82,7 @@ sequenceDiagram
 큐가 가득 차면 생산자의 `put()`이 블로킹되어 생산 속도가 소비 속도에 강제로 맞춰진다. 이 자연스러운 속도 조절이 배압(backpressure)이다. 배압이 없으면(무제한 큐) 생산자는 계속 빠르게 쌓기만 하고 큐 크기가 무한정 늘어나 메모리 문제로 이어지지만, 유한 큐는 생산자 스스로가 소비자의 처리 속도를 기다리게 만들어 큐 내부 요소 수를 제한한다. 큐 밖의 대기 요청·생산자 스레드·재시도는 별도 제한하지 않으므로 시스템 전체 안정성까지 자동 보장하지 않는다. 다만 생산자 스레드가 웹 요청 처리 스레드라면, 이 블로킹이 응답 지연으로 사용자에게 그대로 전파된다는 트레이드오프가 있다.
 
 ### Q. `SynchronousQueue`를 "큐"라고 부르지만 실제로 요소를 저장하지 않는다는 것이 어떤 실무적 함의를 가지는가?
-저장 공간이 0이므로 `SynchronousQueue`에 대한 `size()`는 항상 0을 반환하고, 하나의 `put()`은 대응하는 `take()`가 나타나야만 완료된다. 즉 생산자와 소비자가 항상 짝을 맞춰 진행되는 핸드오프(hand-off) 구조를 강제한다. 이는 작업을 버퍼링하지 않고 즉시 처리 가능한 스레드에게만 넘기고 싶을 때(예: `newCachedThreadPool`이 유휴 스레드가 없으면 새 스레드를 만들도록 유도) 적합하지만, 일반적인 생산자-소비자 버퍼링 용도로는 부적합하다.
+내부 저장 공간이 0이므로 `size()`는 항상 0을 반환하고 삽입은 다른 스레드의 제거 연산과 짝을 맞춰야 한다. `put()`의 상대는 `take()`뿐 아니라 `poll()`·시간 제한 poll도 될 수 있다. `put()`의 정상 반환은 객체를 인계했다는 뜻이며, 수신자의 업무 처리 완료까지 기다리는 것은 아니다. 이 핸드오프(hand-off)는 작업을 쌓지 않고 수신 가능한 스레드에게 넘길 때(예: `newCachedThreadPool`) 적합하지만 일반적인 생산자-소비자 버퍼링을 제공하지 않는다.
 
 ### Q. `DelayQueue`에서 지연 시간이 아직 끝나지 않은 요소가 존재할 때 `take()`를 호출한 소비자는 어떻게 동작하는가?
 `DelayQueue`는 힙 구조로 가장 빨리 만료될 요소를 루트에 유지하며, `take()`는 그 요소의 남은 지연 시간만큼 대기했다가(단순히 블로킹만 하는 게 아니라 내부적으로 타이머를 계산해 대기) 만료 후 락 획득과 스케줄링이 가능해지면 반환한다. 중간에 더 빨리 만료되는 요소가 새로 삽입되면 대기 중인 소비자를 깨워 대기 시간을 재계산하도록 신호를 보낸다. 스케줄링 재시도 큐, 캐시 만료 처리 같은 "일정 시간 후에만 유효한 작업" 패턴에 적합하다.
@@ -114,3 +114,9 @@ Java SE 25 BlockingQueue의 종료·drainTo 계약과 PriorityBlockingQueue의 �
 - [Java SE 25 PriorityBlockingQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/PriorityBlockingQueue.html) — initialCapacity는 저장 상한이 아니며 동일 우선순위 순서는 별도 보장하지 않음.
 
 실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 PriorityBlockingQueue initialCapacity를 초과한 삽입을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 SynchronousQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/SynchronousQueue.html)의 용량 0·put/poll 인계 계약을 확인했다. Temurin 25.0.4.1+1에서 take를 호출하지 않고 시간 제한 poll로 put을 완료시키며, 수신자의 후속 업무 처리 전에도 put이 반환함을 확인했다. 다른 BlockingQueue 구현의 종료·drainTo·성능 전체는 재검증하지 않아 verified를 유지한다.
+
+[OpenJDK jdk-25+36 ThreadPoolExecutor](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/ThreadPoolExecutor.java)·[Executors](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/Executors.java)의 execute/offer 분기와 newCachedThreadPool 구성을 대조해, 직접 put 호출과 실행기의 작업 제출 경로를 구분했다. 이 실행기 경로는 소스 대조 범위이며 새 부하 시험은 하지 않았다.

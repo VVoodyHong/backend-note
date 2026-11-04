@@ -2,7 +2,7 @@
 category: "데이터베이스/관계형 DB 기초"
 tags: ["database", "index", "b-plus-tree", "성능튜닝", "rdb"]
 aliases: ["B+Tree", "B+ 트리"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -55,7 +55,7 @@ graph TD
 A. B-Tree는 내부 노드에도 데이터가 저장되어 있어 범위 검색 시 트리를 오르내리며 여러 노드를 방문해야 한다. B+Tree는 데이터를 리프 노드에만 두고 리프끼리 연결 리스트로 이어놓았기 때문에, 시작점만 트리 탐색으로 찾으면 이후는 리프 레벨에서 순차적으로 스캔만 하면 된다. 논리적으로 순차 접근하므로 재탐색을 줄인다. 다만 리프의 논리적 이웃이 디스크에서도 연속 배치된다는 보장은 없다.
 
 ### Q. 보조 인덱스로 조회할 때 발생하는 북마크 조회(lookup)의 비용을 줄이는 방법은?
-A. 커버링 인덱스를 구성해 보조 인덱스만으로 SELECT 절을 충족시키면 클러스터드 인덱스로 되돌아가는 lookup 자체를 없앨 수 있다. 또는 조회 대상 행 수가 매우 많다면(예: 조건에 맞는 행이 테이블의 상당 비율을 차지) 옵티마이저가 아예 인덱스를 포기하고 풀스캔을 택하는 것이 더 빠를 수 있으므로, 이 경우는 인덱스를 억지로 강제(`FORCE INDEX` 등)하지 않는 것이 낫다.
+A. 커버링 인덱스로 필요한 값을 모두 제공하면 값을 얻기 위한 클러스터드 인덱스 조회를 줄일 수 있다. 다만 MySQL 8.4 InnoDB는 보조 인덱스의 삭제 표시·새로운 페이지 변경 때문에 MVCC 가시성 확인용 lookup을 수행할 수 있다([[커버링 인덱스]]). 조회 대상이 테이블의 상당 비율이면 풀스캔이 더 쌀 수도 있으므로, 물리 접근이 0이라고 가정하거나 인덱스를 무조건 강제하지 말고 실제 계획·작업량을 비교한다.
 
 ### Q. 복합 인덱스 `(status, created_at)`이 있을 때 `WHERE created_at > ? ORDER BY status`는 왜 인덱스를 제대로 활용하지 못하는가?
 A. 리딩 컬럼이 `status`인데 조건절에서 `status`에 대한 필터가 없어 인덱스의 정렬 순서를 등호 조건으로 좁히지 못한다. B+Tree는 `status`가 같은 값끼리 묶여 정렬되고 그 안에서 `created_at`이 정렬되는 구조이므로, `status` 없이 `created_at`만 범위 검색하면 여러 `status` 그룹을 넘나들며 스캔해야 해 인덱스 효율이 떨어진다. `ORDER BY status`는 이 인덱스의 선두 정렬과 맞아 인덱스 스캔을 택하면 별도 정렬을 피할 수 있다. 범위 탐색 효율과 정렬 제공 여부는 별개다.
@@ -92,3 +92,7 @@ A. 쓰기 지연(INSERT/UPDATE/DELETE 응답 시간 증가), 저장 엔진의 re
 
 - [PostgreSQL 18 Index Statistics](https://www.postgresql.org/docs/18/monitoring-stats.html#MONITORING-PG-STAT-ALL-INDEXES-VIEW) — 조회 통계의 의미와 관찰 범위.
 - [PostgreSQL 18 Unique Indexes](https://www.postgresql.org/docs/18/indexes-unique.html) — 인덱스의 유일성 보장 역할.
+
+부분 재검증: 2026-11-04. MySQL 8.4의 보조 인덱스 MVCC 문서에서 covering 경로도 클러스터드 레코드를 확인하는 예외를 대조하고, 같은 노트 본문·커버링 인덱스 노트와 상충하던 Q&A의 lookup 제거 단정을 수정했다. 실제 MySQL I/O·실행 계획 측정은 하지 않았으며 기존 전체 `verified`는 유지한다.
+
+- [MySQL 8.4 InnoDB Multi-Versioning](https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html) — 삭제 표시·페이지 변경 시 보조 인덱스에서 clustered index·undo로 가시성 확인.

@@ -1,7 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "comparable", "comparator", "정렬", "컬렉션"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -63,7 +63,7 @@ flowchart LR
 ## 실무 관점
 - 도메인 객체가 명확한 하나의 기본 정렬 기준(예: 날짜, ID)을 가진다면 `Comparable`을 구현해 `TreeSet`/`TreeMap`, `Collections.sort(list)`에서 별도 인자 없이 정렬되게 한다. 상황마다 다른 기준으로 정렬해야 한다면(관리자 화면에서는 이름순, 리포트에서는 매출순) `Comparator`를 그때그때 생성해서 넘긴다.
 - `compareTo`의 결과와 `equals()`의 결과는 반드시 일관되어야 한다는 강제 규칙은 없지만, "일관성 있게 만드는 것을 강력히 권장"한다(`compareTo`가 0이면 `equals`도 `true`). 이 일관성이 깨지면 `TreeSet`/`TreeMap`은 `equals()`가 아니라 `compareTo() == 0`을 기준으로 중복을 판단하므로, `equals()`로는 다른 객체인데 `TreeSet`에 넣으면 하나만 남는 혼란스러운 상황이 생긴다.
-- `Comparator.comparing(keyExtractor)`에 정렬 키로 기본형 래퍼(`Integer`, `Long`)를 쓰면 오토박싱 오버헤드가 붙는다. 대량 데이터 정렬에서는 `Comparator.comparingInt()`/`comparingLong()`/`comparingDouble()` 기본형 특화 오버로드를 쓰면 박싱을 피할 수 있다.
+- `int`를 반환하는 getter를 `Comparator.comparing`의 키 추출기로 쓰면 참조형 결과에 맞추는 박싱 변환이 필요하다. `comparingInt()`/`comparingLong()`/`comparingDouble()`은 기본형 경로로 이 변환을 피한다. 반면 이미 저장된 `Integer` 참조를 반환하는 getter는 그 참조를 사용할 뿐 매 추출마다 새로 박싱하지 않는다. 박싱 변환도 캐시·JIT에 따라 새 객체 할당으로 이어지지 않을 수 있으므로 실제 할당과 정렬 비용을 측정한다.
 - 뺄셈으로 `compare`를 구현하는 `(a, b) -> a.getValue() - b.getValue()` 패턴은 오버플로(overflow) 위험이 있다. `int` 범위 경계 근처 값에서 부호가 뒤집혀 정렬이 깨질 수 있으므로 `Integer.compare()`나 `Long.compare()`를 쓰는 것이 안전하다.
 
 ## 심화 Q&A
@@ -113,3 +113,7 @@ Java SE 25 Comparator의 reversed·nullsFirst/nullsLast 조합과 TreeSet의 비
 - [Java SE 25 TreeSet](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html) — 비교 기반 순서·중복·검색.
 
 실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 nullsLast의 reversed 효과·가변 트리 키의 검색 실패을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 Comparator](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html)의 Function 기반 comparing과 ToIntFunction 기반 comparingInt, [JLS 25 §5.1.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.7)의 박싱 변환을 대조했다. Temurin 25.0.4.1+1에서 기존 Integer 참조 반환과 두 비교기의 예시 정렬 결과를 확인하고, javap로 int→Integer 어댑터의 valueOf와 기존 참조 반환의 getfield/areturn을 구분했다. JIT 이후 실제 할당률·속도는 측정하지 않았으며 null 순서·가변 트리 키 전체는 재검증하지 않아 verified를 유지한다.

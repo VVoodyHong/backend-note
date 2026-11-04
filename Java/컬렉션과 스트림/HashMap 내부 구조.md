@@ -1,7 +1,7 @@
 ---
 category: "Java/컬렉션과 스트림"
 tags: ["java", "hashmap", "자료구조", "해시테이블", "jcf"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -51,7 +51,7 @@ flowchart LR
 
 ## 실무 관점
 - 초기 용량을 예측 가능하면 생성자에 지정해 불필요한 리사이징을 줄인다. Java 19+에서는 예상 매핑 수 `n`을 받는 `HashMap.newHashMap(n)`을 사용할 수 있다. 생성자는 예상 원소 수와 버킷 용량을 구분해야 한다. 극단적 해시 충돌 때문에 발생하는 확장까지 막는 보장은 없다.
-- 커스텀 객체를 키로 쓸 때는 반드시 `equals()`와 `hashCode()`를 함께 오버라이드해야 한다. 둘 중 하나만 재정의하면 조회가 실패하거나 논리적으로 같은 객체가 다른 버킷에 저장되는 문제가 생긴다.
+- 커스텀 키가 값 동등성을 정의한다면 `equals()`와 `hashCode()`가 같은 기준을 따르게 한다. 상속한 구현이 이미 계약을 만족하면 중복 재정의할 필요는 없다. `hashCode()`만 재정의하는 것도 계약을 지키면 허용되지만, 값 기반 equals와 참조 기반 해시를 잘못 조합하면 동등한 키 조회가 실패할 수 있다. 계약과 구현 예제는 [[equals와 hashCode]]를 참고한다.
 - 가변(mutable) 객체를 키로 사용하다 필드 값을 바꾸면 `hashCode()`가 달라져 저장 당시 버킷과 조회 시 버킷이 어긋나 데이터를 찾지 못하는 흔한 장애 패턴이 있다. 키는 불변(immutable) 객체로 설계하는 것이 안전하다.
 - `hashCode()` 구현이 나쁘면(예: 항상 같은 값 반환) 모든 데이터가 한 버킷에 몰려 사실상 연결 리스트/트리 순회가 되어 성능이 O(n) 또는 O(log n)으로 저하된다. 트리화는 이런 최악의 상황에 대한 방어책이지, 근본 해법은 아니다.
 - 순서가 필요하면 `LinkedHashMap`, 정렬이 필요하면 `TreeMap`을 쓴다. `HashMap`의 순회 순서에 의존하는 코드는 버전이나 리사이징 시점에 따라 깨질 수 있다.
@@ -115,3 +115,7 @@ Java SE 25 HashMap/Map의 computeIfAbsent null·예외·계산 중 수정 금지
 - [OpenJDK jdk-25+36 HashMap](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/HashMap.java) — computeIfAbsent의 mappingFunction.apply 이후 modCount 검사.
 
 실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 null 반환·기존 null·예외 이후 재호출, Optional.empty의 저장, 계산 중 다른 키 수정 시 예외와 변경 잔존을 확인했다. 마지막 사례는 잘못된 사용 방식의 해당 구현 관찰이며, 그 결과 상태를 다른 구현·버전의 보장으로 삼지 않는다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode())의 동등한 객체에 대한 동일 해시·호출 간 일관성 계약을 확인했다. Temurin 25.0.4.1+1에서 hashCode만 상수로 재정의한 객체가 참조 동등성을 유지하며 서로 다른 키로 저장되는 경우와, 상위 타입에서 두 메서드를 올바르게 상속한 키의 조회를 실행 확인했다. 두 메서드의 선언 여부보다 계약 준수가 기준이며, 기존 전체 verified는 유지한다.

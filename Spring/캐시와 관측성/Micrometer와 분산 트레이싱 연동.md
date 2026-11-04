@@ -1,7 +1,7 @@
 ---
 category: "Spring/캐시와 관측성"
 tags: ["spring", "spring-boot", "micrometer", "observability", "tracing", "opentelemetry"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -65,7 +65,7 @@ Actuator, `micrometer-tracing-bridge-otel`, `opentelemetry-exporter-otlp` 의존
 management:
   tracing:
     sampling:
-      probability: 0.1   # 기본값 10%, 전수 수집은 운영 부하가 커 샘플링 필수
+      probability: 0.1   # 기본 확률 10%; 전송량·관측 요구에 맞게 조정
   otlp:
     tracing:
       endpoint: http://otel-collector:4318/v1/traces
@@ -93,7 +93,7 @@ Boot 4.1의 OTLP endpoint 키는 `management.opentelemetry.tracing.export.otlp.e
 `Observation` 직접 계측은 registry의 핸들러를 사용한다. `@Observed`는 애너테이션만 붙여서는 충분하지 않고 `ObservedAspect`와 AOP 설정이 필요하다. Boot에서 지원하는 자동 구성을 사용하면 `management.observations.annotations.enabled=true` 및 AspectJ 의존성을 확인한다. 이미 관측하는 컨트롤러에 중복 계측을 추가할 필요가 있는지도 판단한다.
 
 ## 실무 관점
-- **샘플링**: Boot 기본 확률은 10%다. 오류·고지연 요청을 기준으로 보관하려면 tail sampler까지 필요한 스팬이 도달해야 한다. 애플리케이션에서 먼저 버린 스팬을 collector가 복원할 수는 없다. 전송량·collector 버퍼·판정 대기 시간과 오류 보존 범위를 함께 설계한다.
+- **샘플링**: Boot 기본 확률은 10%다. Boot 4.1.1의 기본 OpenTelemetry sampler는 `parent-based-trace-id-ratio`이므로 이 확률은 부모가 없는 새 trace에 적용하고, 부모가 있으면 그 sampled 결정을 따른다. 따라서 `probability=0`도 상위에서 sampled로 전달된 trace까지 모두 끄는 설정은 아니다. sampler 선택과 외부 헤더 신뢰 경계는 [[분산 트레이스 ID 전파]]와 함께 확인한다. 오류·고지연 요청을 기준으로 보관하려면 tail sampler까지 필요한 스팬이 도달해야 한다. 애플리케이션에서 먼저 버린 스팬을 collector가 복원할 수는 없다. 전송량·collector 버퍼·판정 대기 시간과 오류 보존 범위를 함께 설계한다.
 - **의존성 조합**: Boot 4.1은 OTel+OTLP용 `spring-boot-starter-opentelemetry`, Brave+Zipkin용 `spring-boot-starter-zipkin`을 제공한다. 원하는 조합과 실제 자동 구성 빈을 확인하고, Boot 3.5의 개별 bridge/exporter 의존성 예제를 그대로 섞지 않는다.
 - **비동기 경계에서 컨텍스트 전파가 끊기는 문제**가 흔하다. `@Async`, 커스텀 `ExecutorService`, 리액티브 체인에서 스레드가 바뀌면 Micrometer의 `ContextPropagation` API(예: `ContextSnapshotFactory`)나 Reactor의 `Context` 연동을 명시적으로 구성하지 않으면 자식 스팬이 부모와 연결되지 않고 별도 트레이스로 잘려 보인다.
 - **전파 대상과 수명**: Context Propagation 1.2.1의 snapshot은 등록된 accessor가 읽은 값을 캡처한다. 이후 원래 `ThreadLocal`에 다른 값을 설정해도 이미 만든 snapshot이 갱신되지는 않는다. `snapshot.setThreadLocals()`로 연 scope를 닫으면 실행 스레드의 이전 값을 복원하므로 `try-with-resources`로 범위를 제한한다. 모든 `ThreadLocal`이나 DB 트랜잭션이 자동 이전되는 기능으로 해석하지 않는다.
@@ -154,3 +154,5 @@ Sleuth의 마지막 마이너 계열은 3.1이며 Boot 3을 지원하지 않는�
 - [Micrometer Gauges](https://docs.micrometer.io/micrometer/reference/concepts/gauges.html) — 관측 객체 수명·순간값·재등록 계약.
 - [DefaultGauge 1.17.1](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/internal/DefaultGauge.java) — 약한 참조와 대상 소멸 시 값.
 - [Context Propagation Purpose](https://docs.micrometer.io/context-propagation/reference/purpose.html) 및 [Examples](https://docs.micrometer.io/context-propagation/reference/usage.html) — 1.2.1, accessor·캡처·scope 복원.
+
+부분 재검증: 2026-11-04. [Boot 4.1.1 Tracing 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/tracing.adoc)와 [OpenTelemetryTracingAutoConfiguration 4.1.1](https://github.com/spring-projects/spring-boot/blob/v4.1.1/module/spring-boot-micrometer-tracing-opentelemetry/src/main/java/org/springframework/boot/micrometer/tracing/opentelemetry/autoconfigure/OpenTelemetryTracingAutoConfiguration.java)의 sampler 구성을 대조했다. 기본 parent-based 결정과 로컬 root 확률만 확인했으며 실제 HTTP 전파·exporter·사용자 정의 Sampler 빈은 실행 검증하지 않았다. 기존 메트릭·브리지 서술의 `verified`는 유지한다.

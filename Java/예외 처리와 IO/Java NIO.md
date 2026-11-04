@@ -1,7 +1,7 @@
 ---
 category: "Java/예외 처리와 IO"
 tags: ["java", "io", "nio", "논블로킹", "파일시스템"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -87,7 +87,9 @@ Java 22부터는 `FileChannel.map(MapMode, long, long, Arena)`로 매핑한 `Mem
 A. 가상 스레드는 스레드당 처리 로직을 그대로 유지하면서(디버깅과 스택 트레이스가 직관적) 대량 동시성을 확보할 수 있어 일반적인 요청-응답형 서버(대부분의 웹 API)에는 개발 생산성과 유지보수성 면에서 유리하다. 반면 매우 낮은 지연시간이 요구되거나, 커넥션당 상태를 세밀하게 이벤트 기반으로 제어해야 하는 시스템(고빈도 트레이딩, 대규모 프록시/게이트웨이)에서는 여전히 Selector 기반 이벤트 루프(Netty 등)가 메모리 사용량과 스케줄링 예측 가능성 면에서 우위를 갖는 경우가 있다.
 
 ### Q. `WatchService`로 파일 변경을 감시할 때 신뢰성 관련 주의점은 무엇인가?
-A. `WatchService`의 구현은 네이티브 이벤트 또는 폴링을 사용할 수 있는데, 플랫폼마다 지원 범위와 지연 특성이 다르고(네트워크 드라이브나 일부 클라우드 동기화 폴더에서는 이벤트가 누락될 수 있음), 이벤트가 폭주하면 `OVERFLOW` 이벤트로 일부 변경 사항이 통지 없이 누락될 수 있다. 따라서 `WatchService`만 신뢰하기보다 주기적인 폴링(polling)과 병행하거나, 파일 크기/수정 시각 등을 재검증하는 보완 로직을 두는 것이 안전하다.
+A. `WatchService`의 감지 방식·지연·순서는 플랫폼에 의존하며, 한 번의 수정이 여러 이벤트로 보고되거나 짧게 존재한 파일이 감지되지 않을 수 있다. `OVERFLOW`를 받으면 놓친 이벤트의 개수를 추측하지 말고 감시 디렉터리의 현재 상태를 다시 읽어 처리 상태와 대조한다. 원격 파일시스템의 변경 감지는 보장되지 않는다.
+
+`ENTRY_MODIFY`는 작성 프로세스의 쓰기 완료를 보장하지 않는다. 파일 크기나 수정 시각을 한 번 확인한 것만으로 완성된 파일이라고 판단하지 않는다. 완성된 입력만 처리해야 한다면 작성자와 완료 표식 또는 같은 파일시스템의 임시 파일→이름 교체 같은 게시 규약을 정하고, 재처리에도 안전하게 설계한다. 이벤트 처리 후 `WatchKey.reset()`으로 다시 통지받을 수 있게 하며, false이면 등록이 무효하므로 감시 대상의 존재와 재등록 조건을 확인한다.
 
 ### Q. ByteBuffer를 duplicate하거나 slice하면 바이트 순서와 데이터도 복사되는가?
 A. Java SE 25의 `duplicate()`, `slice()`, `asReadOnlyBuffer()`는 바이트 내용을 공유하지만 position·limit·mark는 독립적으로 관리한다. 새 ByteBuffer의 바이트 순서(byte order)는 원본 설정과 무관하게 BIG_ENDIAN이다. LITTLE_ENDIAN 원본을 나눠 다중 바이트 값을 읽는 코드라면 `source.slice().order(source.order())`처럼 새 뷰에도 순서를 설정한다. 설정을 빠뜨리면 같은 네 바이트를 다른 정수로 해석해 프로토콜 길이·식별자 등이 조용히 잘못 읽힐 수 있다.
@@ -121,3 +123,7 @@ A. Java SE 25의 `duplicate()`, `slice()`, `asReadOnlyBuffer()`는 바이트 내
 - [Java SE 25 FileChannel.transferTo](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#transferTo(long,long,java.nio.channels.WritableByteChannel)) — 부분 전송·0 반환·원본 위치 불변과 최적화 범위. Oracle JDK 25.0.4에서 3바이트만 받는 WritableByteChannel로 부분 전송, offset 갱신 후 중복 없는 결과, 원본 position 불변, EOF와 수신 불가의 두 0 반환을 확인했다. 실제 네트워크 backpressure·OS zero-copy 경로는 측정하지 않았다.
 
 - 도식·표 대조(2026-10-04): [Java SE 25 InputStream](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html) — 도식도 read(byte[])의 일괄 읽기를 포함해 본문과 맞췄다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 WatchService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchService.html)·[WatchKey](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchKey.html)의 쓰기 미완료 가능성, OVERFLOW 이후 재조회, reset·무효화 계약을 확인했다(Context7 공식 API 검색 병행). Temurin 25.0.4.1+1/macOS 로컬 임시 디렉터리에서 작성 스트림이 열린 중간 상태의 수정 통지, reset 전 재통지 대기·후 재큐잉, cancel 뒤 reset=false를 확인했다. 이벤트 개수·지연은 보장값으로 쓰지 않으며 OVERFLOW·원격 파일시스템·크래시 내구성은 실행하지 않았다. 기존 verified는 유지한다.

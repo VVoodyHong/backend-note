@@ -1,7 +1,7 @@
 ---
 category: "Spring/API 설계와 문서화"
 tags: ["spring", "hateoas", "rest", "hypermedia", "spring-mvc"]
-updated: 2026-09-08
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -46,6 +46,7 @@ class MemberController {
 - **URL 결합도 감소**: 메서드 이름·인자 변경은 링크 작성 코드의 컴파일 오류로 드러날 수 있고 매핑 문자열만 바꾸면 링크가 새 URL을 따른다. 경로 변경 자체가 컴파일 오류를 내는 것은 아니다. methodOn은 반환 타입 등 프록시 생성 제약이 있어 모든 메서드에 적용할 수 있는 방식은 아니다.
 - **성능 주의**: `methodOn(...)` 자체는 실제 메서드를 실행하지 않고 프록시로 메서드 시그니처만 캡처해 URL을 만드는 데 쓰이므로 그 자체로는 안전하다. 다만 목록 응답에서 각 항목마다 연관 리소스 링크(주문, 결제 등)를 붙이는 `RepresentationModelAssembler.toModel()` 구현 안에 실수로 실제 서비스/리포지토리 조회 로직을 함께 넣으면, 목록 크기만큼 불필요한 조회가 반복 실행되어 [[N+1 문제]]와 유사한 성능 저하가 생길 수 있다. Assembler는 이미 조회된 도메인 객체를 링크로 감싸는 역할에만 충실하고, 추가 조회는 상위 서비스 계층에서 한 번에 처리하도록 분리해야 한다.
 - **포맷과 URL**: HAL은 링크·embedded 리소스를, HAL-FORMS는 동작·입력 메타데이터를 표현한다. 소비자가 지원하는 형식으로 정한다. 프록시 뒤의 절대 URL은 신뢰 경계에서 정리한 Forwarded 헤더를 사용하고, 외부 입력을 그대로 신뢰해 호스트가 바뀌지 않도록 한다.
+- **빈 목록의 타입과 표현**: Java의 `CollectionModel<MemberDto>` 선언만으로 빈 목록의 런타임 원소 타입이 보존되지는 않는다. `CollectionModel.empty(MemberDto.class)` 또는 `CollectionModel.of(members).withFallbackType(MemberDto.class)`로 타입을 제공하면 빈 결과에도 타입별 처리를 적용할 근거가 생긴다. 실제 원소가 `EntityModel<MemberDto>`라면 fallback에도 그 래퍼와 제네릭 구조를 맞춘다. 빈 `_embedded` 관계를 JSON에 명시하는 것은 별도 표현 계약이므로, fallback 타입 하나로 모든 HAL 필드가 자동 생성된다고 가정하지 않고 0건 응답도 검사한다.
 
 ## 심화 Q&A
 
@@ -70,3 +71,5 @@ A. API 버저닝 전략에서 유용할 수 있다. 리소스 관계가 URL 하�
 검증일: 2026-09-08. 적용 범위: Spring HATEOAS 3.1.2의 표현 모델·링크 생성·미디어 타입.
 
 - [Spring HATEOAS Reference](https://docs.spring.io/spring-hateoas/docs/current/reference/html/) — 모델·methodOn 제약·Affordances·미디어 타입·forwarded headers.
+
+부분 재검증: 2026-11-04. Context7과 [HATEOAS 3.1.2 CollectionModel 소스](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/java/org/springframework/hateoas/CollectionModel.java), [3.1.2 빈 컬렉션 처리 문서](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/asciidoc/server.adoc)를 대조했다. Temurin 25.0.4.1+1·Framework 7.0.9·HATEOAS 3.1.2에서 빈 모델의 원소 타입 미확정, 명시적 empty 타입, withFallbackType의 원소 타입 유지 3조건을 실행했다. HAL 직렬화·실제 processor 호출·웹 응답은 실행하지 않았으며 전체 `verified`는 유지한다.

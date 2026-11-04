@@ -2,7 +2,7 @@
 category: Spring/테스트 전략
 tags: [spring, testing, transaction]
 aliases: [TestTransaction, 테스트 관리 트랜잭션]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-23
 ---
 
@@ -103,4 +103,4 @@ A. 콜백 실행 사실과 외부 브로커의 저장은 별개다. 커밋 후 �
 - [TransactionContext 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TransactionContext.java) — 속성 전달 및 rollback flag에 따른 종료.
 - [TestContextTransactionUtils 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TestContextTransactionUtils.java) — 속성 위임 구현. 공식 지원표와 구현 관찰 차이를 확인했다.
 - [Testing Spring Boot Applications](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html) — Boot 4.1.1, 실제 서버의 별도 스레드·트랜잭션.
-- [Jakarta Persistence 3.2 EntityManager](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/entitymanager) — flush·clear·1차/2차 캐시 경계.
+- [Jakarta Persistence 3.2 EntityManager](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/EntityManager.html) — flush·clear·1차/2차 캐시 경계.

@@ -1,7 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "sealed", "patternmatching", "jep", "타입시스템"]
-updated: 2026-09-22
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -99,7 +99,9 @@ flowchart TD
 `non-sealed` 타입은 제3자가 자유롭게 상속할 수 있으므로, 그 타입을 다시 상속한 미지의 하위 클래스가 `switch`에 나타날 수 있다. `case Rectangle r` 하나로 그 모든 하위 인스턴스를 처리하므로 위 예제는 여전히 default 없이 완전하다. 다만 Rectangle의 하위 클래스들을 유한하게 열거하고 누락을 검사하는 닫힌 계층의 이점은 그 아래에서 사라진다.
 
 ### Q. switch의 pattern case 순서가 왜 중요한가?
-switch pattern matching은 라벨을 위에서 아래로 순서대로 평가하며 첫 번째로 일치하는 라벨을 선택한다. `case Circle c when c.radius <= 0`처럼 더 구체적인 가드 조건을 상위 타입 매칭보다 먼저 배치하지 않으면, 앞선 무가드 타입 패턴이 후속 가드 패턴을 지배(dominance)하므로 컴파일 오류가 난다. 상속 관계가 있는 타입 패턴을 섞어 쓸 때는 더 구체적인(하위) 타입이나 조건을 먼저 배치해야 한다.
+패턴과 가드를 모두 만족하는 첫 case를 선택한다. 예제의 무가드 `case Circle c`가 앞에 오면 같은 타입의 후속 가드 분기를 지배(dominance)하므로 컴파일 오류다. 무가드 상위 타입도 후속 하위 타입 패턴을 지배한다. 반면 상위 타입에 비상수 가드가 있으면 가드를 통과하지 않은 하위 타입을 뒤에서 처리할 수 있으므로, 항상 하위 타입이 먼저여야 하는 것은 아니다.
+
+`when true`는 무가드처럼 취급하지만 일반 가드 식의 논리적 포함 관계는 컴파일러가 증명하지 않는다. 예를 들어 `i > 0` 다음의 `i > 5` 분기는 컴파일되더라도 앞선 분기에 가려 실행되지 않을 수 있다. 컴파일 성공과 업무 분기의 도달 가능성을 별도로 검토한다.
 
 ### Q. Record Pattern과 결합하면 어떤 것이 더 가능해지는가?
 위 예제의 `Rectangle`은 일반 클래스이므로 분해할 수 없다. 별도 모델 `record Rect(double w, double h) {}`라면 `case Rect(var w, var h) when w == h ->`처럼 타입 매칭과 컴포넌트 분해, 조건부 가드를 한 줄로 표현할 수 있다. 중첩된 record까지 한 번에 분해하는 것도 가능해 `outer.inner().value()` 같은 체이닝 호출 없이 `case Outer(Inner(var value)) ->`로 바로 값을 꺼낼 수 있다. 자세한 문법은 [[Record]] 참고.
@@ -133,3 +135,7 @@ if (obj instanceof String s || obj instanceof Integer) {
 - [JEP 440](https://openjdk.org/jeps/440) — Java 21 record 패턴.
 
 부분 재검증: 2026-09-22. [Java 27 Language Changes](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html)의 프리뷰 상태를 확인했다. JDK 27에서 long→int 패턴이 옵션 없이 컴파일 오류이고, 프리뷰 활성화 시 int 범위 값과 Long.MAX_VALUE를 구분함을 실행 확인했다. sealed 계층의 나머지 설명은 기존 검증 범위를 유지한다.
+
+### 2026-11-04 부분 재검증
+
+[JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1)의 무가드·상수 true 가드의 지배 관계와 비상수 가드 구분을 확인했다. Temurin 25.0.4.1+1에서 가드가 있는 Number 뒤의 Integer 패턴 컴파일·선택과 겹치는 비상수 가드의 허용을 확인했고, 무가드 및 when true의 Number 뒤에 Integer를 둔 코드는 각각 지배 관계 컴파일 오류를 확인했다. 프리뷰 기능이나 별도 컴파일 후 계층 변경은 이번 범위 밖이므로 verified는 유지한다.

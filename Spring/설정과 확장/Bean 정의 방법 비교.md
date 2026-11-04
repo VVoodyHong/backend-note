@@ -1,7 +1,7 @@
 ---
 category: "Spring/설정과 확장"
 tags: ["spring", "bean", "configuration", "beandefinition"]
-updated: 2026-09-08
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -71,6 +71,7 @@ Spring 5부터 `GenericApplicationContext.registerBean(...)`으로 애노테이�
 - 컴포넌트 스캔은 편하지만 스캔 범위(`@ComponentScan(basePackages = ...)`)가 넓어질수록 부팅 시 클래스패스 탐색 비용이 커진다. 대규모 모놀리식 서비스에서는 스캔 범위를 세분화하거나 명시적 `@Import`로 필요한 설정만 로딩하는 편이 부팅 시간에 유리하다.
 - `proxyBeanMethods = true`(기본값)는 안전하지만 CGLIB 프록시 생성 비용이 있다. 설정 클래스 내부에서 `@Bean` 메서드 간 직접 호출이 없다면 `proxyBeanMethods = false`로 명시해 부팅 시간을 아낄 수 있다. Spring Boot 자동 구성 클래스 다수도 이미 lite mode로 작성되어 있다.
 - 흔한 실수: lite mode(`proxyBeanMethods = false`)로 설정된 `@Configuration` 클래스 내부에서 다른 `@Bean` 메서드를 직접 호출해 "싱글톤인 줄 알았는데 매번 새 인스턴스가 생성"되는 버그. 파라미터 주입으로 바꿔야 한다.
+- **팩토리 메서드의 반환 타입**: 생성 전 타입 예측에는 `@Bean` 메서드의 선언된 반환 타입이 중요하다. `Api service()`가 실제로 `ApiImpl`을 반환해도 아직 생성하지 않은 빈을 `ApiImpl`로 찾으면 후보에서 빠질 수 있고, 생성 뒤에는 결과가 달라질 수 있다. 호출자는 인터페이스로 의존해도 되지만 구현 타입·다른 인터페이스로도 조회할 빈의 팩토리 반환 타입은 충분히 구체적으로 선언한다. 기동 순서를 바꿔 우연히 주입되게 만드는 방식으로 해결하지 않는다.
 - Spring AOT는 컴포넌트 스캔도 빌드 시점에 처리한다. 명시적 @Bean/Supplier만 쓰면 자동으로 네이티브 호환성이 좋아지는 것은 아니다. 빈 타입·등록 경로가 분석 가능해야 하며 임의 Supplier의 동작이나 런타임에 달라질 빈 집합은 별도 제약이 있다. 힌트는 리플렉션·리소스 접근을 지원하지만 빌드 시 제외된 빈을 되살리지 않는다.
 - `BeanDefinitionRegistryPostProcessor`는 매우 강력하지만 컨테이너 초기화 순서에 개입하기 때문에, 애플리케이션 코드에서 직접 쓰기보다는 프레임워크/라이브러리 확장 지점으로 남겨두는 것이 안전하다.
 
@@ -108,3 +109,5 @@ A. 등록 순서(컴포넌트 스캔이 먼저, 자동 구성이 나중)와 이�
 - [Java 설정 기본 개념](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html) — full/lite와 직접 호출.
 - [Spring AOT](https://docs.spring.io/spring-framework/reference/core/aot.html) — 빈 정의 처리·조건 고정·생성 코드와 힌트.
 - [사용자 자동 구성](https://docs.spring.io/spring-boot/reference/features/developing-auto-configuration.html) — 빈 조건과 사용자 설정.
+
+부분 재검증: 2026-11-04. [Framework 7.0.9의 @Bean 고정 문서](https://github.com/spring-projects/spring-framework/blob/v7.0.9/framework-docs/modules/ROOT/pages/core/beans/java/bean-annotation.adoc)에서 반환 타입과 생성 전 타입 예측의 경계를 확인했다. Temurin 25.0.4.1+1·Framework 7.0.9에서 지연 싱글톤을 구현 타입으로 조회할 때 인터페이스 반환은 생성 전 미노출·생성 후 노출, 구체 타입 반환은 생성 전 노출됨을 포함한 4조건을 실행 확인했다. AOT 빌드·전체 빈 등록 방식은 이번 실행 범위 밖이며 기존 `verified`는 유지한다.

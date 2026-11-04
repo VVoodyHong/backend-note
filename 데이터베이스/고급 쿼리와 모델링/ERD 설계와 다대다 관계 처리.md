@@ -1,7 +1,7 @@
 ---
 category: "데이터베이스/고급 쿼리와 모델링"
 tags: ["database", "erd", "data-modeling", "many-to-many", "jpa", "schema-design"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -79,6 +79,7 @@ PostgreSQL 18의 복합 FK는 기본 `MATCH SIMPLE`에서 구성 컬럼 중 하�
 - **`@ManyToMany`를 피하는 이유**: JPA/Hibernate의 `@ManyToMany` 연관관계만으로는 연결 행의 추가 속성을 엔티티 필드로 매핑할 수 없고, 컬렉션 전체를 지우고 다시 쓰는 방식으로 갱신되는 경우가 많아 의도치 않은 대량 DELETE/INSERT가 발생하기 쉽다. 실무에서는 처음부터 연결 테이블을 명시적인 엔티티(예: `Enrollment`)로 만들고 두 방향 `@ManyToOne`으로 매핑하는 것을 기본값으로 삼는 경우가 많다.
 - **인덱스 설계**: 연결 테이블에서 `(student_id, course_id)` 복합 PK를 두면 `student_id`로 시작하는 조회는 그 인덱스로 커버되지만, `course_id`만으로 조회(특정 강좌를 듣는 학생 목록)하려면 별도의 `course_id` 단독 인덱스(또는 `(course_id, student_id)` 인덱스)가 필요하다. 양방향 조회 패턴을 미리 파악해 인덱스를 설계해야 한다.
 - **삭제 정책**: 학생이나 강좌가 삭제될 때 연결 테이블 행을 어떻게 처리할지(`ON DELETE CASCADE` vs 애플리케이션에서 명시적 처리)를 설계 단계에서 결정해야 한다. `CASCADE`는 편리하지만 실수로 상위 엔티티를 지웠을 때 하위 이력까지 조용히 사라지는 위험이 있다.
+- **ORM 삭제 전파의 대상**: Hibernate ORM 7.1의 `@ManyToMany(cascade = REMOVE)`와 REMOVE를 포함하는 `ALL`은 연결 행을 넘어 상대 엔티티에도 삭제를 전파한다. 학생 삭제로 공유 강좌까지 삭제하려 하면 다른 학생의 FK 때문에 실패하거나, 참조가 없으면 보존해야 할 강좌가 삭제될 수 있다. 학생 → 수강 신청의 소유 관계와 수강 신청 → 공유 강좌의 참조 관계를 구분하고, 연결 엔티티의 `@ManyToOne`에도 `ALL`을 무조건 복사하지 않는다. DB의 연결 테이블 FK에 둔 `ON DELETE CASCADE`와 ORM의 상대 엔티티 REMOVE 전파는 같은 동작이 아니다.
 - **1:1 관계와의 구분**: 1:1 관계는 굳이 별도 테이블을 만들지 않고 한쪽 테이블에 컬럼을 몰아넣거나, FK에 유니크 제약을 걸어 표현할 수 있다. 다대다와 헷갈려 불필요하게 연결 테이블을 만드는 것은 과도한 설계다.
 - **ERD 도구와 정합성**: ERD는 설계 산출물로 끝나는 것이 아니라 실제 스키마와 어긋나지 않도록 지속적으로 갱신해야 한다. `DDL`로부터 ERD를 역생성하는 도구(DataGrip, dbdiagram.io, SchemaSpy 등)를 활용해 문서와 실제 스키마의 드리프트(drift)를 주기적으로 점검하는 것이 실무적으로 안전하다.
 - **흔한 실수**: 연결 테이블에 PK를 아예 두지 않거나 유니크 제약을 빠뜨려 같은 조합이 중복 삽입되는 것, FK 인덱스를 한쪽 방향만 만들어 반대 방향 조회가 풀스캔이 되는 것, `@ManyToMany`를 그대로 쓰다가 나중에 속성을 추가해야 해서 마이그레이션 비용이 커지는 것이 대표적이다.
@@ -120,3 +121,8 @@ Hibernate의 `@ManyToMany` 컬렉션은 기본적으로 컬렉션 전체를 하�
 
 - [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — FK의 nullable·MATCH FULL 경계와 자식 인덱스 비자동 생성.
 - [MySQL 8.4 Foreign Key Constraints](https://dev.mysql.com/doc/refman/8.4/en/create-table-foreign-keys.html) — InnoDB FK의 인덱스 순서와 자동 생성.
+
+부분 재검증: 2026-11-04. Hibernate ORM 7.1.36.Final 공식 가이드에서 다대다 REMOVE의 연결 테이블 밖 삭제 전파와 공유 참조의 제약 위반을 확인했다. DB CASCADE와의 구분은 같은 가이드의 @OnDelete 설명도 대조했다. ORM·DB 삭제를 실행한 결과는 아니며 기존 전체 `verified`는 유지한다.
+
+- [Hibernate ORM 7.1 Many-to-many](https://docs.hibernate.org/orm/7.1/userguide/html_single/#associations-many-to-many) — REMOVE/ALL 전파와 공유 엔티티 삭제 위험.
+- [Hibernate ORM 7.1 @OnDelete](https://docs.hibernate.org/orm/7.1/userguide/html_single/#pc-cascade-on-delete) — FK의 DB 수준 삭제와 ORM 상태 전파의 구분.

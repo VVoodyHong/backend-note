@@ -2,7 +2,7 @@
 category: "데이터베이스/복제와 분산"
 tags: ["database", "cap-theorem", "분산시스템", "일관성", "가용성"]
 aliases: ["CAP Theorem"]
-updated: 2026-09-22
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -31,7 +31,9 @@ flowchart TD
 
 ### CP 시스템의 동작
 
-정족수(quorum) 기반으로 동작하는 시스템(ZooKeeper, etcd, Consul, 그리고 강한 일관성 모드의 관계형 DB 클러스터)은 파티션 발생 시 과반 노드를 확보하지 못한 쪽의 요청을 거부하거나 타임아웃시킨다. 예를 들어 5개 노드 중 파티션으로 2개와 3개로 나뉘면, 3개 쪽(과반)만 쓰기를 계속 받아들이고 2개 쪽은 스스로 서비스를 중단하거나 읽기 전용으로 전환한다.
+정족수(quorum) 기반 시스템에서 합의가 필요한 연산은 필요한 노드에 도달하지 못하면 실패하거나 대기한다. 예를 들어 5개 투표 노드가 2개와 3개로 나뉘면 과반수 쪽이 합의를 계속할 수 있고, 소수 쪽은 같은 보장이 필요한 쓰기·읽기를 계속 처리할 수 없다. 쓰기만 차단한 "읽기 전용" 상태라고 CAP의 선형성이 자동으로 유지되는 것은 아니다.
+
+etcd 3.6의 기본 KV 읽기는 선형성을 보장하지만 선택적인 `serializable` 읽기는 합의 의존을 줄이는 대신 정족수 기준 오래된 값을 반환할 수 있다. 분단된 노드의 로컬 사본을 읽게 허용했다면 이를 별도의 약한 읽기 계약으로 설명해야 한다. 건강한 과반수가 새 값을 커밋한 뒤 소수 쪽이 구값을 반환하는 이력은 CAP의 C를 만족하지 않는다. 제품 전체에 CP/AP 한 단어를 붙이기보다 연산별 읽기 모드까지 구분한다.
 
 ### AP 시스템의 동작
 
@@ -89,3 +91,7 @@ A. 그렇다. 짧은 파티션이라도 그 순간 진행 중이던 요청의 �
 - [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 일관성 수준과 선형성 경계.
 - [Cosmos DB Consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — 5개 읽기 일관성 수준.
 - [PostgreSQL 18 Standby](https://www.postgresql.org/docs/18/warm-standby.html) — 동기 복제·자동 failover 범위.
+
+부분 재검증: 2026-11-04. etcd 3.6의 기본 선형 KV 읽기와 선택적인 serializable 읽기의 stale 허용을 공식 API 보장 문서로 확인했다. 기존 "소수 쪽 읽기 전용" 표현이 CAP의 C를 유지하는 것처럼 해석되지 않도록 교정했다. 분단 이력은 선형성 정의와 이 API 계약을 적용한 예이며 실제 etcd 장애 실험은 하지 않았다. 다른 제품·PACELC의 기존 `verified`는 유지한다.
+
+- [etcd 3.6 API Guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) — 기본 linearizable 읽기, serializable 읽기의 오래된 데이터 허용과 합의 의존 차이.

@@ -2,7 +2,7 @@
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "container-orchestration", "deployment", "statefulset", "devops"]
 aliases: ["쿠버네티스 오브젝트"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -65,6 +65,12 @@ Linux kube-proxy IPVS 모드는 v1.35부터 deprecated이며 새 구성은 해�
 
 단일 Pod 접근이 필요하면 `ReadWriteOncePod`(RWOP)를 검토한다. 이 기능은 Kubernetes v1.29부터 stable이며 CSI 볼륨과 지원 드라이버·sidecar 조합이 필요하다. 일반 access mode는 바인딩·마운트 조건이고, `ReadOnlyMany`를 적었다는 사실만으로 마운트된 파일시스템의 쓰기 방지가 강제되는 것도 아니다. 실제 마운트의 readOnly 설정·스토리지 권한과 장애 시 소유권 이전을 함께 검증한다.
 
+### CronJob의 일정은 업무 실행을 한 번으로 확정하지 않는다
+
+CronJob은 예정 시각에 Job을 생성하는 컨트롤러다. 일정 처리는 근사적이어서 같은 시각에 Job이 두 개 생기거나 생성이 누락될 수 있고, Job 내부의 재시도도 별도로 존재한다. 정산·일별 알림처럼 중복이 문제가 되는 작업은 업무 날짜·테넌트·작업 종류 등으로 실행 키를 정하고 [[멱등성 키 설계]]의 중복 제거·결과 기록을 적용한다.
+
+`concurrencyPolicy: Forbid`는 같은 CronJob이 만든 Job의 동시 실행을 제한한다. 다른 CronJob이나 수동 실행까지 막는 전역 잠금으로 해석하지 않는다. 이전 Job이 끝나지 않았으면 새 일정이 건너뛰어질 수 있으므로, 모든 예정 회차가 빠짐없이 실행된다는 보장으로도 사용할 수 없다. 지연 시작 허용 범위인 `startingDeadlineSeconds`, `.spec.timeZone`, 누락 회차의 보충 절차를 업무 요건에 맞게 정한다. `suspend: true`는 이미 실행 중인 Job을 중단하지 않으며, 해제 시에는 누락 일정이 실행될 수 있어 catch-up 정책도 확인한다.
+
 ## 심화 Q&A
 
 ### Q. Deployment가 파드를 교체할 때 ReplicaSet은 왜 삭제하지 않고 남겨두는가?
@@ -101,3 +107,5 @@ A. Pod 템플릿의 `restartPolicy`는 `Never` 또는 `OnFailure`만 허용된�
 부분 재검증: 2026-09-23. [StatefulSets 공식 문서](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)의 v1.37 표시 내용을 기준으로 객체 삭제 시 순서 미보장, OrderedReady의 강제 롤백 복구 조건, PVC retention의 whenScaled 경계를 확인했다. 실제 클러스터 삭제·롤백·스토리지 동작은 실행하지 않았으며 다른 오브젝트 전체의 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [Kubernetes Persistent Volumes — Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)의 표시 v1.37 문서에서 RWO의 노드 범위·RWOP의 Pod 범위·CSI 전제·v1.29 stable과 일반 access mode의 쓰기 보호 비보장을 대조했다. 실제 CSI 드라이버·롤링 배포·마운트·장애 fencing 시험은 실행하지 않았고 기존 오브젝트 전체의 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. 표시 v1.37의 [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)에서 일정당 Job 생성의 중복/누락 가능성, concurrencyPolicy의 동일 CronJob 범위, Forbid의 누락·지연 시작 정책, timeZone 및 suspend 해제 경계를 확인했다. 업무 실행 키·보충 절차는 이 스케줄링 계약을 적용한 설계 기준이다. 실제 CronJob 지연·중복 생성·중단·catch-up은 실행하지 않았고 다른 오브젝트의 `verified`는 유지했다.

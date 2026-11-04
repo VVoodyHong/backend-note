@@ -2,7 +2,7 @@
 category: "메시지 큐/메시지 큐 운영"
 tags: ["messaging", "dead-letter-queue", "error-handling", "kafka", "rabbitmq", "sqs"]
 aliases: ["DLQ", "데드 레터 큐"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -20,7 +20,7 @@ DLQ(Dead Letter Queue)는 정상적으로 처리할 수 없는 메시지를 원�
 
 1. **재시도 횟수 초과**: 같은 메시지를 N번 재처리했는데도 계속 실패.
 2. **처리 불가능한 메시지(poison message)**: 역직렬화 실패, 스키마 불일치 등 원인 수정 전 같은 처리 코드로 재시도해도 성공하기 어려운 메시지.
-3. **TTL(Time-To-Live) 만료**: 큐에서 일정 시간 이상 처리되지 못하고 대기한 메시지.
+3. **메시지 TTL(Time-To-Live) 만료**: 큐에서 일정 시간 이상 대기한 메시지. 큐 자체의 만료·삭제와 구분한다.
 
 ```mermaid
 flowchart LR
@@ -65,6 +65,7 @@ public void handleDlt(ConsumerRecord<?, ?> record, @Header(KafkaHeaders.EXCEPTIO
 
 ## 실무 관점
 
+- **RabbitMQ의 두 TTL을 구분한다.** 4.4 문서 기준 `x-message-ttl`·메시지 `expiration`은 메시지 만료이고, `x-expires`·정책 `expires`는 사용되지 않는 큐 자체를 삭제하는 설정이다. 큐가 만료되면 남은 메시지는 DLX로 옮겨지지 않는다. retry queue 정리에 x-expires를 쓴다면 DLX가 잔여 메시지를 보존한다고 가정하지 않는다. 또한 quorum queue의 만료 메시지는 큐 선두에 도달했을 때 dead-letter되므로 서로 다른 TTL을 한 retry queue에 섞으면 짧은 지연 메시지가 긴 지연 메시지 뒤에서 기다릴 수 있다. TTL을 정확한 재시도 실행 시각으로 보장하지 않는다.
 - **언제/왜 쓰는가**: 컨슈머 장애 하나가 큐 전체의 헤드-오브-라인 블로킹(head-of-line blocking)을 유발하지 않도록 격리하기 위해서다. 특히 순서 보장이 있는 파티션/큐에서는 실패한 메시지 하나가 뒤에 있는 모든 메시지 처리를 막을 수 있으므로 격리를 검토한다. 다만 선행 이벤트를 건너뛰면 후속 이벤트의 업무적 순서가 깨지므로 같은 키 전체를 보류하거나 상태 버전 검사로 막을 수도 있다.
 - **흔한 실수/장애 사례**:
   - DLQ로 보내기만 하고 모니터링/알림을 붙이지 않아, 메시지가 조용히 쌓이다가 몇 주 뒤에 발견되는 경우. DLQ 적재 건수는 반드시 알림(alert) 대상 메트릭으로 등록해야 한다.
@@ -125,3 +126,8 @@ DLQ도 결국 큐/토픽이므로 용량, 보존 기간, 파티션/샤드 한계
 부분 재검증: 2026-10-04. SQS의 DLQ 재구동 시 식별자·보존 시간 초기화, 필터링·수정 제한, 취소 범위를 확인했다. 업무 이벤트 ID 보존은 해당 계약에서 도출한 멱등성 설계다. AWS API 호출·실제 메시지 이동은 수행하지 않았으며 RabbitMQ·Spring Kafka 전체의 `verified`는 유지한다.
 
 - [SQS Configuring Dead-Letter Queue Redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html) — 2026-10-04 서비스 문서: 새 messageID/enqueueTime, 보존 기간 재시작, 필터링·수정 불가, 이미 이동한 메시지의 취소 제외.
+
+부분 재검증: 2026-11-04. 확인일 RabbitMQ 4.4의 메시지 TTL과 큐 만료, quorum queue 선두에서의 dead-letter 시점을 공식 문서로 확인했다. 혼합 TTL retry queue의 지연은 이 제거 조건에서 도출했다. 실제 만료·메시지 이동은 실행하지 않았고 RabbitMQ 4.3의 재시도 설정·SQS·Spring Kafka의 기존 `verified`는 유지한다.
+
+- [RabbitMQ 4.4 Time-To-Live and Expiration](https://www.rabbitmq.com/docs/ttl) — x-message-ttl/expiration과 x-expires/expires의 차이, quorum queue의 선두 제거.
+- [RabbitMQ 4.4 Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — 큐 전체 만료 시 잔여 메시지를 dead-letter하지 않는 경계.

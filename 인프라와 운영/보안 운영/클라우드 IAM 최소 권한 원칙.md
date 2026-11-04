@@ -1,7 +1,7 @@
 ---
 category: "인프라와 운영/보안 운영"
 tags: ["operations", "aws", "iam", "클라우드보안", "접근제어"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -72,6 +72,17 @@ SCP는 Organizations 관리 계정과 service-linked role에 적용되지 않으
 
 작업 시작 시 받은 access key·secret key·session token을 고정 환경변수로 복사했다면 원래 발급 경로의 갱신이 실행 중인 프로세스에 자동 반영된다고 가정하지 않는다. 사용하는 자격증명 공급자와 갱신 경로를 확인하고, 갱신 이후의 새 API 호출까지 시험한다. 만료로 실패한 API와 이미 완료된 외부 작업을 구분해 업무 전체를 무조건 재실행하지 않는다.
 
+### MFA 조건은 키 부재까지 평가한다
+
+`aws:MultiFactorAuthPresent`의 `false`와 키 부재는 다르다. 장기 액세스 키로 서명한 CLI/API 요청이나 연합 신원에는 이 키가 없으므로 `Deny`에 `Bool: false`만 붙이면 그 요청은 해당 거부 조건에 걸리지 않는다. 다른 정책에 Allow가 남아 있으면 “MFA 없는 호출을 막았다”는 의도와 달리 접근이 가능할 수 있다.
+
+| 조건문을 Deny에 적용 | 키=true | 키=false | 키 없음 |
+|---|---|---|---|
+| `Bool: {aws:MultiFactorAuthPresent: false}` | 해당 거부 미적용 | 거부 | 해당 거부 미적용 |
+| `BoolIfExists: {aws:MultiFactorAuthPresent: false}` | 해당 거부 미적용 | 거부 | 거부 |
+
+키 부재까지 막으려는 대화형 사용자 정책은 `BoolIfExists: false`의 거부 범위를 검토한다. 이를 워크로드 역할이나 연합 사용자에게 일괄 적용하면 정상 자동화도 차단할 수 있다. 연합 인증의 MFA는 IdP가 검증한 인증 방법을 세션 태그 등으로 전달하는 별도 신뢰 계약이 필요하다. 반대로 `Allow`의 `BoolIfExists: true`는 키 없는 장기 자격증명도 통과시키므로 엄격한 MFA 필수 조건으로 해석하지 않는다. 적용할 작업·리소스·주체를 좁히고 키 true/false/부재의 세 경우를 각각 검증한다.
+
 ## 심화 Q&A
 
 ### Q. SCP와 Permission Boundary는 둘 다 "상한선"을 정의하는데 실무에서 어떻게 구분해서 쓰는가?
@@ -110,3 +121,5 @@ A. 두 시스템 모두 "주체(principal)-액션-리소스"를 명시적으로 
 부분 재확인: 2026-09-23. [AWS IAM Permissions Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)의 identity 정책 교집합, 동일 계정 role ARN/session ARN 직접 허용 차이, Deny+NotPrincipal 주의와 권고 대안을 확인했다. 기존 조직·역할·MFA 계약 전체는 재검증하지 않아 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [AWS STS AssumeRole — DurationSeconds](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)의 역할 체인 CLI/API 세션 최대 1시간·초과 요청 실패를 확인했다. 적용 범위는 STS AssumeRole 역할 체인이며 모든 OIDC·콘솔 세션에 같은 상한을 일반화하지 않는다. 환경변수 복사와 갱신 확인은 이를 적용한 운영 점검 항목이다. 실제 STS 발급·SDK 자동 갱신·장시간 배치는 실행하지 않았고 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [AWS IAM aws:MultiFactorAuthPresent](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-multifactorauthpresent)의 장기 키·연합 신원에서의 키 부재, Deny+Bool/BoolIfExists 및 Allow+BoolIfExists 조합을 확인했다. 적용 범위는 조회일 AWS IAM 관리형 서비스 문서이며 표의 “거부 미적용”은 최종 Allow를 뜻하지 않는다. 실제 IAM 정책 배포·시뮬레이터·STS 인증은 실행하지 않았고 `verified`는 유지했다.

@@ -2,7 +2,7 @@
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "resource-management", "qos", "autoscaling"]
 aliases: ["Kubernetes 리소스 요청과 제한"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -109,7 +109,9 @@ A. v1.37 문서는 resize가 기존 QoS를 유지해야 한다고 명시한다. 
 A. 대표적으로 requests/limits를 아예 설정하지 않아 BestEffort였던 Pod에 VPA가 처음으로 값을 채워 넣으면 QoS가 BestEffort에서 Burstable로 바뀌게 되는데, QoS는 불변이므로 in-place 리사이즈가 아니라 Pod 삭제 후 재생성으로 처리된다. 이 때문에 "리사이즈라 무중단일 것"이라 기대했던 워크로드가 실제로는 축출/재스케줄링을 겪어 순간적인 처리 실패가 발생한다. minAllowed는 추천값 하한이며 기존 Off 모드 Pod의 값을 즉시 채우지는 않는다. 새 Pod admission 또는 명시적 rollout으로 초기 요청량을 설정하고 재시작 가능성을 점검한다.
 
 ### Q. ResourceQuota를 네임스페이스에 걸었는데 Pod가 생성되지 않는다면 어떤 순서로 원인을 좁혀가야 하는가?
-A. 먼저 ResourceQuota가 `requests.cpu`/`requests.memory`에 대한 하드 한도를 걸고 있는지 확인하고, 이 경우 해당 네임스페이스의 모든 Pod가 반드시 명시적인 requests를 가져야 생성이 허용된다는 규칙을 떠올려야 한다(LimitRange의 기본값이 없다면 requests 미지정 Pod 자체가 거부된다). 다음으로 현재 네임스페이스의 총 사용량을 `kubectl describe quota`로 확인해 한도 초과인지, 아니면 단순히 개별 Pod가 requests를 빠뜨려 admission이 거부된 것인지(에러 메시지의 `must specify` 문구로 구분)를 나눠서 본다.
+A. 먼저 quota가 제한하는 리소스와 Pod에 최종 적용되는 requests/limits를 확인한다. 원본 YAML에 requests가 없더라도 해당 limit에서 복사되거나 LimitRange 기본값이 주입될 수 있으므로 “명시하지 않았으면 무조건 거부”로 판단하지 않는다. 기본값 주입 뒤에도 필수 값이 없으면 거부될 수 있다. 반대로 주입된 값 때문에 예상보다 quota 사용량이 커지거나 request가 limit보다 커지는 조합도 점검한다.
+
+`kubectl describe quota`의 사용량·상한과 실제 오류의 `must specify`·`exceeded quota`를 대조한다. quota 위반은 API admission에서 403으로 거부되며, 노드 용량 부족으로 이미 생성된 Pod가 Pending인 상황과 다르다. Deployment 객체 생성은 성공했어도 하위 Pod 생성이 거부될 수 있으므로 워크로드의 상태·이벤트까지 확인한다. ResourceQuota는 네임스페이스 예산이며 그만큼의 노드 자원을 미리 확보하는 예약도 아니다.
 
 ## 관련 개념
 - [[Kubernetes 프로브와 안전한 종료]]
@@ -128,3 +130,5 @@ A. 먼저 ResourceQuota가 `requests.cpu`/`requests.memory`에 대한 하드 한
 부분 재확인: 2026-09-23. [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)의 메모리 기반 emptyDir 집계·sizeLimit 미지정·언어 GC와 파일 수명 차이를 확인했다. JVM 전체 메모리 예산은 이 자원 경계를 적용한 운영 판단이다. 기존 QoS·resize·VPA 버전 계약 전체는 재검증하지 않아 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [Kubernetes Local ephemeral storage](https://kubernetes.io/docs/concepts/storage/ephemeral-storage/)의 표시 v1.37 문서에서 집계 대상·컨테이너/Pod 한도·축출·지원 파일 시스템 배치·열린 삭제 파일의 스캔 제약을 확인했다. 같은 v1.37 공식 Resource Management·Pod QoS 문서에서 Linux cgroups 강제와 QoS 분류가 CPU·메모리 기준임도 대조해 정의의 적용 범위를 좁혔다. 메모리 기반 볼륨과 구분한 운영 진단 범위이며 실제 노드 디스크 고갈·축출·프로젝트 quota 실험은 수행하지 않았다. 기존 CPU·메모리·VPA 전체 계약은 재검증하지 않아 `verified`를 유지했다.
+
+부분 재검증: 2026-11-04. 표시 v1.37의 [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)·[네임스페이스 CPU 기본값](https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/)·[LimitRange admission](https://kubernetes.io/docs/concepts/policy/limit-range/#limitrange-and-admission-checks-for-pods)에서 requests/limits 기본값과 주입 후 충돌, quota 위반 403, Deployment 생성과 하위 Pod 생성의 차이를 확인했다. 적용 범위는 일반 컨테이너의 CPU·메모리 admission 판단이며 커스텀 admission webhook·실제 quota 거부·scheduler 실행은 검증하지 않았다. 기존 QoS·resize·스토리지 전체는 재검증하지 않아 `verified`를 유지했다.

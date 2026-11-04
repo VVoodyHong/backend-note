@@ -1,7 +1,7 @@
 ---
 category: "인프라와 운영/CI-CD"
 tags: ["operations", "ci-cd", "devops", "자동화", "파이프라인"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -59,6 +59,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -72,6 +74,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - run: docker build -t registry/app:${{ github.sha }} .
       - run: docker push registry/app:${{ github.sha }}
 
@@ -86,6 +90,8 @@ jobs:
 파이프라인은 GitOps 방식(Argo CD, Flux)으로 구성하면 "배포 = 매니페스트 저장소의 상태 변경"이 되어, 배포 이력이 Git 커밋 로그로 남고 롤백도 `git revert` 수준으로 단순해진다.
 
 예제의 Java 21은 프로젝트가 선택한 기준 버전이며 최신 버전을 뜻하지 않는다. GitHub Actions major tag도 이동할 수 있으므로 운영에서는 검증한 full commit SHA로 고정하고 업데이트를 관리한다. 각 job은 별도 러너이므로 인증·도구 설정이 공유되지 않는다. PR의 비신뢰 코드를 운영 자격증명으로 실행하지 않고, 배포 job은 보호된 환경·동시성 정책과 실제 롤아웃 결과 확인을 구성한다. Git revert는 원하는 코드 상태를 되돌릴 뿐 이미 실행한 데이터 변경을 취소하지 않는다.
+
+예제는 checkout 이후 인증된 Git 명령이 필요하지 않아 `persist-credentials: false`를 지정했다. checkout v6의 기본값 true는 인증 정보를 `$RUNNER_TEMP` 아래 별도 파일에 두고 후속 Git 명령이 사용하게 한다. 저장 위치가 `.git/config` 밖으로 바뀌어도 빌드 스크립트가 인증된 Git 명령을 사용할 수 있다는 수명은 남는다. checkout 이후의 인증 설정을 줄이는 조치와 함께 토큰 권한 최소화·비신뢰 빌드 격리를 유지한다. 인증이 필요한 private submodule·후속 fetch 등은 필요한 단계에 한정해 설계한다.
 
 ## 실무 관점
 - CI는 필수, CD는 조직 성숙도에 따라 Delivery까지만 두는 경우가 많다. 금융권/규제 산업은 수동 승인 게이트(Delivery)를 남기는 경우가 흔하다.
@@ -145,3 +151,5 @@ A. 빠르고 결정적인 검증(컴파일, 단위 테스트, 린트, 정적 분
 부분 재확인: 2026-09-23. [GitHub Actions Secure Use](https://docs.github.com/en/actions/reference/security/secure-use)의 특권 트리거·비신뢰 checkout/아티팩트/캐시와 스크립트 주입 방지를 확인했다. 기존 액션 태그·도구 버전·전체 파이프라인 예제를 실행한 것은 아니므로 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)의 single/max 대기 정책·cancel-in-progress 조합 제약·대기 시작 시각 기준을 확인하고 [Workflow cancellation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation)의 러너 프로세스 종료 절차와 대조했다. 적용 범위는 조회일 GitHub.com Actions 문서이며 GHES별 지원 버전은 미확인이다. 외부 배포 복구는 이 취소 경계에서 도출한 운영 절차다. 실제 워크플로·취소·배포 실행은 하지 않았고 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [actions/checkout v6 README](https://github.com/actions/checkout/blob/v6/README.md)와 [v6 action.yml](https://github.com/actions/checkout/blob/v6/action.yml)의 persist-credentials 기본값 true·false 선택, RUNNER_TEMP 저장과 후속 Git 인증·post-job 정리 범위를 확인했다. 적용 범위는 조회한 v6 major ref이며 특정 불변 commit을 검증한 것은 아니다. YAML 예제에서 불필요한 인증 지속을 끄고, 실제 GitHub Actions 실행·토큰 접근 시험은 하지 않았다. 나머지 액션·빌드·배포 계약의 `verified`는 유지했다.

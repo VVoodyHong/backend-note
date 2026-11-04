@@ -2,7 +2,7 @@
 category: "네트워크/네트워크 보안"
 tags: ["network", "mtls", "tls", "인증", "service-mesh"]
 aliases: ["mTLS", "Mutual TLS"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -13,7 +13,7 @@ mTLS(mutual TLS, 상호 TLS)는 일반 TLS와 달리 서버뿐 아니라 클라�
 
 ## 동작 원리 / 구조
 
-### mTLS 핸드셰이크 흐름 (TLS 1.3 기준)
+### mTLS 핸드셰이크 흐름 (TLS 1.3 인증서 기반 전체 핸드셰이크)
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ graph LR
 - **인프라 레벨 mTLS(서비스 메시)**: Istio, Linkerd 같은 서비스 메시가 사이드카 프록시(sidecar proxy) 간 통신에 mTLS를 자동 적용하고, 인증서 발급/로테이션도 메시가 대신 처리한다. 애플리케이션 코드는 mTLS를 전혀 인지하지 않고 평문으로 통신하는 것처럼 작성해도 된다.
 
 ## 실무 관점
-- 제로 트러스트(Zero Trust) 아키텍처의 핵심 구성 요소로 자주 언급된다. 네트워크 위치(사내망 여부)를 신뢰의 근거로 삼지 않고, 매 연결마다 인증서로 신원을 증명하게 강제한다.
+- 제로 트러스트(Zero Trust) 아키텍처의 핵심 구성 요소로 자주 언급된다. 네트워크 위치(사내망 여부) 대신 연결 상대의 인증된 신원을 근거로 정책을 적용한다. TLS 세션 재개에서는 기존 인증 상태를 이어받을 수 있으므로 매 연결마다 인증서를 다시 제시한다고 일반화하지 않는다.
 - 서비스 개수가 많아지면 인증서 발급/로테이션을 수동으로 관리하기 불가능해지므로, 사설 PKI 자동화(내부 CA + 짧은 유효기간 + 자동 로테이션)가 사실상 전제 조건이다. 이 부분은 [[PKI와 인증서 체계]]에서 다루는 자동 발급 파이프라인과 직결된다.
 - Spring Boot에서 mTLS를 직접 구성할 경우 `server.ssl.client-auth=need`로 클라이언트 인증서를 필수화하고, 트러스트 저장소(truststore)에 허용할 CA를 등록한다. 아래는 개념적인 설정 예시다.
 
@@ -71,8 +71,14 @@ server:
 
 - 흔한 실수는 클라이언트 인증서 검증까지만 하고 애플리케이션 레벨 인가(authorization)를 생략하는 것이다. mTLS는 "누구인지"만 증명할 뿐, "무엇을 할 수 있는지"는 별도의 인가 로직(예: Spring Security의 `X509AuthenticationFilter`로 인증서 주체를 `Authentication` 객체로 매핑한 뒤 권한 부여)이 필요하다. 이 부분은 [[Security Filter Chain]]과 연결된다.
 - Istio에서 mTLS를 `PERMISSIVE` 모드로 켜두면 mTLS와 평문 트래픽이 혼재된 과도기를 지원하지만, 이를 "strict"로 전환하지 않고 방치하면 평문 우회 경로가 계속 열려 있는 상태로 남는다. 마이그레이션 후 평문을 금지하려는 범위에는 `STRICT`를 적용한다. Linkerd는 같은 모드명을 사용하는 것으로 가정하지 말고 비메시 소스의 평문 허용 여부를 authorization policy로 제한한다.
-- 인증서 회전에 실패하면 기존 인증서가 유효한 동안은 재사용할 수 있지만 만료 후 새 handshake는 실패해야 한다. 이미 성립한 연결은 인증서 만료만으로 즉시 종료되지 않을 수 있으므로 연결 최대 수명과 긴급 신원 차단 정책도 마련한다. 만료 인증서 검증을 끄는 fail-open을 통상적인 복구 수단으로 삼지 않는다.
+- 인증서 회전에 실패하면 만료 후 그 인증서를 새로 검증하는 전체 handshake는 실패해야 한다. 세션 재개와 이미 성립한 연결은 별도 수명주기를 가지므로 연결 최대 수명·재개 정책과 긴급 신원 차단 정책도 마련한다. 만료 인증서 검증을 끄는 fail-open을 통상적인 복구 수단으로 삼지 않는다.
 - 성능 관점에서 mTLS는 TLS 1.3 기준으로도 추가 왕복(RTT)이 발생하지는 않지만(클라이언트 인증서/CertificateVerify가 기존 플로우에 포함됨), 검증해야 할 인증서 체인이 두 배로 늘고 클라이언트 측 서명·서버 측 검증 연산이 추가되므로 CPU 비용이 커진다. 따라서 커넥션 재사용(HTTP Keep-Alive, 커넥션 풀)이 특히 중요해진다.
+
+### 새 TCP 연결도 인증서의 새 검증을 보장하지 않는다
+
+TLS 1.3의 사전 공유 키(Pre-Shared Key, PSK) 세션 재개(session resumption)는 이전 연결의 보안 컨텍스트와 연결된다. PSK를 선택한 주 핸드셰이크에서는 서버의 Certificate/CertificateVerify가 생략되고 CertificateRequest도 보내지 않는다. 따라서 0-RTT를 사용하지 않아도, 새 TCP 연결이 매번 클라이언트 인증서를 다시 받아 체인·신원 정책을 재평가한다는 가정은 성립하지 않는다.
+
+CA 신뢰 제거·인증서 폐기·인가 정책 변경 때는 기존 연결과 함께 재개 티켓/캐시의 유효성도 확인한다. 즉시 신원 철회가 필요하면 구현이 지원하는 재개 무효화·전체 핸드셰이크 요구와 요청별 인가를 조합한다. 재연결 시험은 세션 캐시를 공유한 재개 연결과 새 컨텍스트의 전체 핸드셰이크를 구분하며, 인증서 파일 교체만으로 두 경로가 모두 새 정책을 적용한다고 판단하지 않는다.
 
 ### ALB의 mTLS passthrough와 L4 TLS 통과를 구분한다
 
@@ -113,3 +119,5 @@ AWS ALB의 `mutual TLS passthrough`는 TLS 암호문을 그대로 백엔드로 �
 부분 재검증: 2026-09-22. [Istio Security](https://istio.io/latest/docs/concepts/security/)의 SPIFFE 신원·PeerAuthentication과 [Linkerd Automatic mTLS](https://linkerd.io/docs/features/automatic-mtls/)의 ServiceAccount 신원·비메시 평문 기본 허용을 대조했다. 적용 범위는 열람 문서의 신원·정책 계약이다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
 
 부분 재검증: 2026-10-04. [AWS ALB Mutual authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html)의 passthrough/verify 책임 분담과 X-Amzn-Mtls-Clientcert 형식을 확인했다. 적용 범위는 AWS ALB의 관리형 mTLS 기능이며 NLB/L4 TLS passthrough와 구분한다. 백엔드 경로·헤더 신뢰는 이 구조에 따른 운영 설계 조건이다. 실제 ALB·인증서 체인·우회 요청 시험과 Spring SSL 예제 재실행은 하지 않았고 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [RFC 8446 §2.2·§4.3.2·§4.6.1](https://www.rfc-editor.org/rfc/rfc8446.html#section-2.2)의 PSK 재개·주 핸드셰이크의 인증서 요청 생략·이전 인증 상태 연결을 확인했다. JDK 25.0.4.1/SunJSSE, TLS 1.3, 임시 자체 서명 인증서를 신뢰한 loopback mTLS에서 동일 SSLContext로 새 TCP 연결 2개를 열었다. 양쪽 peerPrincipal은 유지되지만 각 X509ExtendedTrustManager의 검증은 첫 연결에서만 1회씩 호출됨을 6개 assertion으로 확인했다. 만료·폐기·티켓 무효화·ALB·서비스 메시의 구현별 정책은 실행하지 않았으며 `verified`는 유지했다.

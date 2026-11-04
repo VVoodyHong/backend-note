@@ -2,7 +2,7 @@
 category: "메시지 큐/Kafka"
 tags: ["messaging", "kafka", "retention", "log-compaction", "운영"]
 aliases: ["Kafka Retention", "Log Compaction"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-22
 ---
 
@@ -42,6 +42,8 @@ Kafka의 로그 보존(retention)은 파티션의 기록을 얼마나 남길지 
 ```
 
 컴팩션은 남은 레코드의 순서나 오프셋을 다시 매기지 않는다. 따라서 오프셋 차이는 실제 메시지 건수와 다를 수 있다. 새 레코드를 쓰는 즉시 키당 하나만 남는 것도 아니다. 백그라운드 cleaner가 처리하기 전에는 중복 키가 존재한다. `min.compaction.lag.ms`는 최소 비정리 기간, `max.compaction.lag.ms`는 정리 대상이 될 때까지의 지연을 조절하며, 후자는 정리 완료 시각의 엄격한 보장이 아니다.
+
+컴팩션 토픽에는 레코드 키가 필요하다. Kafka 4.3.1 브로커는 키가 null인 레코드를 `INVALID_RECORD`로 거부한다. payload 안에 업무 ID가 있어도 Kafka record key를 생략하면 이 조건을 충족하지 않는다. delete 토픽을 `compact` 또는 `compact,delete`로 변경할 때 모든 생산자의 키 설정과 비동기 send 결과를 먼저 점검한다. 실패를 피하려 모든 이벤트에 같은 고정 키를 넣으면 서로 독립된 업무의 과거 값을 같은 파티션 안에서 정리하게 되므로, 복원할 상태의 식별자를 키로 사용한다.
 
 ### 삭제 표식과 상태 복원
 
@@ -105,3 +107,7 @@ A. 아니다. 정리 대상 선정과 실제 cleaner 실행·파일 교체는 �
 부분 재검증: 2026-10-04. Kafka 4.3 cleaner가 키의 마지막 오프셋과 이후 출현을 기준으로 정리하는 동작을 확인했다. v8→삭제→v7 사례는 이 계약에서 도출한 재처리 위험이며 실제 브로커에서 실행하지 않았다. 설정 기본값 전체의 기존 `verified`는 유지한다.
 
 - [Kafka 4.3 Log Compaction Details](https://kafka.apache.org/43/design/design/#log-compaction-details) — 키별 마지막 오프셋 요약과 뒤에 같은 키가 있는 이전 레코드 제거.
+
+부분 재검증: 2026-11-04. Kafka 4.3.1 고정 소스에서 compactedTopic의 record.hasKey 검사와 INVALID_RECORD 반환을 확인했다. 정책 전환 전 생산자 점검·고정 키 위험은 이 검사와 키별 정리 계약을 적용한 운영 판단이다. 실제 토픽 변경·브로커 발행 시험은 하지 않았으며 설정 기본값 전체의 기존 `verified`는 유지한다.
+
+- [Kafka 4.3.1 LogValidator.validateKey](https://github.com/apache/kafka/blob/4.3.1/storage/src/main/java/org/apache/kafka/storage/internals/log/LogValidator.java) — 컴팩션 토픽의 키 없는 레코드 거부. payload 내부 ID는 검사 대상이 아니다.

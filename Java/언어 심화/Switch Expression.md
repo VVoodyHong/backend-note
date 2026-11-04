@@ -1,7 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "switch", "jep", "제어문"]
-updated: 2026-09-22
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -91,7 +91,9 @@ flowchart LR
 `switch` 진입 전에 별도로 `if (obj == null) { ... }`를 두어 사전에 걸러내야 했다. `case null`은 이 방어 로직을 switch 문법 안으로 통합해, null 처리와 타입/값 매칭을 한 곳에서 선언적으로 관리할 수 있게 한다. 다만 `case null`을 넣지 않은 기존 코드는 여전히 null 입력 시 NPE를 던지므로 하위 호환은 유지된다.
 
 ### Q. 패턴 매칭 switch에서 여러 case가 동시에 만족 가능한 타입일 때 어떤 것이 선택되는가?
-switch는 라벨을 선언 순서대로 검사해 처음으로 일치하는 라벨을 선택한다. 상위 타입과 하위 타입을 같은 switch에 섞어 쓸 경우 하위 타입을 먼저 배치하지 않으면 상위 타입 라벨이 항상 먼저 매칭돼 하위 타입 전용 분기가 죽은 코드(dead code)가 되고, 이 경우 컴파일러가 도달 불가능(unreachable) 에러를 낸다.
+일치 가능한 패턴 라벨 중 먼저 선언된 분기를 선택한다. 무가드 `case Number n` 앞에 하위 타입 `case Integer i`가 오도록 배치해야 하며, 순서를 뒤집으면 후자가 지배(dominance)되어 컴파일 오류다. 반면 `case Number n when n.intValue() > 10`은 가드를 만족하지 않는 값도 있어 뒤의 Integer 패턴을 일괄 지배하지 않는다. `when true`처럼 상수 true인 가드는 무가드처럼 취급한다.
+
+컴파일러는 일반적인 가드 식 사이의 논리적 포함 관계까지 증명하지 않으므로, 겹치는 조건이 컴파일된다고 모든 분기가 실제로 선택될 수 있다는 뜻은 아니다. 기본형·문자열 상수 switch에서 default를 앞에 선언할 수 있는 경우에도 default는 다른 case가 맞지 않을 때의 대체 분기이며 단순한 첫 줄 우선 규칙으로 해석하지 않는다.
 
 Java 27의 기본형 확장 switch와 기본형 패턴은 정식 switch 표현식과 별도인 프리뷰 기능이다. 버전 구분은 [[Sealed Interface와 Pattern Matching#Java 27의 기본형 패턴은 별도 프리뷰]]를 참고한다.
 
@@ -110,3 +112,7 @@ Java 27의 기본형 확장 switch와 기본형 패턴은 정식 switch 표현�
 - [JEP 441](https://openjdk.org/jeps/441) — Java 21 null 패턴과 MatchException.
 
 부분 재검증: 2026-09-22. [Java 27 기본형 패턴·switch](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html)의 프리뷰 상태만 추가 확인했다.
+
+### 2026-11-04 부분 재검증
+
+[JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1)의 무가드·상수 true 가드의 지배 관계와 비상수 가드 구분을 확인했다. Temurin 25.0.4.1+1에서 가드가 있는 Number 뒤의 Integer 패턴 컴파일·선택과 겹치는 비상수 가드의 허용을 확인했고, 무가드 및 when true의 Number 뒤에 Integer를 둔 코드는 각각 지배 관계 컴파일 오류를 확인했다. 프리뷰 기능이나 별도 컴파일 후 계층 변경은 이번 범위 밖이므로 verified는 유지한다. 기본형 상수 switch의 default 앞 배치도 실행해 상수 case가 우선함을 확인했다.

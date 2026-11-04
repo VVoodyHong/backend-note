@@ -1,7 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "stampedlock", "optimistic-read", "concurrency", "lock"]
-updated: 2026-09-23
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -78,7 +78,7 @@ sequenceDiagram
 - `StampedLock`은 재진입을 지원하지 않는다. 같은 스레드가 읽기 락을 잡은 상태에서 다시 읽기 락이나 쓰기 락을 시도하면 데드락(deadlock)에 빠질 수 있다. `synchronized`나 `ReentrantLock`에 익숙한 개발자가 재진입을 당연하게 가정하고 재귀 호출 안에서 락을 다시 잡다가 겪는 실무 장애 패턴이다.
 - 낙관적 읽기 구간에서는 읽은 필드를 로컬 변수로 복사만 하고, `validate()` 이전에 그 값으로 외부 시스템 호출이나 예외를 던지는 등 되돌릴 수 없는 부수 효과를 일으키면 안 된다. 검증에 실패해도 이미 발생한 부수 효과는 취소할 수 없기 때문이다.
 - `StampedLock`은 `readLockInterruptibly()`·`writeLockInterruptibly()` 및 시간 제한 획득을 제공한다. `readLock()`·`writeLock()`은 인터럽트 가능 버전이 아니며, 공정성(fairness) 설정은 제공하지 않는다. 공정성이 중요한 경합 상황이라면 `ReentrantReadWriteLock`의 공정 모드가 더 적합할 수 있다.
-- 언락 시 락 획득 때 받은 스탬프를 정확히 넘겨야 한다. 낙관적 읽기는 애초에 언락이 필요 없지만(락을 획득한 적이 없으므로), 비관적 읽기/쓰기 락은 획득 시 스탬프와 해제 시 스탬프가 일치해야 하며, 이를 다른 락 종류의 스탬프와 섞어 쓰면 `IllegalMonitorStateException`이 발생한다.
+- 해제에는 같은 StampedLock 인스턴스에서 해당 획득·변환으로 받은 스탬프를 전달한다. 낙관적 읽기는 잠금을 획득하지 않으므로 해제하지 않는다. API가 검사하는 것은 스탬프와 현재 락 상태의 일치이며, 상태·모드가 맞지 않으면 `IllegalMonitorStateException`이 발생한다. 스탬프는 락 인스턴스의 고유 식별자가 아니므로 다른 인스턴스의 스탬프 혼용을 항상 검출한다고 가정하면 안 된다. 락과 스탬프의 대응 및 한 번의 해제 책임을 호출 코드가 유지해야 한다.
 
 ## 심화 Q&A
 
@@ -123,3 +123,7 @@ A. `tryConvertToWriteLock(readStamp)`가 0이면 기존 읽기 락은 그대로 
 Java SE 25 StampedLock의 낙관적 검증 범위·변환 실패·소유권 없는 stamp 계약을 다시 확인했다. 기존 전체 검증일은 유지한다.
 
 실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 복수 reader의 승격 실패·읽기 락 유지, 단일 reader 승격, 쓰기 후 낙관적 stamp 무효화을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
+
+### 2026-11-04 부분 재검증
+
+[Java SE 25 StampedLock](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/StampedLock.html)의 상태 일치·소유권 부재 계약과 [OpenJDK jdk-25+36 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/locks/StampedLock.java)의 초기 상태·unlockRead 검사를 확인했다. Temurin 25.0.4.1+1에서 별도 인스턴스의 동일 숫자 read stamp로 잘못된 해제가 수락되는 반례와 read stamp를 unlockWrite에 전달할 때의 거부를 확인했다. 잘못된 인스턴스 혼용은 금지할 사용 방식이며 수락 자체를 API 보장으로 일반화하지 않는다. 낙관적 읽기·승격 전체는 재검증하지 않아 verified를 유지한다.

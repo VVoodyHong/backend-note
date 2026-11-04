@@ -2,7 +2,7 @@
 category: "보안/인증과 인가"
 tags: ["security", "sso", "saml", "oidc", "federation", "identity"]
 aliases: ["Single Sign-On", "SSO", "SAML", "OIDC"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -70,7 +70,7 @@ spring:
                   certificate-location: classpath:sp-certificate.crt
 ```
 
-서명 검증만으로 로그인 응답을 수락하지 않는다. OIDC는 issuer·audience·exp와 요청의 state/nonce 및 PKCE를 사용 흐름에 맞게 검증한다. SAML은 신뢰하는 IdP 서명, Destination/Recipient, Audience, 시간 조건, InResponseTo와 assertion 재사용 차단을 확인한다. YAML은 키/인증서 파일을 실제 제공해야 하는 SP 설정 발췌다.
+서명 검증만으로 로그인 응답을 수락하지 않는다. OIDC는 issuer·audience·exp와 요청의 state/nonce 및 PKCE를 사용 흐름에 맞게 검증한다. SAML은 신뢰하는 IdP 서명, Destination/Recipient, Audience, 시간 조건과 assertion 재사용 차단을 확인한다. SP가 시작한 로그인은 InResponseTo로 원래 요청에 연결하고, IdP가 시작한 unsolicited 응답은 별도 허용 정책으로 다룬다. YAML은 키/인증서 파일을 실제 제공해야 하는 SP 설정 발췌다.
 
 ## 실무 관점
 - **SCIM과 세트로 도입**: 로그인만 연합하고 사용자 생성/삭제/역할 변경을 수동으로 관리하면 퇴사자 계정이 SP마다 남아있는 사고로 이어진다. 엔터프라이즈 SSO는 실무적으로 SAML/OIDC(인증) + SCIM(사용자 생명주기 동기화) + MFA/감사 로그(컴플라이언스)를 함께 갖추는 것이 표준 요구사항이다.
@@ -108,7 +108,9 @@ A. OIDC discovery의 신뢰하는 issuer에서 jwks_uri를 얻고 키를 캐싱�
 A. 로그인은 IdP를 통해 위임되지만 각 SP 내부의 사용자 계정 자체는 별도로 관리되므로, IdP에서 계정을 비활성화(퇴사 처리)해도 SP에 남아있는 로컬 세션이나 발급된 장기 토큰이 즉시 무효화되지 않을 수 있다. SCIM 등의 provisioning으로 계정 상태를 동기화하고 SP가 세션·토큰을 별도로 폐기해야 한다. SCIM 전송만으로 즉시 전역 로그아웃이 보장되지는 않는다.
 
 ### Q. SAML Assertion 검증에서 SP가 반드시 확인해야 할 항목은 무엇이며, 누락 시 어떤 공격에 노출되는가?
-A. 서명(Signature) 유효성, Assertion의 유효 기간(NotBefore/NotOnOrAfter), 수신 대상(Audience), 응답 대상 SP의 엔티티 ID 일치 여부를 반드시 검증해야 한다. 이 중 하나라도 누락하면, 예를 들어 Audience 검증을 생략하면 다른 SP를 위해 발급된 정상 서명 Assertion을 재사용하는 공격(Assertion 재전송)에 노출될 수 있다.
+A. 신뢰하는 IdP의 서명이 실제 사용할 응답/Assertion을 보호하는지와 Assertion의 시간 조건을 검증한다. `AudienceRestriction`의 Audience는 SP의 엔티티 ID이고, bearer `SubjectConfirmationData.Recipient`는 응답이 도착한 ACS URL이다. 두 값을 같은 식별자로 비교하면 안 된다. SubjectConfirmationData의 `NotOnOrAfter`와 SP가 시작한 요청의 `InResponseTo`도 검증하고, HTTP POST 프로파일에서는 허용 유효 기간 동안 사용한 Assertion ID를 추적해 재사용을 막는다. Audience 누락은 다른 SP용 Assertion 수락으로, 요청 연계·재사용 검사 누락은 로그인 응답의 재전송으로 이어질 수 있다.
+
+IdP가 시작한 unsolicited 응답은 원래 AuthnRequest가 없으므로 InResponseTo가 없어야 한다. 이 흐름을 허용할지 별도 결정하고, 요청 연계를 생략한다는 이유로 Recipient·시간·Audience·서명·재사용 검사를 함께 생략하지 않는다.
 
 ### Q. OIDC의 `id_token`을 리소스 접근에 그대로 사용하면 안 되는 이유는 무엇이며 SAML과 비교해 어떤 개념적 차이를 보여주는가?
 A. `id_token`은 "이 사용자가 인증되었다"는 신원 증명이지 리소스 접근 권한을 위임하는 토큰이 아니다. 리소스 접근에는 별도의 `access_token`을 사용해야 한다. 이는 OIDC가 인증(신원 증명)과 인가(자원 접근 위임)를 명확히 분리한 설계이며, SAML은 Assertion 하나가 신원 정보와 속성(attribute)을 동시에 담아 SP가 이를 인가 판단에도 재사용하는 경우가 많다는 점에서 설계 철학의 차이를 보여준다.
@@ -133,3 +135,5 @@ A. SAML Web Browser SSO는 브라우저 중심 프로파일이라 모바일 앱�
 부분 재확인: 2026-09-23. [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html) — §5.1·§5.7의 이메일과 iss/sub 식별자, §5.3.2의 UserInfo sub 일치, §8.1의 pairwise sector를 확인했다. 계정 연결 절차는 이 신원 계약을 적용한 설계 기준이다. 기존 SAML·Spring 설정 전체는 재검증하지 않아 `verified`는 유지한다.
 
 부분 재검증: 2026-10-04. [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html)의 §2 auth_time·acr, §3.1.2.1 max_age, §3.1.3.7 auth_time 확인, §12.2 refresh 후 iat/auth_time 의미를 대조했다. 적용 범위는 OIDC 재인증 계약이며 실제 IdP·MFA·Spring 로그인 흐름은 실행하지 않았다. 기존 SAML·키 회전 설명 전체를 재검증한 것은 아니므로 `verified`는 유지했다.
+
+부분 재검증: 2026-11-04. [OASIS SAML 2.0 Profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf)의 §4.1.4.2–5·§4.1.5와 [SAML Approved Errata 05](https://docs.oasis-open.org/security/saml/v2.0/errata05/os/saml-v2.0-errata05-os.html)의 관련 보정을 대조해 Audience의 SP 식별자와 Recipient의 ACS URL, SP 시작/unsolicited 요청 연계, POST 재사용 방지를 구분했다. 적용 범위는 SAML 2.0 Web Browser SSO bearer 프로파일이며 실제 IdP·OpenSAML·Spring 통합 시험은 하지 않았다. OIDC·설정 전체는 재검증하지 않아 `verified`는 유지했다.

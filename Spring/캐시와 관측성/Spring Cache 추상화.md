@@ -2,7 +2,7 @@
 category: "Spring/캐시와 관측성"
 tags: ["spring", "cache", "aop", "spel", "redis"]
 aliases: ["Spring Cache", "스프링 캐시"]
-updated: 2026-10-04
+updated: 2026-11-04
 verified: 2026-09-08
 ---
 
@@ -55,6 +55,7 @@ sequenceDiagram
 
 - `@Cacheable`의 조회 key와 condition은 메서드 호출 전에 평가한다. `@CachePut`의 key, `beforeInvocation=false`인 `@CacheEvict`의 key는 결과(`#result`)를 참조할 수 있으므로 모든 애너테이션의 key가 실행 전 평가되는 것은 아니다.
 - `unless`는 **메서드 실행 후** 결과(`#result`)를 보고 캐싱 여부를 거부(veto)할 때 쓴다. null이나 빈 컬렉션을 캐싱하지 않으려 할 때 사용.
+- `Optional<T>` 반환값은 내부 값으로 풀어 캐싱한다. `Optional.empty()`는 null 저장으로 이어지므로 null 허용 제공자에서는 다음 호출도 빈 결과를 받는다. 이때 `#result`도 Optional이 아닌 내부 값이므로 빈 결과를 제외하려면 `unless = "#result == null"`을 사용한다. 조회 직후 새 데이터가 생길 수 있다면 아래 null 캐싱의 TTL·무효화 정책을 함께 정한다.
 
 ```java
 @Cacheable(
@@ -96,6 +97,7 @@ flowchart LR
 - **직렬화 방식**: RedisCache의 기본 값 직렬화는 JDK 직렬화다. JSON으로 바꿀 때 타입 정보·호환성·역직렬화 허용 범위를 설계한다. Spring Data Redis 4.0부터 Jackson 2용 `GenericJackson2JsonRedisSerializer`는 deprecated이며 Jackson 3용 `GenericJacksonJsonRedisSerializer`가 대체 타입이다.
 - **트랜잭션과의 상호작용**: RedisCacheManager의 `transactionAware()` 또는 트랜잭션 인지 데코레이터는 활성 Spring 트랜잭션의 일반 put/evict/clear를 성공 커밋 뒤로 미룬다. `CacheManager` 인터페이스 자체에 공통 setter가 있는 것은 아니다. `putIfAbsent`, `evictIfPresent` 같은 즉시 연산은 지연할 수 없고, DB와 Redis의 원자적 분산 커밋이나 캐시 반영 실패 복구까지 제공하지 않는다.
 - **동기 로딩과 롤백**: Framework 7.0.9의 `TransactionAwareCacheDecorator`는 `get(key, Callable)` 로딩을 실제 캐시에 직접 위임한다. 따라서 `@Cacheable(sync=true)`로 미커밋 DB 값을 읽어 적재하면 트랜잭션 인지 설정이 있어도 롤백 뒤 그 값이 캐시에 남을 수 있다. `sync=true`는 로더 동시성 제어이며 커밋 시점 제어가 아니다. 쓰기 트랜잭션 안의 캐시 적재를 피하거나, 실제 제공자의 로딩·저장 경로와 커밋 이후 갱신 정책을 함께 검증한다.
+- **커밋 후 캐시 실패**: 트랜잭션 인지 데코레이터가 미룬 캐시 작업이 `afterCommit()`에서 실패하면 DB는 이미 커밋됐는데 호출자에게 예외가 돌아갈 수 있다. 따라서 예외 응답만 보고 주문·결제를 새로 실행하면 중복될 수 있다. 원래 업무의 멱등성·처리 상태 조회와 실패한 캐시 갱신/무효화의 재처리를 별도로 설계한다. 콜백 오류를 삼키는 것만으로 캐시 정합성이 복구되는 것도 아니다. 이 콜백은 [[Spring Event와 비동기 처리]]의 AFTER_COMMIT 리스너가 사용하는 `afterCompletion` 경로와 구분한다.
 - **리액티브 반환 타입**: 6.1부터 Mono의 값, Flux의 완료된 원소 목록을 캐싱한다. 무한·대용량 Flux나 세밀한 스트리밍 제어에는 적합하지 않다. 제공자의 비동기 retrieve 지원을 확인하고 Caffeine은 async cache mode를 사용한다. 6.1.3부터 제공되는 JVM 시스템 프로퍼티 `spring.cache.reactivestreams.ignore=true`는 리액티브 적응을 무시하는 구버전 호환 옵션으로, 캐싱 자체를 끄는 일반 Boot 설정이 아니다.
 
 ## 심화 Q&A
@@ -148,3 +150,7 @@ flowchart LR
 
 - [TransactionAwareCacheDecorator 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-context-support/src/main/java/org/springframework/cache/transaction/TransactionAwareCacheDecorator.java) — 일반 put의 커밋 후 처리와 로더 호출의 직접 위임.
 - [Cacheable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/annotation/Cacheable.html) — sync의 제공자 위임 범위.
+
+부분 재검증: 2026-11-04. [TransactionSynchronization.afterCommit 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/transaction/support/TransactionSynchronization.html#afterCommit())과 위 TransactionAwareCacheDecorator 고정 소스로 커밋 후 예외 전파를 확인했다. Temurin 25.0.4.1+1·Framework 7.0.9·H2 2.4.240에서 실제 DB 트랜잭션과 put 실패를 주입한 캐시를 사용해 트랜잭션 안에서는 지연되고, 커밋 뒤 호출자에게 예외가 전파되며, 새 DB 조회에 행이 남는 3조건을 실행했다. Redis/Caffeine의 네트워크 장애·실제 @CachePut 프록시 조합은 이번 범위 밖이며 `verified`는 유지한다.
+
+같은 날 위 [Cacheable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/annotation/Cacheable.html)의 Optional 처리·unless 계약을 확인했다. ConcurrentMapCacheManager와 실제 Cacheable 프록시로 빈 결과의 재사용·null 저장, unless로 빈 결과 제외, 값이 있는 Optional의 재사용·내부 값 저장을 5조건으로 실행했다. Redis의 null 저장 설정이나 TTL은 이 재현에 포함하지 않았다.
