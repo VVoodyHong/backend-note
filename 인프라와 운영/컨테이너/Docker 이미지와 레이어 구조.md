@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/컨테이너"
 tags: ["operations", "docker", "container", "이미지빌드", "devops"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Docker 이미지와 레이어 구조
@@ -89,13 +88,11 @@ A. 쓰기 가능 레이어는 컨테이너에 귀속되며 재시작(`docker res
 
 ## 참고 자료
 
-- [OCI Image Manifest](https://github.com/opencontainers/image-spec/blob/v1.1.1/manifest.md) — image-spec v1.1.1·config/layer descriptors. 확인: 2026-09-08.
-- [Docker containerd image store](https://docs.docker.com/engine/storage/containerd/) — Engine29.0+ 신규설치 기본. 확인: 2026-09-08.
-- [Docker Cache invalidation](https://docs.docker.com/build/cache/invalidation/) — 파일checksum·mtime 제외·RUN캐시. 확인: 2026-09-08.
-- [Docker Pruning](https://docs.docker.com/engine/manage-resources/pruning/) — dangling image·unused image·build cache 구분. 확인: 2026-09-08.
-- [Docker Build secrets](https://docs.docker.com/build/building/secrets/) — BuildKit secret mount. 확인: 2026-09-08.
-- [Spring Boot Dockerfiles](https://docs.spring.io/spring-boot/reference/packaging/container-images/dockerfiles.html) — 4.1.1·jarmode=tools·layer extraction. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. [Docker Build cache invalidation](https://docs.docker.com/build/cache/invalidation/)과 [Build secrets](https://docs.docker.com/build/building/secrets/)에서 시크릿 내용/속성의 캐시 참여 차이와 RUN 시크릿 마운트 수명을 확인했다. 적용 범위는 문서의 Dockerfile frontend `docker/dockerfile:1` 및 BuildKit 시크릿 마운트이며 Engine·BuildKit 패치 버전별 재현은 하지 않았다. 로그·산출물 유출 경계는 마운트가 명령의 출력물을 정화하지 않는다는 설계상의 확인 항목이다. 실제 이미지 빌드·토큰 교체 시험은 수행하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [Dockerfile reference: ENTRYPOINT](https://docs.docker.com/reference/dockerfile/#entrypoint)와 [exec 형식 변수 치환](https://docs.docker.com/reference/dockerfile/#variable-substitution)의 셸 경유·PID 1·신호 전달·리터럴 인자 규칙을 확인했다. 적용 범위는 Linux 컨테이너의 Dockerfile 실행 설정이며 Windows 컨테이너에 일반화하지 않는다. 실제 Docker 빌드·stop·Kubernetes 종료 시험은 하지 않았고 `verified`는 유지했다.
+- [OCI Image Manifest](https://github.com/opencontainers/image-spec/blob/v1.1.1/manifest.md) — image-spec v1.1.1·config/layer descriptors.
+- [Docker containerd image store](https://docs.docker.com/engine/storage/containerd/) — Engine29.0+ 신규설치 기본.
+- [Docker Cache invalidation](https://docs.docker.com/build/cache/invalidation/) — 파일checksum·mtime 제외·RUN캐시; Dockerfile frontend docker/dockerfile:1·BuildKit의 시크릿 내용/속성 캐시 참여 차이.
+- [Docker Pruning](https://docs.docker.com/engine/manage-resources/pruning/) — dangling image·unused image·build cache 구분.
+- [Docker Build secrets](https://docs.docker.com/build/building/secrets/) — BuildKit RUN 시크릿 마운트 수명; 명령 출력·산출물 유출과 구분.
+- [Spring Boot Dockerfiles](https://docs.spring.io/spring-boot/reference/packaging/container-images/dockerfiles.html) — 4.1.1·jarmode=tools·layer extraction.
+- [Dockerfile reference: ENTRYPOINT](https://docs.docker.com/reference/dockerfile/#entrypoint) — Linux 컨테이너의 shell/exec ENTRYPOINT·PID 1·신호 전달.
+- [exec 형식 변수 치환](https://docs.docker.com/reference/dockerfile/#variable-substitution) — exec 형식의 리터럴 인자와 변수 치환; Linux 컨테이너 범위.

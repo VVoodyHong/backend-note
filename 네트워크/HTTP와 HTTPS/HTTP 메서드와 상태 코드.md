@@ -1,8 +1,7 @@
 ---
 category: "네트워크/HTTP와 HTTPS"
 tags: ["network", "http", "rest", "상태코드", "api-design"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # HTTP 메서드와 상태 코드
@@ -106,15 +105,12 @@ HEAD는 GET과 동일하게 처리되지만 응답 바디 없이 헤더만 반�
 
 ## 참고 자료
 
-- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — §9 안전성·멱등성·§15 상태 코드. 확인: 2026-09-08.
-- [RFC 5789: PATCH Method](https://www.rfc-editor.org/rfc/rfc5789.html) — 조건부 캐시 가능성·원자적 변경. 확인: 2026-09-08.
-- [RFC 9111: HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111.html) — 캐시 재검증. 확인: 2026-09-08.
-- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — Spring MVC 서버 구성 범위. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [RFC 9110 §9.2.2·§10.2.3](https://www.rfc-editor.org/rfc/rfc9110.html)의 멱등성·자동 재시도·Retry-After와 [RFC 5789 §2](https://www.rfc-editor.org/rfc/rfc5789.html#section-2)의 PATCH 의미를 대조했다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
-
-부분 재확인: 2026-09-23. [RFC 8470 §5·§6](https://www.rfc-editor.org/rfc/rfc8470.html)의 425·조기 데이터 재시도 금지·Early-Data 홉 전파를 확인했다. 이 내용은 TLS 조기 데이터 처리에 대한 계약이며 일반 업무 대기 상태가 아니다. [RFC 9110 §15.4](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4)의 메서드 보존 리다이렉션과 자동 재전송 주의도 대조했다. 기존 메서드·상태 코드 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [RFC 9110 §15.3.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3)의 202 수락/미완료 의미, 최종 실행 비보장, 현재 상태와 monitor 안내를 확인했다. 작업 식별자·접수 멱등성·지표 분리는 이 HTTP 의미를 적용한 애플리케이션 설계 조건이며 특정 큐의 전달 보장을 주장하지 않는다. 실제 비동기 API·클라이언트 통합 시험은 하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [RFC 9110 §8.8.3.2·§13.1–2](https://www.rfc-editor.org/rfc/rfc9110.html#section-13)의 If-Match 강한 비교·별표의 존재 조건, If-None-Match의 GET/HEAD 304와 다른 메서드 412 구분·If-Modified-Since 우선순위를 확인했다. 저장소의 조건부 갱신은 HTTP 전제조건을 경쟁 상태 없이 적용하기 위한 구현 기준이다. 실제 HTTP 서버·DB 동시 갱신·클라이언트 실행은 하지 않았고 `verified`는 유지했다.
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — §9 안전성·멱등성·§15 상태 코드; §9.2.2·10.2.3의 멱등성·자동 재시도·Retry-After.
+- [RFC 5789: PATCH Method](https://www.rfc-editor.org/rfc/rfc5789.html) — 조건부 캐시 가능성·원자적 변경.
+- [RFC 9111: HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111.html) — 캐시 재검증.
+- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — Spring MVC 서버 구성 범위.
+- [RFC 5789 §2](https://www.rfc-editor.org/rfc/rfc5789.html#section-2) — PATCH 메서드의 의미와 적용 조건.
+- [RFC 8470 §5·§6](https://www.rfc-editor.org/rfc/rfc8470.html) — TLS 조기 데이터의 425 응답·early data 없는 재시도·Early-Data 홉 전파.
+- [RFC 9110 §15.4](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4) — 메서드 보존 리다이렉션과 자동 재전송 제약.
+- [RFC 9110 §15.3.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3) — 202는 수락·미완료를 뜻하며 최종 성공을 보장하지 않음; 상태 조회 안내.
+- [RFC 9110 §8.8.3.2·§13.1–2](https://www.rfc-editor.org/rfc/rfc9110.html#section-13) — If-Match 강한 비교·별표 존재 조건, If-None-Match의 304/412, If-Modified-Since 우선순위.

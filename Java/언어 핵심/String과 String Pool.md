@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 핵심"
 tags: ["java", "string", "stringpool", "메모리", "불변성"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # String과 String Pool
@@ -88,23 +87,10 @@ Java 7 이전에는 PermGen 크기 제한(`-XX:MaxPermSize`) 때문에 대량의
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 String](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html) — intern·불변성·hashCode.
+- [Java SE 25 String](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html) — UTF-16·code point·equals·intern·불변성·hashCode와 로케일·문자셋 변환.
 - [JLS 25 문자열 리터럴](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5) — 인터닝과 상수 표현식.
-- [JEP 254](https://openjdk.org/jeps/254) — Compact Strings.
+- [JEP 254](https://openjdk.org/jeps/254) — Java 9 Compact Strings.
 - [JEP 280](https://openjdk.org/jeps/280) — Java 9+ 문자열 연결.
-
-### 2026-09-23 부분 재검증
-
-[Java SE 25 String](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html)의 UTF-16 인덱스·equals·intern과 [Normalizer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/text/Normalizer.html)의 정규화 계약을 확인했다. OpenJDK 25.0.2에서 보조 문자의 길이/코드 포인트, 서로게이트 분할, 합성/분해 문자열의 equals·intern 차이와 NFC 결과를 확인했다. 과거 저장 영역 변경·모든 JIT 최적화 설명은 오늘 범위 밖이다.
-
-### 부분 재검증: 2026-10-04
-
-Java SE 25의 로케일 의존 대소문자 변환, Charset 인자를 받는 String 생성자·getBytes의 대체 처리, decoder/encoder의 오류 보고 정책을 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [String](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html) — toLowerCase/toUpperCase의 로케일, String(byte[], Charset), getBytes(Charset).
-- [CharsetDecoder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html) — malformed/unmappable 입력과 REPORT 정책(기본 오류 정책도 REPORT).
-- [CharsetEncoder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetEncoder.html) — 표현 불가능한 문자의 대체·오류 보고.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 터키어/ROOT의 TITLE 변환 차이, 잘못된 UTF-8의 대체와 엄격 디코더의 MalformedInputException, ASCII로 표현할 수 없는 한글의 대체와 엄격 인코더의 UnmappableCharacterException을 확인했다. 전역 기본 로케일은 바꾸지 않았고, 모든 언어의 정렬·검색·유니코드 보안 규칙을 검증한 것은 아니다.
+- [Java SE 25 Normalizer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/text/Normalizer.html) — Unicode NFC 등 문자열 정규화.
+- [Java SE 25 CharsetDecoder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html) — malformed/unmappable 입력과 REPORT 정책(기본 오류 정책도 REPORT).
+- [Java SE 25 CharsetEncoder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetEncoder.html) — 표현 불가능한 문자의 대체·오류 보고.

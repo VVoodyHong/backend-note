@@ -1,8 +1,7 @@
 ---
 category: "Java/JVM 심화"
 tags: ["java", "직렬화", "serializable", "security", "jvm"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 직렬화와 Serializable
@@ -108,29 +107,11 @@ A. 아니다. 매번 독립적으로 기록한다는 규칙은 루트 객체에 
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Java 25 Serialization §1](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/serial-arch.html) — 필드·핸들·record·enum 직렬화.
 - [Java 25 Serialization §3](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/input.html) — 생성자·readObject·Externalizable·record 복원.
 - [Java 25 Serialization §4](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/class.html) — UID 산출 규칙.
 - [Java 25 Serialization §5](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/version.html) — 호환·비호환 변경.
-- [Java SE 25 ObjectInputFilter](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputFilter.html) — 클래스·그래프 제한과 필터 팩토리.
-
-### 2026-09-23 부분 재검증
-
-Java 25 Serialization §2.1의 핸들 재사용·reset·writeUnshared 적용 범위를 확인했다. 기존 전체 검증일은 유지한다.
-
-- [Java 25 Serialization §2](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/output.html) — 반복 객체 기록, reset 및 하위 객체의 공유.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 동일 객체 핸들 재사용·reset 이후 새 상태·writeUnshared의 하위 객체 공유을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 부분 재검증: 2026-10-04
-
-Java SE 25의 필터 미일치 상태·구체적인 String/기본 타입 제외·헤더 대기를 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [ObjectInputFilter.Config](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputFilter.Config.html) — 필터 설정, createFilter의 패턴 순서·UNDECIDED·자원 한도.
-- [ObjectInputStream](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputStream.html) — 생성자의 헤더 대기, setObjectInputFilter의 호출 대상·거부 조건.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 미일치 패턴의 객체 통과와 마지막 `!*`의 거부, String의 필터 미호출과 maxbytes 비강제, 버퍼의 헤더 flush 전 대기·후 생성 완료를 재현했다. 실제 소켓 양단 교착이나 악성 객체 그래프를 실행한 검증은 아니다.
-
-- 도식·표 대조(2026-10-04): [Java 25 Serialization §3](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/input.html) — 도식의 생성자 미호출 단정을 일반 Serializable의 첫 비직렬화 상위 생성자 실행으로 교정했다. record·Externalizable의 별도 생성자 경로는 기존 본문에서 구분한다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
+- [Java SE 25 ObjectInputFilter](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputFilter.html) — 클래스·그래프 제한과 필터 팩토리, 문자열·기본형 및 maxbytes 검사 범위.
+- [Java 25 Serialization §2](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/output.html) — 반복 객체 기록, reset·writeUnshared와 하위 객체의 공유.
+- [Java SE 25 ObjectInputFilter.Config](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputFilter.Config.html) — 필터 설정, createFilter의 패턴 순서·UNDECIDED·자원 한도.
+- [Java SE 25 ObjectInputStream](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputStream.html) — 생성자의 헤더 대기, setObjectInputFilter의 호출 대상·거부 조건.

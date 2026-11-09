@@ -2,8 +2,7 @@
 category: "인프라와 운영/관측성 심화"
 tags: ["operations", "sre", "sli", "slo", "error-budget", "alerting"]
 aliases: ["SLI", "SLO", "Error Budget"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # SLI SLO와 에러 버짓
@@ -113,7 +112,7 @@ SLO를 계산하기 전에 유효 요청의 경계와 실패 판정을 정한다
 
 ## 참고 자료
 
-- [Google SRE Workbook Alerting on SLOs](https://sre.google/workbook/alerting-on-slos/) — burn rate·multiwindow 계산. 확인: 2026-09-08.
-- [Google SRE Workbook Implementing SLOs](https://sre.google/workbook/implementing-slos/) — SLI 정의·사용자 관점·error budget. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [Google SRE Workbook의 low-traffic 논의](https://sre.google/workbook/alerting-on-slos/#low-traffic-services-and-error-budget-alerting)와 [Prometheus Histograms and summaries](https://prometheus.io/docs/practices/histograms/)의 집계·quantile 평균 불가·임계치 bucket을 확인했다. 유효 요청·수집 누락 구분은 측정 계약 설계 기준이며 기존 전체 계산·알림 구현을 실행 재검증한 것은 아니므로 `verified`는 유지했다.
+- [Google SRE Workbook Alerting on SLOs](https://sre.google/workbook/alerting-on-slos/) — burn rate·multiwindow 계산.
+- [Google SRE Workbook Implementing SLOs](https://sre.google/workbook/implementing-slos/) — SLI 정의·사용자 관점·error budget.
+- [Google SRE Workbook의 low-traffic 논의](https://sre.google/workbook/alerting-on-slos/#low-traffic-services-and-error-budget-alerting) — 저트래픽 서비스의 에러 버짓 알림 경계.
+- [Prometheus Histograms and summaries](https://prometheus.io/docs/practices/histograms/) — histogram 집계·quantile 평균 불가·임계치 bucket.

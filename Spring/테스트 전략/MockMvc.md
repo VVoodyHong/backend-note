@@ -1,8 +1,7 @@
 ---
 category: "Spring/테스트 전략"
 tags: ["spring", "mockmvc", "웹계층테스트", "spring-mvc", "슬라이스테스트"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # MockMvc
@@ -108,17 +107,14 @@ A. Boot 4.1.1에서는 테스트 의존성부터 확인한다. MVC 테스트 스
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 6.2–7.0, Spring Boot 3.4–4.1.
+적용 범위: Spring Framework 6.2–7.0, Boot 3.4–4.1. 보안 테스트 모듈 구성은 Boot 4.1.1·Security 7.1.1 기준.
 
 - [MockMvc overview](https://docs.spring.io/spring-framework/reference/testing/mockmvc/overview.html) — 모의 서블릿 기반 MVC 검증.
 - [MockMvc setup](https://docs.spring.io/spring-framework/reference/testing/mockmvc/hamcrest/setup.html) — standalone과 WebApplicationContext 구성.
 - [Async requests](https://docs.spring.io/spring-framework/reference/testing/mockmvc/hamcrest/async-requests.html) — 수동 asyncDispatch.
 - [MockMvcTester](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/test/web/servlet/assertj/MockMvcTester.html) — 미해결 요청 예외와 AssertJ 검증.
-- [Boot testing](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html) — WebMvcTest 범위·실제 서버 테스트.
+- [Boot testing](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html) — WebMvcTest 범위와 실제 서버 테스트.
 - [Boot 4 migration](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — MockBean 제거와 테스트 모듈 변경.
 - [MockMvcWebTestClient](https://docs.spring.io/spring-framework/reference/testing/webtestclient.html) — MockMvc와 WebFlux 바인딩 구분.
-
-부분 재검증: 2026-10-04. Boot 4.1.1·Security 7.1.1에서 보안 테스트 모듈에 따른 슬라이스 자동 설정을 확인했다. 커스텀 보안 설정이 없는 같은 `@WebMvcTest`에서 해당 모듈이 없으면 체인 0개·익명 GET 200, 추가하면 체인 1개·401을 모의 요청으로 확인했다. 운영 보안 정책이나 실제 HTTP 서버를 검증한 결과는 아니다.
-
 - [Boot 4.1.1 Security MockMvc imports](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/module/spring-boot-security-test/src/main/resources/META-INF/spring/org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc.imports) — 보안 테스트 모듈의 자동 설정 등록.
-- [Boot 4.1.1 Security test starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-security-test/build.gradle) — 테스트 스타터의 모듈 의존성.
+- [Boot 4.1.1 Security test starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-security-test/build.gradle) — 보안 테스트 스타터의 모듈 의존성.

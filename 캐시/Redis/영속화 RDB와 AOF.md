@@ -1,8 +1,7 @@
 ---
 category: "캐시/Redis"
 tags: ["cache", "redis", "영속화", "rdb", "aof"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 영속화 RDB와 AOF
@@ -110,28 +109,16 @@ Redis는 시작 시 AOF 파일의 무결성을 검사하며, 마지막 명령이
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. 영속화가 없는 원본의 자동 재시작 위험과 Redis 7.2+ WAITAOF의 연결·fsync·시간 초과·일관성 한계를 확인했다. 기존 전체 확인일은 유지한다.
-
-- [WAITAOF](https://redis.io/docs/latest/commands/waitaof/) — 로컬·복제본 fsync 확인, 반환 수 검사, 트랜잭션·스크립트·페일오버 제약.
+- [WAITAOF](https://redis.io/docs/latest/commands/waitaof/) — Redis 7.2+: 로컬·복제본 fsync 확인, 반환 수 검사, 트랜잭션·스크립트·페일오버 제약.
 - [WAIT](https://redis.io/docs/latest/commands/wait/) — 복제 확인과 영속화·강한 일관성의 차이.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [Redis Persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/) — RDB/AOF 선택·Redis 7.0+ Multi-Part AOF·복구 우선순위.
+- [Redis Persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/) — RDB/AOF 선택·복구 우선순위·전환과 rewrite 완료, Redis 7.0+ Multi-Part AOF 백업.
 - [Redis 8.4 redis.conf](https://raw.githubusercontent.com/redis/redis/8.4/redis.conf) — save 기본값·appendonly/appendfsync·preamble·truncated 설정.
 - [Redis 8.4 AOF Source](https://raw.githubusercontent.com/redis/redis/8.4/src/aof.c) — flushAppendOnlyFile의 fsync 진행 중 write 지연 동작.
 - [Redis Replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/) — 주기 RDB를 꺼도 full resync 생성 가능·diskless 옵션.
 - [Diagnosing Latency](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/) — fork·CoW·THP·AOF I/O 경합.
-
-부분 재검증: 2026-09-23. Redis 공식 영속화 문서로 AOF 전환·7.0+ 파일 백업 경계를, 8.10 명령 문서로 BACKUP 상태와 SEAL 복원 시점을 확인했다. Redis 8.10.2 릴리스도 확인했으나 기존 8.4 기본값 전체를 8.10에 대해 재검증한 것은 아니다. 실행 중인 Redis에 대한 전환·복원 시험은 하지 않았다. 기존 전체 검증일은 유지한다.
-
-- [Redis Persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/) — RDB→AOF 전환, rewrite 완료 확인, Multi-Part AOF 백업.
 - [BACKUP START](https://redis.io/docs/latest/commands/backup-start/) — Redis Open Source 8.10.0+, 임시 AOF·BASE 생성·단일 백업·빈 디렉터리.
 - [BACKUP SEAL](https://redis.io/docs/latest/commands/backup-seal/) — Redis Open Source 8.10.0+, immutable 파일 집합과 seal 시점 복원.
-- [Redis 8.10.2 release](https://github.com/redis/redis/releases/tag/8.10.2) — 2026-09-17 공개 버전 확인.
-
-부분 재검증: 2026-10-22. Redis 8.4 고정 소스·설정에서 RDB 실패에 따른 쓰기 거부 조건, PING 영향, AOF 쓰기·fsync 오류의 별도 경로를 확인했다. 디스크 장애·저장 실패는 실제 서버에서 유발하지 않았으며 기존 `verified`는 유지한다.
-
+- [Redis 8.10.2 release](https://github.com/redis/redis/releases/tag/8.10.2) — 2026-09-17 릴리스.
 - [Redis 8.4 server.c](https://github.com/redis/redis/blob/8.4/src/server.c) — `writeCommandsDeniedByDiskError()`와 쓰기/PING 거부 조건.
 - [Redis 8.4 redis.conf](https://github.com/redis/redis/blob/8.4/redis.conf) — `stop-writes-on-bgsave-error` 기본값과 저장 재개 정책.
 - [Redis BGREWRITEAOF](https://redis.io/docs/latest/commands/bgrewriteaof/) — rewrite 실패가 기존 AOF를 훼손하지 않는 경계.

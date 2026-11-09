@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "volatile", "jmm", "visibility", "concurrency"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # volatile과 가시성
@@ -107,11 +106,5 @@ A. JLS 25 §17.3은 `sleep()`과 `yield()`에 동기화 효과가 없다고 명�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [JLS 25 §17.4·17.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) — 동기화 순서·가시성·long/double 단일 접근 원자성.
+- [JLS 25 §17.4·17.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) — 동기화 순서·가시성·long/double 단일 접근 원자성과 배열 참조·원소의 구분.
 - [Java SE 25 Thread](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html) — interrupt와 블로킹 API별 반응.
-
-### 2026-09-23 부분 재검증
-
-JLS 25 §17.3–17.4의 sleep/yield와 volatile 공개 경계, 배열 요소와 참조 변수의 구분을 다시 확인했다. 기존 전체 검증일은 유지한다.

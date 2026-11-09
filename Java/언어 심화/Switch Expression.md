@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "switch", "jep", "제어문"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Switch Expression
@@ -104,15 +103,9 @@ Java 27의 기본형 확장 switch와 기본형 패턴은 정식 switch 표현�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §14.11](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11) — switch 라벨·null·지배 관계.
 - [JLS 25 §15.28](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.28) — switch expression의 값·제어 이전 제약.
 - [JEP 361](https://openjdk.org/jeps/361) — Java 14 화살표·콜론 expression과 yield.
 - [JEP 441](https://openjdk.org/jeps/441) — Java 21 null 패턴과 MatchException.
-
-부분 재검증: 2026-09-22. [Java 27 기본형 패턴·switch](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html)의 프리뷰 상태만 추가 확인했다.
-
-### 2026-11-04 부분 재검증
-
-[JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1)의 무가드·상수 true 가드의 지배 관계와 비상수 가드 구분을 확인했다. Temurin 25.0.4.1+1에서 가드가 있는 Number 뒤의 Integer 패턴 컴파일·선택과 겹치는 비상수 가드의 허용을 확인했고, 무가드 및 when true의 Number 뒤에 Integer를 둔 코드는 각각 지배 관계 컴파일 오류를 확인했다. 프리뷰 기능이나 별도 컴파일 후 계층 변경은 이번 범위 밖이므로 verified는 유지한다. 기본형 상수 switch의 default 앞 배치도 실행해 상수 case가 우선함을 확인했다.
+- [Java 27 기본형 패턴·switch](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html) — Java 27 기본형 패턴·switch의 프리뷰 상태.
+- [JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1) — 무가드·상수 true 가드의 지배 관계, 비상수 가드와 상수·default 라벨 배치.

@@ -1,8 +1,7 @@
 ---
 category: "Java/컬렉션과 스트림"
 tags: ["java", "stream-api", "functional-programming", "jcf", "병렬-처리"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Stream API
@@ -85,20 +84,11 @@ A. `Stream.toList()`는 리스트의 변경 연산을 막지만 내부 가변 �
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Stream API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html) — Java SE 25 지연·단락·연산 생략·재사용·toList.
+- [Stream API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html) — Java SE 25 지연·단락·연산 생략·재사용, toList의 null·불변성 및 종단 연산과 close의 구분.
 - [Collector API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collector.html) — Java SE 25 네 함수와 특성·결합 계약.
-- [Collectors API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html) — Java SE 25 수집 결과 계약과 중복 키.
+- [Collectors API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html) — Java SE 25 수집 결과·중복 키·null과 toUnmodifiableList·toMap·groupingBy 계약.
 - [Gatherer API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Gatherer.html) — Java SE 25 커스텀 중간 연산, Since 24.
 - [Stream 패키지 명세](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html) — Java SE 25 비간섭·상태·병렬 리듀스.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 Stream·stream 패키지·Collectors의 단락 실행, reduce/collect, close 및 목록 수집 계약을 재확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 toList의 null 허용·수정 금지, toUnmodifiableList의 null 거부, 최종 연산과 close 분리을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 Stream.flatMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#flatMap(java.util.function.Function)), [Map.merge](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#merge(K,V,java.util.function.BiFunction)), [OpenJDK jdk-25+36 Collectors](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/stream/Collectors.java) — 내부 스트림 정리, collector의 null 검사와 merge 삭제 계약. Oracle JDK 25.0.4에서 단락 처리한 내부 스트림의 close, 미소비 내부 스트림의 별도 정리 필요, toMap/groupingBy null 실패와 병합 null의 제거·재삽입을 확인했다. 병렬 I/O 부하·전체 Gatherer 계약은 재검증하지 않았다.
+- [Java SE 25 Stream.flatMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#flatMap(java.util.function.Function)) — 매핑으로 얻은 내부 스트림의 종료.
+- [Java SE 25 Map.merge](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#merge(K,V,java.util.function.BiFunction)) — 병합 결과가 null일 때 매핑 제거.
+- [OpenJDK jdk-25+36 Collectors](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/stream/Collectors.java) — collector의 null 검사와 Map.merge 사용 경로.

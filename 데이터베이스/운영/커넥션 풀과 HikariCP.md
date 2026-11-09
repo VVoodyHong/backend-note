@@ -2,8 +2,7 @@
 category: "데이터베이스/운영"
 tags: ["database", "connection-pool", "hikaricp", "spring-boot", "jdbc"]
 aliases: ["HikariCP", "Connection Pool"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 커넥션 풀과 HikariCP
@@ -98,16 +97,8 @@ A. 각 요청이 연결 하나를 보유한 채 두 번째 연결을 기다리�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [HikariCP README](https://github.com/brettwooldridge/HikariCP) — 2026-09-08 확인본: 파라미터 기본값·close·keepalive·maxLifetime.
+- [HikariCP README](https://github.com/brettwooldridge/HikariCP) — 파라미터 기본값·close·keepalive·maxLifetime.
 - [HikariCP Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing) — 경험식 및 DB 동시성에 따른 풀 산정.
 - [Spring Framework 7.0.9 LazyConnectionDataSourceProxy](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/datasource/LazyConnectionDataSourceProxy.html) — Spring 트랜잭션과 read-only 연결.
-
-부분 재검증: 2026-09-23. HikariCP 공식 FAQ의 JDBC 격리 상태 추적·복원과 다중 연결 점유에 따른 풀 대기 조건을 확인했다. FAQ는 특정 릴리스의 기본값 표가 아니므로 기존 파라미터 전체 검증일은 유지한다.
-
 - [HikariCP FAQ](https://github.com/brettwooldridge/HikariCP/wiki/FAQ) — SQL로 바꾼 격리 수준의 누출, pool-locking 산식·성능 산정과의 구분.
-
-부분 재검증: 2026-10-22. HikariCP 7.0.2의 ProxyLeakTask 소스로 경고 시점의 동작, 대여 스택, 뒤늦은 반납 로그를 확인했다. 실제 연결 누수·쿼리 취소 시험은 하지 않았으며 파라미터 기본값 전체와 기존 `verified`는 유지한다.
-
 - [HikariCP 7.0.2 ProxyLeakTask](https://github.com/brettwooldridge/HikariCP/blob/HikariCP-7.0.2/src/main/java/com/zaxxer/hikari/pool/ProxyLeakTask.java) — 생성 시 스택 확보, `run()`의 경고, `cancel()`의 반환 로그; 강제 회수·SQL 취소 기능 없음.

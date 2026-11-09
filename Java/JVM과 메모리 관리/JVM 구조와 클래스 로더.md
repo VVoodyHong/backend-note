@@ -2,8 +2,7 @@
 category: "Java/JVM과 메모리 관리"
 tags: ["java", "jvm", "classloader", "바이트코드"]
 aliases: ["JVM 아키텍처", "클래스 로딩"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JVM 구조와 클래스 로더
@@ -84,25 +83,10 @@ A. 아니다. 컴파일 타임 상수 식으로 초기화한 기본 타입·Stri
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JVMS 25 §5](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html) — 로딩·링크·타입 식별·초기화 실패.
-- [JLS 25 §12](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html) — 초기화 트리거·상수 예외·언로딩.
+- [JLS 25 §12](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html) — 초기화 트리거·상수 예외·재귀 초기화·언로딩.
 - [Java SE 25 ClassLoader](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ClassLoader.html) — 부모 위임·platform/system loader·모듈.
-- [Spring Boot LaunchedClassLoader](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/loader/launch/LaunchedClassLoader.html) — Since 3.2.0; 조회 API 4.1.1의 실행 JAR 로더 명칭.
-
-### 2026-09-23 부분 재검증
-
-JLS 25 §12.4.1–12.4.2의 상수 변수 예외·초기화 실패 상태·같은 스레드의 재귀 초기화를 확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 최초 ExceptionInInitializerError·후속 NoClassDefFoundError, 순환 초기화의 기본값 관찰을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-### 부분 재검증: 2026-10-04
-
-Java SE/JLS 25의 URLClassLoader close 이후 사용 범위, TCCL 참조·복원, 일반 클래스 언로딩의 로더 수명 조건을 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [URLClassLoader.close](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/URLClassLoader.html#close()) — 새 로딩 중단, 기존·부모 클래스 접근, 동시 로딩 중 close의 미정의 결과.
-- [Thread의 contextClassLoader](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html#setContextClassLoader(java.lang.ClassLoader)) — 현재 스레드의 컨텍스트 로더 설정.
+- [Spring Boot LaunchedClassLoader](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/loader/launch/LaunchedClassLoader.html) — Spring Boot 4.1.1 API의 실행 JAR 로더, Since 3.2.0.
+- [Java SE 25 URLClassLoader.close](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/URLClassLoader.html#close()) — 새 로딩 중단, 기존·부모 클래스 접근, 동시 로딩 중 close의 미정의 결과.
+- [Java SE 25 Thread.contextClassLoader](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html#setContextClassLoader(java.lang.ClassLoader)) — 현재 스레드의 컨텍스트 로더 설정.
 - [JLS 25 §12.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.7) — 클래스 언로딩과 defining loader의 회수 가능성.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 임시 JAR를 별도 URLClassLoader로 로드했다. close 뒤 기존 클래스 메서드·부모 클래스 접근은 성공하고 아직 읽지 않은 자체 클래스는 ClassNotFoundException으로 실패했다. 예외 발생 경로의 TCCL 복원도 확인했다. 실제 GC 언로딩 시점·WAS 재배포·Metaspace 회수량은 측정하지 않았다.

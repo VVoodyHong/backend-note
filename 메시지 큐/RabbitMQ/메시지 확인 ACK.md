@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/RabbitMQ"
 tags: ["messaging", "rabbitmq", "ack", "consumer-acknowledgement", "publisher-confirm", "reliability"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 메시지 확인 ACK
@@ -123,29 +122,15 @@ prefetch=1은 컨슈머 간 작업 분배(work distribution)가 균등해져 느
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. RabbitMQ 4.3 Consumer Acknowledgements and Publisher Confirms 문서에서 구독형 소비와 basic.get의 prefetch 적용 차이를 확인했다. 예제 전체의 실행 검증은 하지 않았고 기존 `verified`를 유지했다.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Consumer ACK and Publisher Confirms](https://www.rabbitmq.com/docs/confirms) — RabbitMQ 4.3, ACK 범위·confirm 조건·prefetch 2000.
 - [Quorum Queues](https://www.rabbitmq.com/docs/quorum-queues) — RabbitMQ 4.3, 영속화·delivery-count/nack/reject 차이.
 - [Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — RabbitMQ 4.3, x-death는 dead-letter 이력.
 - [Java Client API Guide](https://www.rabbitmq.com/client-libraries/java-api-guide) — Java 클라이언트 5.x, 채널 동시성·비동기 개별 ACK.
-- [Spring AMQP Template](https://docs.spring.io/spring-amqp/reference/amqp/template.html) — 확인일 공식 문서, confirm·returns 설정.
-- [Listener Container Configuration](https://docs.spring.io/spring-amqp/reference/amqp/containerAttributes.html) — 확인일 공식 문서, NONE/AUTO/MANUAL.
-
-부분 재검증: 2026-09-23. RabbitMQ 4.3 신뢰성 문서와 Java 클라이언트 5.x 자동 복구 문서의 발행 손실·미확인 재전송·redelivered 의미를 재검증했다. 브로커 장애 실행 시험은 하지 않았다. 기존 전체 검증일은 유지한다.
-
+- [Spring AMQP Template](https://docs.spring.io/spring-amqp/reference/amqp/template.html) — confirm·returns 설정.
+- [Listener Container Configuration](https://docs.spring.io/spring-amqp/reference/amqp/containerAttributes.html) — NONE/AUTO/MANUAL.
 - [RabbitMQ Reliability](https://www.rabbitmq.com/docs/reliability) — confirm 유실과 발행 재전송, redelivered의 전달 단위 의미.
 - [Java Client Automatic Recovery](https://www.rabbitmq.com/client-libraries/java-api-guide#recovery) — 연결 단절 중 발행을 복구 후 자동 재전송하지 않는 경계.
-
-부분 재검증: 2026-10-04. RabbitMQ 4.3 Consumers 문서에서 quorum 전용 전달 확인 timeout·기본 30분·1분 검사·채널 종료와 재큐잉 범위를 확인했다. 실제 브로커 timeout·Spring AMQP 컨테이너 복구는 시험하지 않았고 기존 `verified`는 유지한다.
-
 - [RabbitMQ 4.3 Delivery Acknowledgement Timeout](https://www.rabbitmq.com/docs/consumers#acknowledgement-timeout) — 적용 큐 종류·시간 경계·채널에 속한 다른 전달의 영향.
-
-부분 재검증: 2026-11-04. 확인일 RabbitMQ 4.4의 unroutable return→confirm ACK 순서와 Spring AMQP 4.1.2의 CorrelationData 반환 정보·future 완료 순서를 대조했다. 아웃박스 완료 판정은 이 계약에서 도출한 운영 지침이다. 브로커·Spring 콜백을 실행하지 않았으며 기존 RabbitMQ 4.3 큐별 동작의 `verified`는 유지한다.
-
 - [RabbitMQ Publisher Confirm Conditions](https://www.rabbitmq.com/docs/confirms#when-publishes-are-confirmed) — 4.4: 라우팅 실패에도 confirm하고 mandatory return을 먼저 전송.
 - [Spring AMQP Correlated Publisher Confirms and Returns](https://docs.spring.io/spring-amqp/reference/amqp/template.html#template-confirms) — 4.1.2: CorrelationData.getReturned와 ACK future 완료 순서.
-
 - [CorrelationData 4.1.2 고정 소스](https://github.com/spring-projects/spring-amqp/blob/v4.1.2/spring-rabbit/src/main/java/org/springframework/amqp/rabbit/connection/CorrelationData.java) — 실제 조회 API는 `getReturned()`이며 반환 정보는 future 완료 전에 채워진다.

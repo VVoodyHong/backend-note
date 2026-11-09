@@ -1,8 +1,7 @@
 ---
 category: "네트워크/DNS와 로드밸런싱"
 tags: ["network", "dns", "인프라", "캐싱"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # DNS 조회 과정
@@ -103,14 +102,12 @@ A. DNS 전환은 TTL 만료 전까지 구버전 IP로 향하는 요청을 제어
 
 ## 참고 자료
 
-- [RFC 1034: Domain Names](https://www.rfc-editor.org/rfc/rfc1034.html) — DNS 계층·재귀/반복 질의·CNAME·캐싱. 확인: 2026-09-08.
-- [RFC 2308: Negative Caching](https://www.rfc-editor.org/rfc/rfc2308.html) — §4–5 SOA MINIMUM과 부정 캐시. 확인: 2026-09-08.
-- [RFC 4786: Operation of Anycast Services](https://www.rfc-editor.org/rfc/rfc4786.html) — §4.4 서비스 상태와 경로 철회. 확인: 2026-09-08.
-- [Java SE 25 InetAddress](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/InetAddress.html) — 성공·실패·stale DNS 캐시 보안 속성. 확인: 2026-09-08.
-- [Route 53 Alias records](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html) — Alias와 zone apex 제약. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [RFC 8767](https://www.rfc-editor.org/rfc/rfc8767.html)의 TTL 만료 데이터 응답 조건과 [JDK 25 InetAddress](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/InetAddress.html)의 별도 이름 해석 캐시 정책을 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-09-23. [RFC 2308 §2–5](https://www.rfc-editor.org/rfc/rfc2308.html#section-2)의 NXDOMAIN/NODATA 구분, 부정 캐시 키와 SOA 기반 TTL 및 [JDK 25 InetAddress](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/InetAddress.html)의 별도 실패 조회 캐시를 확인했다. 새 레코드 생성 뒤 실패가 남는 설명은 이 캐시 계약의 운영상 결과다. 리졸버별 캐시 상한·DNSSEC 부정 증명 재사용·실제 서비스 전환은 이번 검증 범위에 포함하지 않으며 기존 전체 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [RFC 7766 §4–5](https://www.rfc-editor.org/rfc/rfc7766.html)의 UDP 잘림·TCP 재조회·양 전송 지원 요구와 [OpenJDK jdk-25+36 DnsClient](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/jdk.naming.dns/share/classes/com/sun/jndi/dns/DnsClient.java)의 truncated 응답 TCP 경로를 대조했다. JDK 25.0.4 JNDI DNS provider를 격리된 loopback 서버에 연결해 UDP TC=1 응답 후 TCP 질의 각 1회, A=127.0.0.2 수신을 실행 확인했다. OS/InetAddress 기본 리졸버·외부 DNS·DNSSEC 검증·방화벽 차단 시험으로 일반화하지 않으며 기존 캐시 계약 전체는 재검증하지 않아 `verified`를 유지했다.
+- [RFC 1034: Domain Names](https://www.rfc-editor.org/rfc/rfc1034.html) — DNS 계층·재귀/반복 질의·CNAME·캐싱.
+- [RFC 2308: Negative Caching](https://www.rfc-editor.org/rfc/rfc2308.html) — §4–5 SOA MINIMUM과 부정 캐시.
+- [RFC 4786: Operation of Anycast Services](https://www.rfc-editor.org/rfc/rfc4786.html) — §4.4 서비스 상태와 경로 철회.
+- [Java SE 25 InetAddress](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/InetAddress.html) — Java SE 25의 성공·실패·stale 이름 해석 캐시와 보안 속성.
+- [Route 53 Alias records](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html) — Alias와 zone apex 제약.
+- [RFC 8767](https://www.rfc-editor.org/rfc/rfc8767.html) — TTL 만료 데이터의 serve-stale 응답 조건.
+- [RFC 2308 §2–5](https://www.rfc-editor.org/rfc/rfc2308.html#section-2) — NXDOMAIN/NODATA 구분·부정 캐시 키·SOA 기반 TTL.
+- [RFC 7766 §4–5](https://www.rfc-editor.org/rfc/rfc7766.html) — UDP 응답 잘림·TCP 재조회·양 전송 지원 요구.
+- [OpenJDK jdk-25+36 DnsClient](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/jdk.naming.dns/share/classes/com/sun/jndi/dns/DnsClient.java) — jdk-25+36 JNDI DNS provider의 truncated 응답 TCP 처리; OS 기본 리졸버와 구분.

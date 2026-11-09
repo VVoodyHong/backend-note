@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring MVC"
 tags: ["spring", "spring-mvc", "dispatcherservlet", "handlermapping", "front-controller"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # DispatcherServlet 요청 처리 흐름
@@ -87,17 +86,14 @@ A. 동기 요청은 처리·렌더링이 끝난 뒤 완료 콜백이 실행된�
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Framework 7.0.9의 `doDispatch`, 요청 프로퍼티 바인딩과 JSON 변환 경계를 확인했다. MockMvc 3건으로 폼의 비허용 필드 제외, 같은 필드의 JSON 역직렬화, 컨트롤러 정상 반환 후 직렬화 실패 시 `postHandle` 생략·`afterCompletion` 실행을 재현했다. 실제 네트워크 커밋 시점은 이 모의 서블릿 시험의 검증 범위가 아니다.
+적용 범위: Spring Framework 6.1–7.0의 Servlet MVC 동기·비동기 처리. 구현·API 세부 조건은 7.0.9 기준.
 
-- [DispatcherServlet 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java) — `HandlerAdapter` 완료·비동기 시작 여부와 후속 콜백.
-- [DataBinder 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/validation/DataBinder.html) — `setAllowedFields`의 프로퍼티 바인딩 적용 범위.
-- [MVC InitBinder](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-initbinder.html), [RequestResponseBodyMethodProcessor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/RequestResponseBodyMethodProcessor.html) — 요청 전용 모델·허용 필드와 메시지 컨버터의 별도 처리.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 6.1~7.0의 Servlet MVC 동기·비동기 처리.
-
-- [HandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/HandlerInterceptor.html) — preHandle·postHandle·afterCompletion 조건.
-- [AsyncHandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 재디스패치·타임아웃 예외.
-- [DispatcherServlet API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html) — 전략과 no-handler 예외.
+- [DispatcherServlet API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html) — 처리 전략과 no-handler 예외.
+- [DispatcherServlet 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-webmvc/src/main/java/org/springframework/web/servlet/DispatcherServlet.java) — HandlerAdapter 완료·비동기 시작 여부와 후속 콜백.
+- [HandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/HandlerInterceptor.html) — preHandle·postHandle·afterCompletion 호출 조건.
+- [AsyncHandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 비동기 재디스패치·타임아웃 경계.
+- [AsyncHandlerInterceptor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 최초 비동기 요청과 정상 ASYNC 재디스패치의 콜백 순서.
+- [DataBinder 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/validation/DataBinder.html) — setAllowedFields의 프로퍼티 바인딩 적용 범위.
+- [MVC InitBinder](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-initbinder.html) — 요청 전용 모델과 허용 필드.
+- [RequestResponseBodyMethodProcessor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/RequestResponseBodyMethodProcessor.html) — 메시지 컨버터를 통한 요청·응답 본문 처리.
 - [MVC Validation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html) — 인자 검증 경로.
-
-부분 재검증: 2026-11-04. [AsyncHandlerInterceptor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html)의 최초 요청·정상 재디스패치 콜백을 확인했다. Framework 7.0.9 MockMvc에서 DeferredResult의 비동기 시작, 최초 preHandle→afterConcurrentHandlingStarted, 재디스패치의 preHandle→postHandle→afterCompletion, 컨트롤러 1회 호출과 최종 응답을 4조건으로 실행했다. 실제 Servlet 컨테이너의 timeout·네트워크 오류는 이번 범위 밖이며 `verified`는 유지한다.

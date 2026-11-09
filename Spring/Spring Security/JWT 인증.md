@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring Security"
 tags: ["spring", "jwt", "spring-security", "stateless-auth", "token"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JWT 인증
@@ -109,19 +108,13 @@ A. 일부 JWT 라이브러리 구현체가 header의 `alg` 값을 클라이언�
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Security 7.1.1의 기본 시간 검증기 소스와 실행으로 exp/nbf 누락 허용 및 만료 거부를 확인했다. 서명 없는 테스트 Jwt 객체를 검증기에 직접 전달한 단위 검증이며, 전체 HTTP 인증 경로를 검증한 것은 아니다.
-
-- [JwtTimestampValidator 7.1.1 소스](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-jose/src/main/java/org/springframework/security/oauth2/jwt/JwtTimestampValidator.java) — allowEmptyExpiryClaim/allowEmptyNotBeforeClaim 기본값과 시간 비교.
-
-검증일: 2026-09-08. 적용 범위: JWT RFC 7519/8725 및 Spring Security 7.1.1 Resource Server.
+적용 범위: JWT RFC 7519·8725, Spring Security 7.1.1 Resource Server.
 
 - [JWT 명세](https://www.rfc-editor.org/rfc/rfc7519.html) — JWS/JWE와 클레임.
 - [JWT 보안 권고](https://www.rfc-editor.org/rfc/rfc8725.html) — 알고리즘·발급자·수신 대상 검증.
-- [Spring Resource Server JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) — 필터 경로와 issuer/audience 설정.
-- [OAuth 보안 권고](https://www.rfc-editor.org/rfc/rfc9700.html) — refresh rotation과 재사용 탐지.
-
-부분 재검증: 2026-10-04. Security 7.1.1·JDK 25.0.4에서 임시 RSA 키로 서명한 토큰을 NimbusJwtDecoder에 전달해 JUnit 3건을 실행했다. aud 전용 검증기로 교체한 뒤 만료·다른 발급자 토큰이 통과하는 경계, 기본 검증과 exp 필수 검증을 합친 정상/거부 경로, 다른 키의 서명 거부를 확인했다. HTTP 인증 체인·원격 JWK 갱신·발급 서버는 이 시험의 범위가 아니다.
-
-- [NimbusJwtDecoder 7.1.1 소스](https://github.com/spring-projects/spring-security/blob/7.1.1/oauth2/oauth2-jose/src/main/java/org/springframework/security/oauth2/jwt/NimbusJwtDecoder.java) — 검증기 교체와 서명·클레임 처리 단계.
+- [Spring Resource Server JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) — 인증 필터 경로와 issuer/audience 설정.
+- [OAuth 보안 권고](https://www.rfc-editor.org/rfc/rfc9700.html) — refresh token 회전과 재사용 탐지.
+- [JwtTimestampValidator 7.1.1 소스](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-jose/src/main/java/org/springframework/security/oauth2/jwt/JwtTimestampValidator.java) — exp/nbf 누락 허용 기본값과 시간 비교.
+- [NimbusJwtDecoder 7.1.1 소스](https://github.com/spring-projects/spring-security/blob/7.1.1/oauth2/oauth2-jose/src/main/java/org/springframework/security/oauth2/jwt/NimbusJwtDecoder.java) — 검증기 교체 및 서명·클레임 처리 단계.
 - [JwtValidators 7.1.1 소스](https://github.com/spring-projects/spring-security/blob/7.1.1/oauth2/oauth2-jose/src/main/java/org/springframework/security/oauth2/jwt/JwtValidators.java) — 기본 검증과 발급자 검증 조합.
 - [Resource Server JWT 사용자 검증기](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#_configuring_a_custom_validator) — 기존 검증기와 추가 검증기의 명시적 결합.

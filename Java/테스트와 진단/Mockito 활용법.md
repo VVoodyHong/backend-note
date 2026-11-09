@@ -1,8 +1,7 @@
 ---
 category: "Java/테스트와 진단"
 tags: ["java", "mockito", "목킹", "단위테스트", "스텁"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Mockito 활용법
@@ -120,8 +119,6 @@ A. `MockitoExtension`이 관리하는 목 상태는 스레드 로컬이 아니�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Mockito 5.20.0 API 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/Mockito.java) — inline 기본·spy 상태 복사·인자 캡처·doReturn·Java 21+ agent 설정.
 - [MockedStatic 5.20.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/MockedStatic.java) — 생성 스레드 한정·close 수명.
 - [MockitoCore 5.20.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/internal/MockitoCore.java) — when이 직전 ongoing stubbing을 가져오는 흐름.
@@ -129,13 +126,8 @@ A. `MockitoExtension`이 관리하는 목 상태는 스레드 로컬이 아니�
 - [InjectMocks 5.20.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/InjectMocks.java) — 생성자·세터·필드 주입 선택과 실패.
 - [MockitoExtension 5.20.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-extensions/mockito-junit-jupiter/src/main/java/org/mockito/junit/jupiter/MockitoExtension.java) — STRICT_STUBS 기본값과 인스턴스 초기화.
 - [ReturnsEmptyValues 5.20.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/internal/stubbing/defaultanswers/ReturnsEmptyValues.java) — 기본 Answer의 primitive·collection·Optional 반환값.
-
-부분 확인: 2026-09-22. Mockito 5.23.0의 inline 기본값·시작 시 agent 설정·static mock의 생성 스레드 한정 계약을 공식 소스로 재확인했다. Oracle JDK 27, Mockito 5.23.0, POM 지정 Byte Buddy/agent 1.17.7, Objenesis 3.3에서 `-javaagent:mockito-core-5.23.0.jar`로 실행해 final 클래스 mock, spy의 when 부작용과 doReturn, 다른 스레드의 static mock 미적용과 close 후 원복을 확인했다. 이 실행 결과가 5.20.0 기준 본문의 모든 기능·조합에 대한 호환성 보장은 아니다.
-
 - [Mockito 5.23.0 API 소스](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/Mockito.java) — inline 기본값과 Java 21+ 시작 agent 설정.
 - [MockedStatic 5.23.0 소스](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/MockedStatic.java) — 생성 스레드 범위와 close 수명.
-- [Mockito 5.23.0 POM](https://repo.maven.apache.org/maven2/org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.pom) — 재현에 사용한 의존 버전.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Mockito 5.23.0 CapturingMatcher](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/internal/matchers/CapturingMatcher.java), [ArgumentMatchers](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/ArgumentMatchers.java) — 캡처한 참조 보관과 any/typed any/isNull/nullable의 null 계약. Mockito 5.23.0을 시작 시 javaagent로 지정한 Oracle JDK 25.0.4에서 같은 가변 객체의 두 호출이 최종 상태로 관찰됨, doAnswer의 호출 시 값 복사, null 매처 경계를 확인했다. 기존 strictness·주입·spy 전체의 재검증은 아니다.
+- [Mockito 5.23.0 POM](https://repo.maven.apache.org/maven2/org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.pom) — Mockito 5.23.0의 의존성 버전.
+- [Mockito 5.23.0 CapturingMatcher](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/internal/matchers/CapturingMatcher.java) — 인자 캡처 시 객체 참조 저장.
+- [Mockito 5.23.0 ArgumentMatchers](https://raw.githubusercontent.com/mockito/mockito/v5.23.0/mockito-core/src/main/java/org/mockito/ArgumentMatchers.java) — any·typed any·isNull·nullable의 null 계약.

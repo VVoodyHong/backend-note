@@ -2,8 +2,7 @@
 category: "캐시/Redis"
 tags: ["cache", "redis", "고가용성", "sentinel", "페일오버"]
 aliases: ["레디스 센티널"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Redis Sentinel
@@ -101,16 +100,8 @@ Sentinel과 마스터 사이의 네트워크 구간에만 일시적 장애가 �
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [High Availability with Redis Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/) — Redis Open Source Sentinel: quorum·과반수, 4개 구성, 복제본 선정 순서와 설정.
 - [Sentinel Client Specification](https://redis.io/docs/latest/develop/reference/sentinel-clients/) — Sentinel 클라이언트: 직접 연결·주소 재조회·역할 확인·알림 유실.
 - [Redis 8.4 Configuration](https://raw.githubusercontent.com/redis/redis/8.4/redis.conf) — Redis 8.4: min-replicas 설정 의미.
-
-부분 재검증: 2026-09-23. Redis Sentinel 공식 문서의 네트워크 분할 중 옛 마스터 쓰기 유실과 클라이언트 명세의 ROLE 검사·풀 연결 교체를 확인했다. 적용 범위는 Redis Open Source Sentinel이며 나머지 설정 전체는 재검증하지 않았다.
-
-- [Sentinel Client Specification: Connection Pools](https://redis.io/docs/latest/develop/reference/sentinel-clients/#connection-pools) — 재탐색·ROLE 확인과 마스터 변경 시 기존 연결 폐기. 위 Sentinel 운영 문서의 분할 시나리오도 재확인.
-
-부분 재검증: 2026-10-04. Redis Open Source 복제 공식 문서의 영속화 비활성 마스터·자동 재시작·Sentinel 감지 이전 복제본 소실 경계를 확인했다. 특정 관리형 Redis 제품의 재시작 정책을 가정하지 않는다. 실제 Sentinel failover·빈 마스터 재동기화 시험은 하지 않았고 기존 `verified`는 유지한다.
-
+- [Sentinel Client Specification: Connection Pools](https://redis.io/docs/latest/develop/reference/sentinel-clients/#connection-pools) — 재탐색·ROLE 확인과 마스터 변경 시 기존 연결 폐기.
 - [Redis Replication: Persistence Turned Off](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/#safety-of-replication-when-master-has-persistence-turned-off) — 빈 마스터 재시작과 복제본 재동기화, Sentinel이 감지하지 못할 수 있는 순서.

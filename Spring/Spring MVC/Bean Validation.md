@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring MVC"
 tags: ["spring", "spring-mvc", "bean-validation", "jakarta-validation", "hibernate-validator"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Bean Validation
@@ -113,18 +112,12 @@ A. 서비스 계층의 메서드 검증은 `MethodValidationPostProcessor`가 �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Jakarta Validation 3.1의 그룹 상속·연쇄 검증·그룹 순서를 확인했다. Hibernate Validator 9.1.3.Final에서 명시 그룹의 Default 제외/상속, 중첩 객체에 그룹 전파, 순서 지정 시 후속 그룹 중단을 3개 JUnit 테스트로 재현했다. 다른 MVC·AOP 설명의 전체 검증일은 유지한다.
+적용 범위: Jakarta Validation 3.1, Spring Framework 6.1–7.0의 MVC 검증. 고정 구현 근거는 Framework 7.0.9·Hibernate Validator 9.1.3.Final.
 
-- [Jakarta Validation 3.1 — 그룹](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-groupsequence) — §5.4 그룹·상속·순서 및 그룹 변환.
-
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 입력·반환값 검증 실패 상태 코드를 확인했다. MockMvc와 Hibernate Validator 9.1.3.Final로 입력 제약 위반 400·반환값 제약 위반 500을 실행 검사했다.
-
-- [HandlerMethodValidationException API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/method/annotation/HandlerMethodValidationException.html) — 입력 400, 반환값 500.
-
-검증일: 2026-09-08. 적용 범위: Jakarta Validation 3.1, Spring Framework 6.1~7.0의 MVC 검증.
-
-- [MVC Validation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html) — 인자 검증과 메서드 검증·BindingResult.
+- [MVC Validation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html) — 인자 검증·메서드 검증·BindingResult.
 - [Spring Bean Validation](https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html) — DI와 AOP 메서드 검증.
 - [Jakarta Validation 3.1 명세](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html) — 제약·null·객체 그래프·그룹.
-
-부분 재검증: 2026-11-04. [Jakarta Validation 3.1 §5.6.5](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-methodlevelconstraints-inheritance)와 [Hibernate Validator 9.1.3.Final 고정 문서](https://github.com/hibernate/hibernate-validator/blob/9.1.3.Final/documentation/src/main/asciidoc/reference/_ch03.adoc)의 메서드 상속 규칙을 확인했다. Temurin 25.0.4.1+1·Hibernate Validator 9.1.3.Final에서 구현체 입력 제약 추가의 선언 오류, 인터페이스 입력 제약 상속과 정상값 통과, 구현체 반환값 제약 강화의 4조건을 실행했다. 검증 API 직접 호출이며 MVC·AOP 통합이나 공급자별 규칙 완화 옵션은 실행하지 않았다. 명세 링크의 누락된 `.html`도 바로잡고 `verified`는 유지한다.
+- [Jakarta Validation 3.1 — 그룹](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-groupsequence) — 그룹 상속·순서·연쇄 검증과 그룹 변환.
+- [HandlerMethodValidationException API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/method/annotation/HandlerMethodValidationException.html) — 입력과 반환값 검증 실패의 HTTP 상태 코드.
+- [Jakarta Validation 3.1 §5.6.5](https://jakarta.ee/specifications/bean-validation/3.1/jakarta-validation-spec-3.1.html#constraintdeclarationvalidationprocess-methodlevelconstraints-inheritance) — 메서드 상속 시 입력 제약 강화 금지와 반환값 제약.
+- [Hibernate Validator 9.1.3.Final 고정 문서](https://github.com/hibernate/hibernate-validator/blob/9.1.3.Final/documentation/src/main/asciidoc/reference/_ch03.adoc) — 메서드 상속 규칙과 선언 오류.

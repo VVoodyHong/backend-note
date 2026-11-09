@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "iterator", "iterable", "컬렉션", "디자인패턴"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Iterator와 Iterable
@@ -113,16 +112,8 @@ A. 아니다. for-each 변환은 iterator를 얻어 순회할 뿐 AutoCloseable.
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Iterable API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html) — Java SE 25 iterator·spliterator 기본 계약.
-- [Iterator API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html) — Java SE 25 선택적 remove와 반복자 계약.
+- [Iterator API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html) — Java SE 25 선택적 remove와 forEachRemaining 중 변경의 미정의 경계.
 - [ArrayList API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html) — Java SE 25 fail-fast의 최선 노력 성격.
 - [CopyOnWriteArrayList API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html) — Java SE 25 스냅샷 반복자.
-- [JLS 25 §14.14.2](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.14.2) — Iterable과 배열의 향상된 for 변환.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 Iterator의 remove 상태·forEachRemaining 미정의 동작과 JLS 25 §14.14.2의 for-each 변환을 재확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 remove 호출 순서·for-each의 자원 미종료을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
+- [JLS 25 §14.14.2](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.14.2) — Iterable·배열의 향상된 for 변환과 자원 종료의 구분.

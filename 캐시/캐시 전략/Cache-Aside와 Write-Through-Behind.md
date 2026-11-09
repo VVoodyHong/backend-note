@@ -1,8 +1,7 @@
 ---
 category: "캐시/캐시 전략"
 tags: ["cache", "cache-aside", "write-through", "write-behind", "redis"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Cache-Aside와 Write-Through-Behind
@@ -138,14 +137,9 @@ Write-Through는 매 쓰기마다 캐시와 DB 쓰기가 동기적으로 이어�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Cache-Aside Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside) — 패턴·일관성·폴백 설계.
 - [Ehcache Cache Loaders and Writers](https://www.ehcache.org/documentation/3.11/writers.html) — Ehcache 3.11: write-through/behind 책임·비동기 큐.
 - [Spring Caching Annotations](https://docs.spring.io/spring-framework/reference/integration/cache/annotations.html) — Spring Framework 7.0.9: @Cacheable/@CacheEvict.
 - [Transaction-bound Events](https://docs.spring.io/spring-framework/reference/data-access/transaction/event.html) — Spring Framework: commit 경계.
 - [Transactional Outbox](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html) — after-commit 이벤트 유실과 이중 쓰기 문제.
-
-부분 재검증: 2026-10-04. Ehcache 3.11의 배치 병합·wrapper 재시도 부재·큐 역압력을 확인했다. 최종 상태와 delta 이벤트 비교는 병합 계약에서 도출한 설계 판단이다. Ehcache·Redis·DB에서 실행하지 않았으며 기존 Spring·캐시 전략 전체의 `verified`는 유지한다.
-
 - [Ehcache 3.11 Cache Loaders and Writers](https://www.ehcache.org/documentation/3.11/writers.html#write-behind) — 키별 배치 병합, CacheLoaderWriter의 재시도 책임, queue size와 backpressure.

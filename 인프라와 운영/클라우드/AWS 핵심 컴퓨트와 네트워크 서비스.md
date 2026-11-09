@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/클라우드"
 tags: ["operations", "aws", "ec2", "lambda", "elb", "컴퓨트"]
-updated: 2026-10-08
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # AWS 핵심 컴퓨트와 네트워크 서비스
@@ -85,13 +84,13 @@ A. Nitro 시스템 버전에 따른 네트워크 카드/드라이버 호환성(E
 
 ## 참고 자료
 
-- [AWS M9g/M9gd GA](https://aws.amazon.com/about-aws/whats-new/2026/06/ec2-m9g-m9gd-instances-graviton5-processors-available/) — 2026-06-10·Graviton5; 리전 가용성 별도. 확인: 2026-09-08.
-- [AWS Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) — 일반 함수 900초·계정/리전 동시성. 확인: 2026-09-08.
-- [EC2 Spot interruption notices](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html) — 2분·best effort·hibernate 예외. 확인: 2026-09-08.
-- [Lambda VPC networking](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — 공유 Hyperplane ENI. 확인: 2026-09-08.
-- [NLB Listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html) — TCP/TLS/UDP 계열 지원. 확인: 2026-09-08.
-- [ALB Target groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html) — HTTP/2·gRPC·대상 유형. 확인: 2026-09-08.
-- [CloudFront Origin restrictions](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-origin.html) — OAC 호환origin. 확인: 2026-09-08.
-- [CloudFront VPC origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html) — private origins·gRPC/리전 제약. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. [Lambda reserved concurrency](https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html)의 전용 동시성 몫·상한과 [provisioned concurrency](https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html)의 사전 초기화·버전/별칭·$LATEST 제외·초과 트래픽 on-demand 실행을 대조했다. 적용 범위는 조회일 AWS Lambda 관리형 서비스 계약이며 계정별 한도·실행 시간·EC2 세대 등 다른 스펙 전체는 재검증하지 않았다. 실제 함수 배포·부하·스로틀링 시험은 하지 않았고 `verified`는 유지했다.
+- [AWS M9g/M9gd GA](https://aws.amazon.com/about-aws/whats-new/2026/06/ec2-m9g-m9gd-instances-graviton5-processors-available/) — 2026-06-10·Graviton5; 리전 가용성 별도.
+- [AWS Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) — 일반 함수 900초·계정/리전 동시성.
+- [EC2 Spot interruption notices](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html) — 2분·best effort·hibernate 예외.
+- [Lambda VPC networking](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — 공유 Hyperplane ENI.
+- [NLB Listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html) — TCP/TLS/UDP 계열 지원.
+- [ALB Target groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html) — HTTP/2·gRPC·대상 유형.
+- [CloudFront Origin restrictions](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-origin.html) — OAC 호환origin.
+- [CloudFront VPC origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html) — private origins·gRPC/리전 제약.
+- [Lambda reserved concurrency](https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html) — 2026-10-04 Lambda 정책: reserved concurrency의 전용 몫·상한.
+- [provisioned concurrency](https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html) — 2026-10-04 Lambda 정책: 사전 초기화·버전/별칭·$LATEST 제외·초과 트래픽 on-demand 실행.

@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring Security"
 tags: ["spring", "spring-security", "method-security", "csrf", "authorization"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Method Security와 CSRF 방어
@@ -56,7 +55,7 @@ http.csrf(csrf -> csrf.spa());
 ### Q. self-invocation으로 `@PreAuthorize`가 무시되는 문제를 어떻게 근본적으로 예방하는가?
 A. AOP 프록시 기반 한계이므로 완전히 없앨 수는 없지만, 보안 검사가 필요한 메서드를 별도의 빈으로 분리해 항상 프록시를 통해 호출되도록 설계하는 것이 가장 확실하다. 또는 AspectJ 컴파일 타임 위빙으로 전환하면 self-invocation도 감지되지만, 대부분의 팀은 설계로 우회하는 쪽을 택한다. 코드 리뷰 단계에서 "같은 클래스 내부 호출인데 `@PreAuthorize`가 붙어 있는가"를 점검 항목으로 두는 것도 실무적인 완화책이다.
 ### Q. URL 기반 `authorizeHttpRequests`와 `@PreAuthorize`의 규칙이 서로 다르게 설정되어 충돌하면 어떻게 되는가?
-A. 둘은 서로 다른 필터/인터셉터 체인에서 독립적으로 평가되므로 "충돌"이라기보다 "둘 다 통과해야 최종 허용"되는 AND 관계다. 예를 들어 URL 레벨에서는 인증만 요구하고 메서드 레벨에서 `hasRole('ADMIN')`을 요구하면, 인증된 일반 사용자는 URL 필터는 통과하지만 메서드 인터셉터에서 403을 받는다. 반대로 URL 레벨에서 이미 특정 역할만 허용했다면 메서드 레벨 검사는 사실상 중복 방어선이 된다. 이 중복을 무의미하다고 보지 말고, 컨트롤러 경로가 실수로 넓게 열렸을 때의 안전망으로 유지하는 것이 좋다.
+A. 둘은 서로 다른 필터/인터셉터 체인에서 독립적으로 평가되므로 "충돌"이라기보다 "둘 다 통과해야 최종 허용"되는 AND 관계다. 예를 들어 URL 레벨에서는 인증만 요구하고 메서드 레벨에서 `hasRole('ADMIN')`을 요구하면, 인증된 일반 사용자는 URL 필터는 통과하지만 메서드 인가에서 거부된다. 이를 HTTP 403으로 변환하는 동작은 웹 보안 필터·예외 처리 구성에 달려 있으며, 비HTTP 호출에 HTTP 응답이 자동으로 생기는 것은 아니다. 반대로 URL 레벨에서 이미 특정 역할만 허용했다면 메서드 레벨 검사는 사실상 중복 방어선이 된다. 이 중복을 무의미하다고 보지 말고, 컨트롤러 경로가 실수로 넓게 열렸을 때의 안전망으로 유지하는 것이 좋다.
 ### Q. Bearer 헤더 전용 API에서 CSRF 위험이 줄어드는 전제는 무엇인가?
 A. 공격 사이트가 피해자의 토큰을 알지 못하고 대상 API가 명시적인 Bearer 헤더만 받으면 단순 폼·이미지 요청으로 인증된 상태 변경을 일으키기 어렵다. 쿠키 인증을 함께 받거나 요청 URL·헤더를 공격자 입력으로 구성하는 클라이언트 측 CSRF가 있으면 이 전제가 깨질 수 있다. 로그인·토큰 갱신 경로의 인증 방식도 각각 점검한다.
 ### Q. `CookieCsrfTokenRepository.withHttpOnlyFalse()`와 인증 쿠키의 HttpOnly는 어떻게 구분하는가?
@@ -75,21 +74,15 @@ A. 토큰 값이 실제로 필요하기 전에는 생성·저장을 미룰 수 �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Security 7.1.1·Framework 7.0.9·JDK 25.0.4에서 메서드를 각각 이름 정보 없음, `-g`만, `-parameters`, `@P`로 컴파일해 기본 MethodSecurityExpressionHandler의 표현식 평가 4건을 실행했다. 앞의 두 구성은 `#id`가 연결되지 않았고 뒤의 두 구성은 연결됐다. 모든 구성에서 `#p0`·`#a0`는 동작했다. 커스텀 이름 탐색기·Kotlin·전체 HTTP 인가 실행을 검증한 것은 아니다. 현재 가이드에 남은 debug-symbol fallback 설명보다 아래 고정 버전 구현과 실행 범위로 한정한다.
+적용 범위: Spring Security 7.1.1·Framework 7.0.9. CSRF spa()는 Security 7.0 도입.
 
-- [DefaultSecurityParameterNameDiscoverer 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/core/src/main/java/org/springframework/security/core/parameters/DefaultSecurityParameterNameDiscoverer.java) / [DefaultParameterNameDiscoverer 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-core/src/main/java/org/springframework/core/DefaultParameterNameDiscoverer.java) — 명시 애노테이션과 Java reflection 기반 이름 탐색.
-- [MethodBasedEvaluationContext 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/context/expression/MethodBasedEvaluationContext.java) — 이름·위치 기반 변수 등록.
-
-검증일: 2026-09-08. 적용 범위: Spring Security 7.1.1; CSRF spa()는 7.0 도입.
-
-- [Method Security](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html) — 인가 인터셉터·위빙·필터링.
+- [Method Security](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html) — 인가 인터셉터·위빙·필터링. 파라미터 이름 탐색은 아래 고정 소스 범위 기준.
+- [DefaultSecurityParameterNameDiscoverer 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/core/src/main/java/org/springframework/security/core/parameters/DefaultSecurityParameterNameDiscoverer.java) — 명시 애노테이션을 통한 보안 메서드 파라미터 이름 탐색.
+- [DefaultParameterNameDiscoverer 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-core/src/main/java/org/springframework/core/DefaultParameterNameDiscoverer.java) — Java reflection 기반 이름 탐색과 -parameters 조건.
+- [MethodBasedEvaluationContext 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/context/expression/MethodBasedEvaluationContext.java) — 이름·위치 기반 SpEL 변수 등록.
 - [CSRF](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html) — deferred 토큰과 SPA 구성.
-- [CsrfConfigurer API](https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/config/annotation/web/configurers/CsrfConfigurer.html) — spa()의 7.0 도입.
-
-부분 재검증: 2026-09-23. Security 7.1.1·Framework 7.0.9의 기본 메서드 보안 범위, 사후 인가와 트랜잭션 순서, CSRF 쿠키 역할을 확인했다. H2 2.4.240에서 기본 순서는 거부 후 저장 행이 남고, 트랜잭션 order=0은 롤백되는 두 경로를 실행 검증했다. 웹 응답 상태는 필터/예외 처리 구성에 달려 있으며, 비HTTP 호출에는 HTTP 403 변환이 자동 적용되지 않는다.
-
-- [AuthorizationInterceptorsOrder API](https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/authorization/method/AuthorizationInterceptorsOrder.html) — Security 7.1.1 인가 어드바이스 순서.
+- [CsrfConfigurer API](https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/config/annotation/web/configurers/CsrfConfigurer.html) — spa() API와 도입 버전.
+- [AuthorizationInterceptorsOrder API](https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/authorization/method/AuthorizationInterceptorsOrder.html) — 인가 어드바이스 순서.
 - [EnableTransactionManagement 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/transaction/annotation/EnableTransactionManagement.html) — 트랜잭션 어드바이스의 order 설정.
-- [OWASP CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) — 2026-09-23 확인, 사용자 권한과 XSS의 방어 한계.
-
+- [OWASP CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) — 사용자 권한과 XSS의 CSRF 방어 한계.
 - [EnableMethodSecurity 7.1.1 소스](https://github.com/spring-projects/spring-security/blob/7.1.1/config/src/main/java/org/springframework/security/config/annotation/method/configuration/EnableMethodSecurity.java) — 5.6 도입과 기본 활성 애노테이션.

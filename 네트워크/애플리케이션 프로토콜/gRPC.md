@@ -1,8 +1,7 @@
 ---
 category: "네트워크/애플리케이션 프로토콜"
 tags: ["network", "grpc", "protocolbuffers", "rpc", "http2", "msa"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # gRPC
@@ -111,16 +110,15 @@ gRPC는 애플리케이션 레벨의 성공/실패를 HTTP 상태 코드가 아�
 
 ## 참고 자료
 
-- [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — RPC lifecycle·message ordering·status. 확인: 2026-09-08.
-- [gRPC Deadlines](https://grpc.io/docs/guides/deadlines/) — deadline 기본 없음·언어별 전파·취소 처리. 확인: 2026-09-08.
-- [gRPC Keepalive](https://grpc.io/docs/guides/keepalive/) — HTTP/2 PING·server policy. 확인: 2026-09-08.
-- [Protocol Buffers proto3 guide](https://protobuf.dev/programming-guides/proto3/#updating) — 스키마 호환성. 확인: 2026-09-08.
-- [Spring gRPC Getting Started](https://docs.spring.io/spring-grpc/reference/getting-started.html) — 조회한 1.1.2-SNAPSHOT reference의 BindableService·channel·BOM 구성; 정식 도입은 선택한 release의 Boot 호환표 확인. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [gRPC Retry](https://grpc.io/docs/guides/retry/)의 투명 재시도·응답 헤더 이후 확정, [gRPC Flow Control](https://grpc.io/docs/guides/flow-control/)의 스트리밍 쓰기 완료·교착 조건을 확인했다. 버전 고정이 없는 공통 가이드 범위이며 언어별 API·Spring gRPC 호환 버전은 이번 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Protocol Buffers proto3 — Unknown Fields](https://protobuf.dev/programming-guides/proto3/#unknowns)의 바이너리 보존·JSON/필드별 복사 시 손실과 [ProtoJSON Format](https://protobuf.dev/programming-guides/json/)의 unknown field 기본 거부·무시 옵션·JSON wire safety를 확인했다. 적용 범위는 proto3/ProtoJSON 공식 가이드 계약이며 특정 언어 런타임의 기본 옵션 전체를 일반화하지 않는다. gRPC-Web/JSON 게이트웨이 통합과 기존 Spring gRPC 버전은 재검증하지 않아 `verified`는 유지했다.
-
-실행 확인: 2026-10-04, JDK 25.0.4와 protobuf-java/protobuf-java-util 4.33.1의 DynamicMessage·JsonFormat으로 동일 proto3 메시지의 구·신 스키마 왕복을 검증했다. 바이너리는 새 필드 값을 보존했고, 구버전 JSON 출력·필드별 복사는 잃었다. 기본 JSON 파서는 새 필드를 거부하며 `ignoringUnknownFields()`는 허용하되 보존하지 않는 것을 assertion으로 확인했다. [v33.1 JsonFormat 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/util/src/main/java/com/google/protobuf/util/JsonFormat.java)의 파서 동작도 대조했다. 이 시험은 메모리 내 메시지 변환이며 실제 RPC 전송·protoc 생성 코드·다른 언어 런타임은 실행하지 않았다.
-
-부분 재검증: 2026-11-04. [Protocol Buffers Field Presence](https://protobuf.dev/programming-guides/field_presence/)의 proto3 기본값·병합·optional 전환 계약과 [v33.1 DynamicMessage 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/core/src/main/java/com/google/protobuf/DynamicMessage.java)의 기본값 제거 조건을 확인했다. JDK 25.0.4.1과 protobuf-java 4.33.1의 DynamicMessage로 미전달/false 동등성, 암시적 기본값 병합 생략, optional false 직렬화·병합, 암시적 중계 후 존재 정보 손실을 5개 assertion으로 실행 확인했다. 실제 RPC·protoc 생성 코드·FieldMask 적용·다른 언어 런타임은 시험하지 않았으며 `verified`는 유지했다.
+- [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — RPC lifecycle·message ordering·status.
+- [gRPC Deadlines](https://grpc.io/docs/guides/deadlines/) — deadline 기본 없음·언어별 전파·취소 처리.
+- [gRPC Keepalive](https://grpc.io/docs/guides/keepalive/) — HTTP/2 PING·server policy.
+- [Protocol Buffers proto3 guide](https://protobuf.dev/programming-guides/proto3/#updating) — 스키마 호환성.
+- [Spring gRPC Getting Started](https://docs.spring.io/spring-grpc/reference/getting-started.html) — 1.1.2-SNAPSHOT reference의 BindableService·channel·BOM 구성; 정식 도입은 선택한 release의 Boot 호환표 확인.
+- [gRPC Retry](https://grpc.io/docs/guides/retry/) — gRPC 투명 재시도·응답 헤더 이후 확정.
+- [gRPC Flow Control](https://grpc.io/docs/guides/flow-control/) — 스트리밍 쓰기 완료·흐름 제어·교착 조건.
+- [Protocol Buffers proto3 — Unknown Fields](https://protobuf.dev/programming-guides/proto3/#unknowns) — proto3 unknown field의 바이너리 보존과 JSON/필드별 복사 시 손실.
+- [ProtoJSON Format](https://protobuf.dev/programming-guides/json/) — ProtoJSON의 미지 필드 기본 거부·무시 옵션·wire safety.
+- [v33.1 JsonFormat 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/util/src/main/java/com/google/protobuf/util/JsonFormat.java) — protobuf-java-util 4.33.1의 JSON 파서 미지 필드 처리; v33.1 소스.
+- [Protocol Buffers Field Presence](https://protobuf.dev/programming-guides/field_presence/) — proto3 기본값·병합·optional 전환과 존재 정보.
+- [v33.1 DynamicMessage 소스](https://raw.githubusercontent.com/protocolbuffers/protobuf/v33.1/java/core/src/main/java/com/google/protobuf/DynamicMessage.java) — protobuf-java 4.33.1 DynamicMessage의 기본값 제거 조건; v33.1 소스.

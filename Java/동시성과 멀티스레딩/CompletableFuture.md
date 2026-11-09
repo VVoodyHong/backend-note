@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "completablefuture", "async", "concurrency", "java8"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CompletableFuture
@@ -93,22 +92,10 @@ CompletableFuture<String> future = CompletableFuture
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 CompletableFuture](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — 실행 정책·allOf·whenComplete·cancel·Java 9 타임아웃.
+- [Java SE 25 CompletableFuture](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — 동기·비동기 실행 정책, allOf·handle·whenComplete·copy·cancel과 Java 9 타임아웃. defaultExecutor의 잔존 fallback 문구는 JDK 25+ 실행 정책과 구분.
 - [Java SE 25 ForkJoinPool](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html) — 공통 풀 병렬성·블로킹 보상.
-
-부분 재검증: 2026-09-22. 아래 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 27 CompletableFuture](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — allOf/anyOf의 빈 입력·실패 완료, cancel과 orTimeout. allOf의 실패 대기 및 cancel 후 공급자 계속 실행을 JDK 27에서 확인했다.
-- [Java SE 21 CompletableFuture](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)와 위 Java SE 25·27 클래스 실행 정책을 대조했다. JDK 25.0.2·27의 배포본 `src.zip`과 병렬성 1 실행으로 기본 풀 동작을 확인했다. 일부 `defaultExecutor()` 메서드 설명에 남은 이전 fallback 문구를 최신 구현 전체에 일반화하지 않는다.
+- [Java SE 27 CompletableFuture](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — allOf/anyOf의 빈 입력·실패 완료와 cancel·orTimeout.
+- [Java SE 21 CompletableFuture](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — 공통 풀 병렬성이 낮을 때의 Java 21 실행 정책.
 - [JDK 25 Release Notes: Updates to ForkJoinPool and CompletableFuture](https://www.oracle.com/java/technologies/javase/25-relnote-issues.html) — JDK-8319447의 실행 정책 변경과 적용 시작 버전.
-
-부분 재검증: 2026-10-04. 아래 적용 버전·범위만 확인했으며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 CompletableFuture](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — non-async 실행 정책, copy·orTimeout·completeOnTimeout의 대상과 예외 전파.
-- [Java SE 25 Executor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html)와 [ThreadPoolExecutor.CallerRunsPolicy](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.CallerRunsPolicy.html) — 직접 실행과 포화 시 호출 스레드 실행; Async가 스레드 전환을 보장한다는 본문·Q&A를 교정했다.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189에서 직접 실행기·CallerRunsPolicy의 실행 스레드, copy 타임아웃 격리, 원본 취소 후 복사본의 예외 상태. 실행 검사는 위 부분 재검증 범위에 한한다.
-
-- 도식·표 대조(2026-10-04): [Java SE 25 CompletableFuture.handle](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — 도식의 handle도 성공·실패 양쪽 완료에서 실행되는 범위로 맞췄다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
+- [Java SE 25 Executor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executor.html) — 직접 실행을 허용하는 Executor 계약.
+- [Java SE 25 ThreadPoolExecutor.CallerRunsPolicy](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.CallerRunsPolicy.html) — 포화 시 호출 스레드 실행과 종료 후 작업 폐기.

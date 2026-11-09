@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "enum", "디자인패턴", "타입안전성"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Enum 활용법
@@ -99,10 +98,8 @@ classDiagram
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §8.9](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9) — enum의 final/sealed 조건, 상수별 몸체와 생성 제한.
-- [Enum API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html) — Java SE 25 이름·순서·복제 제한.
+- [Enum API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html) — Java SE 25 name·toString·valueOf·getDeclaringClass·순서·복제 제한.
 - [EnumMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html) — Java SE 25 배열 표현과 제약.
 - [EnumSet API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html) — Java SE 25 비트 벡터 표현.
 - [JLS 25 §12.4](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.4) — 클래스 초기화 시점.
@@ -110,11 +107,5 @@ classDiagram
 - [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — enum 영속화의 ORDINAL/STRING 매핑.
 - [Constructor API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Constructor.html) — Java SE 25 newInstance의 enum 생성 거부.
 - [OpenJDK 25 javac Lower 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Lower.java) — 생성된 enum values 메서드의 방어적 배열 복사.
-
-### 2026-09-23 부분 재검증
-
-[Java SE 25 Enum](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html)의 getDeclaringClass·name/toString·valueOf 계약을 확인했다. OpenJDK 25.0.2+10-69에서 상수별 getClass 차이와 동일 getDeclaringClass, 표시 문자열로 valueOf 호출 시 거부를 실행 확인했다. JPA 매핑·직렬화 전체의 재검증은 아니므로 기존 verified를 유지한다.
-
-### 2026-10-22 부분 재검증
-
-[Java SE 25 EnumSet.copyOf](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html#copyOf(java.util.Collection))와 [EnumMap(Map)](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html#%3Cinit%3E(java.util.Map))의 빈 일반 컬렉션 거부와 enum 전용 컬렉션 복사 계약을 확인했다. Temurin 25.0.4.1+1에서 두 실패 경로, 비어 있는 enum 전용 컬렉션의 복사, 클래스 토큰으로 초기화한 뒤 빈 입력을 추가하는 경로를 실행했다. JPA·직렬화·values 구현 전체를 다시 검증한 것은 아니므로 verified를 유지한다.
+- [Java SE 25 EnumSet.copyOf](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html#copyOf(java.util.Collection)) — 빈 일반 컬렉션의 타입 추론 제한과 EnumSet 복사.
+- [Java SE 25 EnumMap(Map)](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html#%3Cinit%3E(java.util.Map)) — 빈 일반 Map의 타입 추론 제한과 EnumMap 복사.

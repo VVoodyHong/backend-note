@@ -1,8 +1,7 @@
 ---
 category: "Spring/설정과 확장"
 tags: ["spring", "conditional", "bean", "configuration"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Conditional과 조건부 빈
@@ -108,14 +107,11 @@ A. `ApplicationContextRunner`는 필요한 설정 클래스와 프로퍼티만 �
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0 조건 평가, Boot 4.1.1 자동 구성.
+적용 범위: Spring Framework 7.0·7.0.9의 조건 평가, Boot 4.1.1 자동 구성.
 
 - [ConditionEvaluator 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/main/spring-context/src/main/java/org/springframework/context/annotation/ConditionEvaluator.java) — 단계 추론·조건 정렬·단락 평가.
 - [ProfileCondition 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/main/spring-context/src/main/java/org/springframework/context/annotation/ProfileCondition.java) — 일반 Condition 구현.
-- [ConfigurationPhase API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ConfigurationCondition.ConfigurationPhase.html) — parse/register 차이.
+- [ConfigurationPhase API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ConfigurationCondition.ConfigurationPhase.html) — parse/register 단계 차이.
 - [자동 구성](https://docs.spring.io/spring-boot/reference/features/developing-auto-configuration.html) — 빈 조건의 권장 위치와 순서.
-
-부분 재검증: 2026-09-23. Boot 4.1.1의 OnProperty 판정과 Framework 7.0.9의 AOT 조건 평가 시점을 확인했다. AOT 빌드 시 활성화한 조건이 JVM AOT 실행 때 유지되는 것을 실행 검증했다.
-
 - [ConditionalOnProperty API](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/autoconfigure/condition/ConditionalOnProperty.html) — havingValue·matchIfMissing·다중 이름·컬렉션 속성의 한계.
-- [Framework AOT](https://docs.spring.io/spring-framework/reference/core/aot.html) — 빌드 시 빈 집합 결정.
+- [Framework AOT](https://docs.spring.io/spring-framework/reference/core/aot.html) — AOT 빌드 시 빈 집합 결정.

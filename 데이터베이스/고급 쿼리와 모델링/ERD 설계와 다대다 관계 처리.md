@@ -1,8 +1,7 @@
 ---
 category: "데이터베이스/고급 쿼리와 모델링"
 tags: ["database", "erd", "data-modeling", "many-to-many", "jpa", "schema-design"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ERD 설계와 다대다 관계 처리
@@ -112,17 +111,7 @@ Hibernate의 `@ManyToMany` 컬렉션은 기본적으로 컬렉션 전체를 하�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — 복합 PK·FK·UNIQUE·다대다 연결 테이블·삭제 정책.
-- [Hibernate ORM 7.1 Many-to-many](https://docs.hibernate.org/orm/7.1/userguide/html_single/#associations-many-to-many) — 연결 엔티티·컬렉션 삭제 시 SQL 동작.
-
-부분 재검증: 2026-09-23. PostgreSQL 18·MySQL 8.4의 FK NULL 처리·자식 인덱스 생성을 재검증했다. JPA 예제와 나머지 설계 설명의 전체 검증일은 변경하지 않았다. 기존 전체 검증일은 유지한다.
-
-- [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — FK의 nullable·MATCH FULL 경계와 자식 인덱스 비자동 생성.
+- [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — 복합 PK·FK·UNIQUE·다대다 연결 테이블·삭제 정책, nullable·MATCH FULL과 자식 인덱스 비자동 생성.
+- [Hibernate ORM 7.1 Many-to-many](https://docs.hibernate.org/orm/7.1/userguide/html_single/#associations-many-to-many) — Hibernate ORM 7.1.36.Final: 연결 엔티티·컬렉션 삭제 SQL, REMOVE/ALL 전파와 공유 엔티티 삭제 위험.
 - [MySQL 8.4 Foreign Key Constraints](https://dev.mysql.com/doc/refman/8.4/en/create-table-foreign-keys.html) — InnoDB FK의 인덱스 순서와 자동 생성.
-
-부분 재검증: 2026-11-04. Hibernate ORM 7.1.36.Final 공식 가이드에서 다대다 REMOVE의 연결 테이블 밖 삭제 전파와 공유 참조의 제약 위반을 확인했다. DB CASCADE와의 구분은 같은 가이드의 @OnDelete 설명도 대조했다. ORM·DB 삭제를 실행한 결과는 아니며 기존 전체 `verified`는 유지한다.
-
-- [Hibernate ORM 7.1 Many-to-many](https://docs.hibernate.org/orm/7.1/userguide/html_single/#associations-many-to-many) — REMOVE/ALL 전파와 공유 엔티티 삭제 위험.
-- [Hibernate ORM 7.1 @OnDelete](https://docs.hibernate.org/orm/7.1/userguide/html_single/#pc-cascade-on-delete) — FK의 DB 수준 삭제와 ORM 상태 전파의 구분.
+- [Hibernate ORM 7.1 @OnDelete](https://docs.hibernate.org/orm/7.1/userguide/html_single/#pc-cascade-on-delete) — Hibernate ORM 7.1.36.Final: FK의 DB 수준 삭제와 ORM 상태 전파의 구분.

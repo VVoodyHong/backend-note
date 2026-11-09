@@ -1,8 +1,7 @@
 ---
 category: "Spring/IoC와 DI"
 tags: ["spring", "bean", "scope", "ioc"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Bean 스코프
@@ -95,15 +94,10 @@ DI 컨테이너는 싱글톤 Bean을 초기화할 때 딱 한 번 의존성 그�
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 prototype scoped proxy는 위임 호출마다 새 대상을 얻는다는 계약을 확인하고, 작업 단위 ObjectProvider 조회와 구분했다. JDK 25에서 prototype의 호출 간 상태 단절, 직접 획득한 객체의 상태 유지, final 구현체에 대한 인터페이스 프록시를 실행 확인했다.
+적용 범위: Spring Framework 7.0·7.0.9. request/session/application은 Servlet 웹 컨텍스트 기준.
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0; request/session/application은 Servlet 웹 컨텍스트 기준.
-
-- [Bean Scopes](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html) — Bean 정의별 singleton, prototype 생명주기, 웹 스코프 및 scoped proxy.
+- [Bean Scopes](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html) — Bean 정의별 singleton·prototype 생명주기·웹 스코프·scoped proxy의 호출별 대상 조회.
 - [Lookup API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Lookup.html) — 메서드 주입의 구현과 final/@Bean 제한.
-
-부분 재검증: 2026-10-04. Java SE 25의 ThreadLocal get/set/remove 계약과 같은 날 대표 노트의 중첩 복원 실행 결과를 반영했다. 빈 스코프의 모든 설명을 재검증한 것은 아니다.
-
-- [ThreadLocal Java SE 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — 현재 스레드 값의 교체·삭제 범위.
-
-부분 재검증: 2026-11-04. [ObjectProvider 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/ObjectProvider.html)와 [DefaultListableBeanFactory 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-beans/src/main/java/org/springframework/beans/factory/support/DefaultListableBeanFactory.java)의 후보 선택을 대조했다. Temurin 25.0.4.1+1·Framework 7.0.9에서 후보 부재·일반 중복의 getIfAvailable 예외/getIfUnique null·단일 Primary 선택 4조건과, 두 Primary 충돌 시 팩토리 직접 조회/주입된 provider 각각의 getIfUnique·supplier형 예외 4조건을 실행했다. 웹 스코프와 전체 생명주기는 이번 실행 범위 밖이며 `verified`는 유지한다.
+- [ThreadLocal Java SE 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — Java SE 25의 현재 스레드 값 교체·삭제 범위.
+- [ObjectProvider 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/ObjectProvider.html) — 후보 부재·복수 후보·getIfAvailable/getIfUnique와 공급자 오버로드.
+- [DefaultListableBeanFactory 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-beans/src/main/java/org/springframework/beans/factory/support/DefaultListableBeanFactory.java) — Primary 후보 선택과 중복 Primary 선언의 예외.

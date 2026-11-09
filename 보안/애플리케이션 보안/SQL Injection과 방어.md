@@ -1,8 +1,7 @@
 ---
 category: "보안/애플리케이션 보안"
 tags: ["security", "sqlinjection", "시큐어코딩", "jpa"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # SQL Injection과 방어
@@ -122,10 +121,8 @@ A. 아니다. WAF는 알려진 패턴 등을 바탕으로 HTTP 요청을 검사�
 
 ## 참고 자료
 
-- [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) — 파라미터 바인딩·allowlist·stored procedure·least privilege. 확인: 2026-09-08.
-- [Java SE 25 PreparedStatement](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/PreparedStatement.html) — JDBC 파라미터 API. 확인: 2026-09-08.
-- [MyBatis 3 Mapper XML](https://mybatis.org/mybatis-3/sqlmap-xml.html) — #{}/ ${} 처리. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)의 바인딩·동적 식별자 allowlist·최소 권한과 정상 파라미터를 이용한 무단 접근 구분을 확인했다. 저장 후 재사용은 같은 분리 원칙을 적용한 사례다. JDBC·MyBatis 개별 버전 전체는 이번 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-22. Context7의 Querydsl 공식 위키에서 JPA/SQL 직렬화 차이를 확인하고, [Querydsl 5.1.0 Expressions](https://github.com/querydsl/querydsl/blob/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/types/dsl/Expressions.java)와 [SerializerBase.handleTemplate](https://github.com/querydsl/querydsl/blob/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/support/SerializerBase.java)의 템플릿 문자열·표현식·상수 처리 경로를 대조했다. [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)의 값 바인딩·구문 허용목록 원칙에 맞춰 방어 범위를 교정했다. 실제 DB·Querydsl 실행 및 다른 ORM 버전 전체는 재검증하지 않아 `verified`를 유지했다.
+- [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) — 값 바인딩·동적 구문 allowlist·stored procedure·최소 권한; 정상 파라미터를 이용한 무단 접근과 구분.
+- [Java SE 25 PreparedStatement](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/PreparedStatement.html) — JDBC 파라미터 API.
+- [MyBatis 3 Mapper XML](https://mybatis.org/mybatis-3/sqlmap-xml.html) — #{}/ ${} 처리.
+- [Querydsl 5.1.0 Expressions](https://github.com/querydsl/querydsl/blob/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/types/dsl/Expressions.java) — Querydsl 5.1.0의 템플릿 문자열·표현식·상수 생성.
+- [SerializerBase.handleTemplate](https://github.com/querydsl/querydsl/blob/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/support/SerializerBase.java) — Querydsl 5.1.0 템플릿 직렬화의 표현식·상수 처리.

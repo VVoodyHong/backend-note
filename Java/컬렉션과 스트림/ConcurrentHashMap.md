@@ -1,8 +1,7 @@
 ---
 category: "Java/컬렉션과 스트림"
 tags: ["java", "concurrenthashmap", "concurrency", "멀티스레드", "jcf"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ConcurrentHashMap
@@ -82,17 +81,6 @@ A. 아니다. 매핑 교체가 일어나지 않아도 콜백이 기존 값 객�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [ConcurrentHashMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html) — Java SE 25 null·happens-before·원자적 콜백·크기 집계.
+- [ConcurrentHashMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html) — Java SE 25 null·happens-before·원자적 콜백·크기 집계와 콜백 실패 경계.
 - [OpenJDK 25 ConcurrentHashMap 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/concurrent/ConcurrentHashMap.java) — CAS·helpTransfer·TreeBin 읽기 경로·count 집계.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 ConcurrentHashMap의 computeIfAbsent·compute 원자성, null·예외 반환 및 콜백의 맵 수정 금지 범위를 확인했다. 가변 값 롤백 부재는 매핑 계약과 객체 변경을 구분한 예제다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 null 계산의 재호출, 기존 키의 콜백 생략, 예외 뒤 가변 값 변경 유지을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 ConcurrentHashMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html#remove(java.lang.Object,java.lang.Object)) — 조건부 remove의 equals 기반 원자성 및 LongAdder 빈도 맵 패턴. Oracle JDK 25.0.4에서 옛 Future 완료가 교체 값을 지우는 실행 순서, 조건부 remove의 새 값 보존, 제거된 LongAdder의 독립 증가를 확인했다. 스트레스 테스트나 외부 작업의 exactly-once 검증은 아니다.
+- [Java SE 25 ConcurrentHashMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html#remove(java.lang.Object,java.lang.Object)) — 조건부 remove의 equals 기반 원자성 및 LongAdder 빈도 맵 패턴.

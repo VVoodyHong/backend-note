@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "forkjoin", "parallelism", "concurrency", "work-stealing"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Fork-Join 프레임워크
@@ -102,23 +101,10 @@ A. Java SE 25의 ForkJoinTask 기본 취소 구현은 `mayInterruptIfRunning` �
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 ForkJoinPool](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html) — work-stealing·목표 병렬성·ManagedBlocker·asyncMode.
+- [Java SE 25 ForkJoinPool](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html) — work-stealing·외부 제출 작업·목표 병렬성·ManagedBlocker·asyncMode.
 - [Java SE 25 ForkJoinTask](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinTask.html) — fork/join 도움 실행·invokeAll·의존 관계.
 - [Java SE 25 RecursiveTask](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/RecursiveTask.html) — 분할 예제와 compute 계약.
-
-부분 재검증: 2026-09-22. 아래 범위를 추가 확인했으며, 그 밖의 본문은 기존 검증 날짜를 유지한다.
-
-- [Java SE 27 ForkJoinTask](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/ForkJoinTask.html) — fork·join 의존 관계, 안쪽 작업부터 join하는 순서. 질문과 답변이 서로 다른 실행 순서를 설명하던 부분을 수정했다.
-
-- [Java SE 27 Stream 패키지](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/stream/package-summary.html) — 병렬 실행·스레드 선택 계약. 2026-09-22에 커스텀 풀 내부의 종단 연산을 Oracle JDK 27에서 실행하고 ForkJoinTask.getPool()로 확인했다. 관찰된 구현 동작과 API 보장을 구분했다.
-
-### 2026-09-23 부분 재검증
-
-- [Java SE 25 ForkJoinTask.cancel](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinTask.html#cancel(boolean)) 및 같은 문서의 adaptInterruptible — 기본 취소에서 인터럽트 인자를 무시하는 계약과 인터럽트 가능한 어댑터의 차이·도입 버전을 확인했다. OpenJDK 25.0.2+10-69에서 실행 중 RecursiveTask가 취소 상태가 된 후에도 대기하다 별도 신호로 종료하는 사례와 adaptInterruptible의 인터럽트를 재현했다.
-- [OpenJDK jdk-25-ga ForkJoinPool](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/concurrent/ForkJoinPool.java) — WorkQueue의 push/pop은 top, steal/poll은 base를 사용하고 FIFO 모드는 로컬 poll을 사용하는 소스에 맞춰 큐 방향 용어를 교정했다. 나머지 성능·컨테이너·Stream 설명은 기존 검증 날짜를 유지한다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 ForkJoinPool](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)의 외부 제출 작업에 대한 work-stealing과 Runnable/Callable 지원을 확인했다(Context7 공식 API 검색 병행). Temurin 25.0.4.1+1에서 Runnable 두 개의 서로 다른 워커 실행과 제출된 Runnable 내부의 하위 작업 fork/join을 확인했다. 이는 처리량 비교나 코어 수에 따른 선형 확장성 검증이 아니며, 공통 풀 취소·병렬 스트림·ManagedBlocker 전체는 재검증하지 않아 verified를 유지한다.
+- [Java SE 27 ForkJoinTask](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/ForkJoinTask.html) — fork·join 의존 관계, 안쪽 작업부터 join하는 순서.
+- [Java SE 27 Stream 패키지](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/stream/package-summary.html) — 병렬 스트림의 실행·스레드 선택 계약; 특정 ForkJoinPool 선택은 API 보장과 구분.
+- [Java SE 25 ForkJoinTask.cancel](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinTask.html#cancel(boolean)) — 기본 취소에서 인터럽트 인자를 무시하는 계약과 인터럽트 가능한 어댑터의 차이·도입 버전.
+- [OpenJDK jdk-25-ga ForkJoinPool](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/concurrent/ForkJoinPool.java) — WorkQueue의 top push/pop, base steal/poll 및 FIFO 로컬 poll.

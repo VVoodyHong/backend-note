@@ -2,8 +2,7 @@
 category: "Spring/웹 심화"
 tags: ["spring", "spring-webflux", "reactive-streams", "project-reactor", "netty"]
 aliases: ["WebFlux", "스프링 웹플럭스"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring WebFlux와 리액티브 스트림
@@ -99,15 +98,13 @@ A. 아니다. 가상 스레드는 블로킹 호출로 인한 스레드 점유 �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Reactor Core 3.8.7로 캐시 뒤 재시도의 원본 호출 1회, 재시도 뒤 캐시의 원본 호출 2회 후 성공 재사용, 서로 다른 테넌트 Context가 같은 캐시 결과를 받는 경우를 3건 실행했다. Reactor 연산자 경계의 시험이며 실제 WebFlux 서버·인증 필터를 실행한 검증은 아니다.
-
-- [Mono 3.8.7 API](https://projectreactor.io/docs/core/3.8.7/api/reactor/core/publisher/Mono.html) — `cache`, 신호별 TTL, `retry`, `deferContextual` 계약. 테넌트 공유 위험은 이 계약을 조합한 실행 사례다.
-- [WebFlux 동시성 모델](https://docs.spring.io/spring-framework/reference/web/webflux/new-framework.html) / [Boot 가상 스레드](https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads) — 2026-10-04 표 대조: Framework 7.0·Boot 4.1의 MVC 비동기·가상 스레드 선택과 블로킹 라이브러리 격리. 서버 성능 비교를 실행한 것은 아니다.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0 WebFlux, Reactor Core 3.8 및 Reactive Streams.
+적용 범위: Spring Framework 7.0 WebFlux, Reactor Core 3.8·3.8.7 및 Reactive Streams.
 
 - [Spring WebFlux](https://docs.spring.io/spring-framework/reference/web/webflux.html) — 리액티브 서버 스택.
+- [WebFlux 동시성 모델](https://docs.spring.io/spring-framework/reference/web/webflux/new-framework.html) — 동시성 모델과 블로킹 라이브러리 격리.
+- [Boot 가상 스레드](https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads) — Boot 4.1의 가상 스레드 선택.
 - [Hot and Cold](https://projectreactor.io/docs/core/release/reference/advancedFeatures/reactor-hotCold.html) — just·defer와 구독 시점.
 - [Mono API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) — zip의 empty/error 취소.
-- [WebFlux Multipart](https://docs.spring.io/spring-framework/reference/web/webflux/controller/ann-methods/multipart-forms.html) — 스트림과 버퍼 처리.
+- [Mono 3.8.7 API](https://projectreactor.io/docs/core/3.8.7/api/reactor/core/publisher/Mono.html) — cache·신호별 TTL·retry·deferContextual 계약과 조합 범위.
+- [WebFlux Multipart](https://docs.spring.io/spring-framework/reference/web/webflux/controller/ann-methods/multipart-forms.html) — 멀티파트 스트림과 버퍼 처리.
 - [Reactor debugging](https://projectreactor.io/docs/core/release/reference/debugging.html) — Hooks·checkpoint·운영용 agent 차이.

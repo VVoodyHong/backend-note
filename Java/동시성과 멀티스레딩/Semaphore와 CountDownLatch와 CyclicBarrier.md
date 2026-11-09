@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "semaphore", "countdownlatch", "cyclicbarrier", "concurrency"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Semaphore와 CountDownLatch와 CyclicBarrier
@@ -112,17 +111,8 @@ barrierAction은 배리어를 채운 "마지막으로 도착한 스레드"가 �
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 Semaphore](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html) — permit·소유권 없음·공정성 예외.
+- [Java SE 25 Semaphore](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html) — permit·소유권 없음·획득 실패와 untimed tryAcquire의 공정성 예외.
 - [Java SE 25 CountDownLatch](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CountDownLatch.html) — 일회성·완료 신호·happens-before.
 - [Java SE 25 CyclicBarrier](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CyclicBarrier.html) — broken 원인·예외 종류·barrierAction.
-
-부분 재검증: 2026-09-22. [Java SE 27 CyclicBarrier](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/CyclicBarrier.html#reset())의 reset 계약과 Oracle JDK 27 소스의 breakBarrier → nextGeneration 순서를 확인했다. 실행 검사에서 기존 대기자는 BrokenBarrierException을 받고 새 세대는 정상 통과했다. Semaphore·CountDownLatch 전체 재검증은 아니다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전·범위만 확인했으며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 Semaphore](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html) — acquire 실패와 반환, release 소유권 없음, 시간 제한 없는 tryAcquire의 공정성 예외와 시간 제한형 대안.
-- [Java SE 25 CompletableFuture](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — cancel·orTimeout의 결과 완료. 허가증을 실제 자원 사용 종료에 연결해야 한다는 설명은 두 계약을 함께 적용한 운영 판단이다.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189에서 미획득 후 release의 허가증 증가, CompletableFuture 취소 콜백의 반환과 본문 종료 시점 차이. 실행 검사는 위 부분 재검증 범위에 한한다.
+- [Java SE 27 CyclicBarrier](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/CyclicBarrier.html#reset()) — reset 시 대기자의 BrokenBarrierException과 장벽 재사용.
+- [Java SE 25 CompletableFuture](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html) — cancel·orTimeout의 결과 완료와 실제 작업 종료의 구분.

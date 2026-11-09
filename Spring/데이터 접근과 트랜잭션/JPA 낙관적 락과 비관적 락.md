@@ -2,8 +2,7 @@
 category: "Spring/데이터 접근과 트랜잭션"
 tags: ["spring", "jpa", "hibernate", "동시성", "transaction"]
 aliases: ["JPA Lock", "Optimistic Locking", "Pessimistic Locking"]
-updated: 2026-11-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # JPA 낙관적 락과 비관적 락
@@ -100,9 +99,9 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
 ## 참고 자료
 
-검증일: 2026-09-22. 적용 범위: Jakarta Persistence 3.2의 잠금 계약, Spring Data JPA 4.1 계열의 `@Lock`. Hibernate 7.1.0.Final/H2 2.3.232에서 두 EntityManager의 버전 충돌, 벌크 갱신의 버전 검사·컨텍스트 동기화 부재, 관리 엔티티의 비관적 잠금과 refresh의 차이를 실행 확인했다. PostgreSQL/MySQL의 잠금 SQL·대기 시간은 이 실험의 검증 범위가 아니다.
+적용 범위: Jakarta Persistence 3.2, Spring Data JPA 4.1의 @Lock, Hibernate ORM 7.1.
 
-- [Jakarta Persistence 3.2 §3.5·§4.11](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 버전 검사, 잠금 범위·예외·timeout 힌트, 벌크 갱신.
+- [Jakarta Persistence 3.2 §3.5·§4.11](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 버전 검사·잠금 범위·예외·timeout 힌트·벌크 갱신.
 - [Spring Data JPA Locking](https://docs.spring.io/spring-data/jpa/reference/jpa/locking.html) — 조회 메서드와 CRUD 재정의의 잠금 모드.
 - [Spring Data JPA Transactionality](https://docs.spring.io/spring-data/jpa/reference/jpa/transactions.html) — 선언한 쿼리 메서드와 서비스 트랜잭션 경계.
 - [Hibernate ORM 7.1 Locking](https://docs.hibernate.org/orm/7.1/userguide/html_single/Hibernate_User_Guide.html#locking) — 낙관적·비관적 잠금과 provider 구현.

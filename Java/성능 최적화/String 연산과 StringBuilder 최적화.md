@@ -1,8 +1,7 @@
 ---
 category: "Java/성능 최적화"
 tags: ["java", "string", "stringbuilder", "메모리최적화", "jep280"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # String 연산과 StringBuilder 최적화
@@ -88,22 +87,10 @@ A. 각 호출의 동기화와 호출 묶음은 다르다. `append(prefix).append
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JEP 280](https://openjdk.org/jeps/280) — Java 9 javac의 invokedynamic 기반 연결.
 - [JEP 254](https://openjdk.org/jeps/254) — Java 9 Compact Strings와 관련 클래스 표현.
 - [Java SE 25 StringBuilder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html) — 용량·성장·스레드 안전성과 append 계약.
 - [SLF4J Manual](https://www.slf4j.org/manual.html) — 2.x fluent API Supplier 지연 인자.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 StringBuilder·StringBuffer API, OpenJDK jdk-25-ga AbstractStringBuilder.setLength 구현과 JEP 280의 javac 적용 범위를 확인했다. 기존 전체 검증일은 유지한다.
-
 - [OpenJDK jdk-25-ga AbstractStringBuilder](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/lang/AbstractStringBuilder.java) — setLength와 버퍼 유지.
-- [Java SE 25 StringBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuffer.html) — 메서드 수준 동기화.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 setLength(0) 이후 capacity 유지을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 StringBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuffer.html)의 필요한 연산 동기화·입력 시퀀스 보호 책임과 [OpenJDK jdk-25+36 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/lang/StringBuffer.java)의 insert 위임 경로를 확인했다. Temurin 25.0.4.1+1에서 insert(int,int)와 append(int)의 synchronized 선언 차이, 사용자 정의 CharSequence를 읽을 때 대상 모니터만 보유함을 확인했다. 실제 동시 변경 경합·JIT 락 제거·문자열 연결 성능은 측정하지 않아 verified를 유지한다.
+- [Java SE 25 StringBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuffer.html) — 필요한 연산의 동기화와 호출자가 보호해야 하는 입력 객체.
+- [OpenJDK jdk-25+36 StringBuffer](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/lang/StringBuffer.java) — insert의 동기화 메서드 위임과 append 경로.

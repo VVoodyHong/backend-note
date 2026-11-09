@@ -2,8 +2,7 @@
 category: "Spring/데이터 접근과 트랜잭션"
 tags: ["spring", "jpa", "hibernate", "영속성컨텍스트", "orm"]
 aliases: ["Persistence Context", "영속성 컨텍스트"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JPA 영속성 컨텍스트
@@ -64,7 +63,7 @@ Jakarta Persistence 3.2에서 트랜잭션 범위 컨텍스트와 해당 트랜�
 
 버전 값과 생성된 식별자도 DB 상태와 어긋날 수 있다. 예를 들어 INSERT를 flush한 뒤 롤백하면 객체에는 ID가 남아 있어도 해당 행은 커밋되지 않았다. 실패한 객체를 그대로 `merge()`하면 새 요청과 같은 방식으로 재사용할 수 있다는 보장도 없다. 재시도는 새 트랜잭션·정상 컨텍스트에서 DB 상태를 다시 읽고 원래의 업무 명령을 재평가한다. 실패한 엔티티 객체 자체를 재시도 입력이나 성공 응답으로 사용하지 않는다.
 
-JDBC 세이브포인트(Savepoint)까지만 되돌리는 경우도 DB 상태와 관리 객체는 따로 움직인다. Hibernate 7.4.5.Final의 버전 필드 없는 일반 엔티티에서 변경·flush 후 JDBC savepoint로 롤백하면 DB는 복구되어도 객체 필드는 변경값이었다. 이어 다른 필드를 수정해 전체 컬럼 UPDATE가 발생하자 되돌렸던 값까지 다시 저장됐다. 이 결과는 해당 매핑의 재현 사례이며 모든 매핑의 SQL이 같다는 뜻은 아니다. JPA 작업을 JDBC 부분 롤백으로 감싸 컨텍스트도 복구됐다고 가정하지 않는다. Spring NESTED의 지원 조건은 [[트랜잭션 전파와 격리]]에서 구분한다.
+JDBC 세이브포인트(Savepoint)까지만 되돌리는 경우도 DB 상태와 관리 객체는 따로 움직인다. Framework 7.0.9·Hibernate 7.4.5.Final·pgJDBC 42.7.13·PostgreSQL 18.6에서 `@Version`·`@DynamicUpdate` 없는 엔티티를 변경·flush 후 직접 만든 JDBC savepoint로 롤백하면 DB는 복구되어도 객체 필드는 변경값이었다. 이어 다른 필드를 수정해 전체 컬럼 UPDATE가 발생하자 되돌렸던 값까지 다시 저장됐다. 이 결과는 해당 매핑의 재현 사례이며 모든 매핑의 SQL이 같다는 뜻은 아니다. JPA 작업을 JDBC 부분 롤백으로 감싸 컨텍스트도 복구됐다고 가정하지 않는다. Spring NESTED의 지원 조건은 [[트랜잭션 전파와 격리]]에서 구분한다.
 
 ## 실무 관점
 - **OSIV(Open Session In View)**: 영속성 컨텍스트를 뷰 렌더링까지 열어두는 옵션(`spring.jpa.open-in-view`, Spring Boot 기본값 `true`이며 기동 시 경고 로그가 뜬다). 컨트롤러/뷰 계층에서 지연 로딩을 편하게 쓸 수 있지만, DB 커넥션을 오래 점유해 커넥션 풀 고갈 위험이 있다. API 서버는 보통 `false`로 끄고 서비스 계층에서 필요한 데이터를 전부 로딩하도록 설계하는 것을 권장한다.
@@ -100,24 +99,13 @@ AUTO 모드의 쿼리가 변경된 데이터의 영향을 받으면 provider가 
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Jakarta Persistence 3.2의 벌크 연산·컨텍스트 경계, Spring Data JPA의 Modifying 옵션을 확인했다. Hibernate 7.1.0.Final/H2 2.3.232에서 벌크 갱신 후 관리 객체·버전이 그대로인 점과 clear에 의한 미반영 변경 유실을 실행 확인했다. 이 실행은 다른 DB의 잠금·격리 검증을 대신하지 않는다.
+적용 범위: Jakarta Persistence 3.2, Hibernate ORM 7.1 문서 및 Spring의 트랜잭션 범위 EntityManager. JDBC savepoint 재현 예시는 본문에 명시한 Framework 7.0.9·Hibernate 7.4.5.Final 환경으로 한정.
 
-- [Spring Data JPA Modifying API](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/Modifying.html) — flushAutomatically/clearAutomatically의 기본값과 동작.
-
-검증일: 2026-09-08. 적용 범위: Jakarta Persistence 3.2, Hibernate ORM 7.1, Spring의 트랜잭션 범위 EntityManager 사용.
-
-- [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 3.3 엔티티 생명주기·merge, 3.11 flush, 7장 EntityManager 범위.
-- [Hibernate ORM User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — 영속 상태, flushing, 식별자 생성과 배치.
+- [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 엔티티 생명주기·merge·flush·EntityManager 범위.
+- [Hibernate ORM User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — 영속 상태·flushing·식별자 생성과 배치.
 - [JpaTransactionManager API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/orm/jpa/JpaTransactionManager.html) — EntityManager 바인딩과 트랜잭션 통합.
 - [Boot properties](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — open-in-view 기본값.
-
-부분 재검증: 2026-09-23. Jakarta Persistence 공식 버전 목록에서 3.2와 개발 중인 4.0을 구분하고, 3.2 §3.4.3의 rollback·detach·Java 상태·생성 값 재사용 제한을 대조했다. 아래 H2 실행은 명세 중 일부 사례를 확인한 것이며 PostgreSQL/MySQL은 실행하지 않았다. 기존 전체 `verified`는 유지한다.
-
-- [Jakarta Persistence 버전 목록](https://jakarta.ee/specifications/persistence/) — 확인일 3.2 정식 명세와 4.0 개발 상태.
+- [Spring Data JPA Modifying API](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/Modifying.html) — flushAutomatically/clearAutomatically의 기본값과 동작.
+- [Jakarta Persistence 버전 목록](https://jakarta.ee/specifications/persistence/) — 버전별 명세와 개발 중 명세의 구분.
 - [Jakarta Persistence 3.2 §3.4.3](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html#a2049) — 롤백 후 분리, 객체 값·버전·생성 식별자의 불일치와 merge 재사용 경계.
-
-추가 실행 확인: 2026-09-23. Hibernate ORM 7.4.5.Final·H2 2.4.240에서 변경 엔티티를 flush 후 rollback해도 Java 필드는 변경값을 유지하고 새 세션의 DB 조회는 원래 값을 반환했다. IDENTITY 신규 엔티티는 rollback 후 ID가 남았지만 해당 행은 DB에 없었다. 버전 값 불일치·merge 실패·rollback 자체의 detach 시점은 이 실행에서 검증하지 않았다.
-
-부분 재검증: 2026-10-04. Framework 7.0.9의 JpaTransactionManager 경계 안에서 Hibernate 7.4.5.Final·pgJDBC 42.7.13·PostgreSQL 18.6으로 JDBC savepoint를 직접 만들고 위 부분 롤백·관리 인스턴스 유지·다른 필드 변경 후 재저장 사례를 실행했다. `@Version`·`@DynamicUpdate` 없는 엔티티이며, Spring NESTED가 지원되어 실행된 시험은 아니다.
-
 - [JpaTransactionManager 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/orm/jpa/JpaTransactionManager.html) — JDBC savepoint와 JPA 컨텍스트의 서로 다른 범위.

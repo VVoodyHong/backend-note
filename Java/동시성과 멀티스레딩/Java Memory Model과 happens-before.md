@@ -2,8 +2,7 @@
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "jmm", "happens-before", "concurrency", "memory-model"]
 aliases: ["JMM", "Java Memory Model", "자바 메모리 모델", "happens-before"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Java Memory Model과 happens-before
@@ -97,11 +96,5 @@ A. 아니다. 읽는 쪽은 첫 필드의 이전 값과 둘째 필드의 새 값
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [JLS 25 §17](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) — happens-before·SC-for-DRF·final 필드·volatile.
+- [JLS 25 §17](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) — happens-before·SC-for-DRF·final·volatile·스레드 종료 감지와 복합 연산의 원자성 경계.
 - [Java SE 25 java.util.concurrent](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html) — 작업 제출·결과 회수·컬렉션의 메모리 일관성 계약.
-
-### 2026-09-23 부분 재검증
-
-JLS 25 §17.4.3–17.4.5의 SC-for-DRF, 종료 감지, 복합 연산 원자성의 한계를 다시 확인했다. 기존 전체 검증일은 유지한다.

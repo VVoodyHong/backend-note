@@ -1,8 +1,7 @@
 ---
 category: "캐시/Redis"
 tags: ["cache", "redis", "pubsub", "streams", "메시징"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Redis Pub-Sub와 Streams
@@ -105,24 +104,12 @@ Sentinel 구성에서는 일반 Pub-Sub이 마스터를 통해 전파되므로 �
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Redis Pub/Sub](https://redis.io/docs/latest/develop/pubsub/) — Pub/Sub at-most-once, 패턴·출력 버퍼, Redis 7.0+ sharded Pub/Sub.
-- [XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/) — Redis 5.0+ 그룹·PEL·NOACK; 8.4 CLAIM 옵션 확인.
+- [XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/) — Redis 5.0+ 그룹·PEL·NOACK, 8.4 CLAIM, 8.10 MAXCOUNT/MAXSIZE 누적 제한과 새 항목·PEL 읽기 적용.
 - [XAUTOCLAIM](https://redis.io/docs/latest/commands/xautoclaim/) — Redis 6.2+ pending 회수와 중복 처리 가능성.
 - [XTRIM](https://redis.io/docs/latest/commands/xtrim/) — Redis 8.2+ KEEPREF/DELREF/ACKED와 approximate trim.
 - [Redis Persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/) — Redis Open Source: Streams도 RDB/AOF 설정의 손실 경계 적용.
-
-부분 재검증: 2026-09-23. Redis 8.4 범위의 그룹 시작 위치·pending 복구·XAUTOCLAIM 커서 의미를 확인했다. 최신 명령 페이지에 더 나중 버전의 옵션도 함께 표시되므로 여기서는 그 옵션을 8.4 기능으로 적용하지 않았다.
-
-- [XGROUP CREATE](https://redis.io/docs/latest/commands/xgroup-create/) — 그룹의 시작 ID 0과 $ 선택. XREADGROUP·XAUTOCLAIM 문서의 기존/새 항목 분리·다음 커서·삭제 ID도 재확인.
-
-부분 재검증: 2026-09-23. 추가로 Redis Open Source 8.10 XREAD·XREADGROUP의 MAXCOUNT/MAXSIZE 및 단일 과대 엔트리 예외를 확인했다. 기존 8.4 그룹 복구 범위와 구분했으며 실제 Redis 8.10 실행 검증은 하지 않았다. 기존 전체 검증일은 유지한다.
-
+- [XGROUP CREATE](https://redis.io/docs/latest/commands/xgroup-create/) — Redis 8.4: 그룹 시작 ID 0/$와 기존·새 항목의 구분.
 - [XREAD](https://redis.io/docs/latest/commands/xread/) — Redis 8.10 누적 응답 예산·COUNT와의 관계·단일 엔트리 예외·Stream 순서.
-- [XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/) — Redis 8.10의 누적 제한과 새 항목·PEL 읽기 적용.
-
-부분 재검증: 2026-10-04. DELCONSUMER의 미완료 항목 소유권 제거를 공식 명령 문서와 Redis 8.10.2 소스로 확인했다. 실제 실행은 격리 Redis 6.2.11에서 수행했다. pending 1개인 consumer를 삭제하면 XPENDING이 0이 되고 XCLAIM·새 항목 읽기로는 복구되지 않으나 XLEN은 1이었다. 먼저 claim한 대조 실험에서는 새 소유자가 ACK할 수 있었다. Redis 8.10.2 서버 실행·영속화 손실 시험은 하지 않았고 기존 `verified`는 유지한다.
-
 - [XGROUP DELCONSUMER](https://redis.io/docs/latest/commands/xgroup-delconsumer/) — Redis 5.0+ 명령의 삭제 전 claim/ACK 요구와 반환값.
 - [Redis 8.10.2 t_stream.c](https://github.com/redis/redis/blob/8.10.2/src/t_stream.c) — streamDelConsumer의 그룹 PEL 참조 제거.

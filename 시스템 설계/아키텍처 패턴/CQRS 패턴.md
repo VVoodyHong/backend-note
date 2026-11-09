@@ -2,8 +2,7 @@
 category: "시스템 설계/아키텍처 패턴"
 tags: ["system-design", "cqrs", "event-sourcing", "ddd", "read-model", "spring"]
 aliases: ["CQRS", "Command Query Responsibility Segregation"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CQRS 패턴
@@ -145,11 +144,8 @@ public class OrderProjector {
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Azure CQRS Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) — 공유 DB/분리 DB 모델·장단점·이벤트 소싱 독립성.
+- [Azure CQRS Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) — 공유 DB/분리 DB 모델·장단점·이벤트 소싱 독립성; 분리 저장소·outbox·멱등 소비자 설계.
 - [Spring ApplicationContext Events](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html) — Framework 7.0.9 기본 동기 이벤트·비동기 리스너.
 - [Spring Transaction-bound Events](https://docs.spring.io/spring-framework/reference/data-access/transaction/event.html) — Framework 7.0.9 commit 단계·비동기 전달과의 구분.
 - [Axon Framework 5.0](https://docs.axoniq.io/axon-framework-reference/5.0/) — CQRS·이벤트 소싱 지원 범위.
-
-부분 재검증: 2026-09-23. [Azure CQRS pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs)의 분리 저장소·outbox·멱등 소비자와 [AWS Transactional outbox](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)의 중복·순서 주의사항을 확인했다. 버전·델타·삭제·백필 계약은 이를 적용한 설계 기준이다. Spring·Axon 예제 전체는 이번 범위 밖이므로 `verified`는 유지했다.
+- [AWS Transactional outbox](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html) — outbox 전달의 중복·순서 주의사항.

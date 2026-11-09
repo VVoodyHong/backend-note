@@ -2,8 +2,7 @@
 category: Spring/테스트 전략
 tags: [spring, testing, transaction]
 aliases: [TestTransaction, 테스트 관리 트랜잭션]
-updated: 2026-11-04
-verified: 2026-09-23
+updated: 2026-11-09
 ---
 
 # Spring 테스트 트랜잭션과 커밋 검증
@@ -58,7 +57,7 @@ void committedOrderCanBeRead() {
 
 ### 문서의 지원 계약과 관찰된 구현을 구분
 
-7.0.9 공식 지원표는 테스트의 `@Transactional`에서 `isolation`·`timeout`·`readOnly`를 지원하지 않는 속성으로 명시한다. 이를 **항상 무시된다**고 바꿔 읽으면 안 된다. 2026-09-23에 7.0.9의 `DataSourceTransactionManager`로 실행한 테스트에서는 격리 수준·readOnly 플래그·타임아웃이 전달됐다. 소스도 속성을 위임해 트랜잭션 매니저에 넘긴다.
+7.0.9 공식 지원표는 테스트의 `@Transactional`에서 `isolation`·`timeout`·`readOnly`를 지원하지 않는 속성으로 명시한다. 이를 **항상 무시된다**고 바꿔 읽으면 안 된다. Framework 7.0.9의 `DataSourceTransactionManager` 구성에서는 격리 수준·readOnly 플래그·타임아웃이 전달됐다. 소스도 속성을 위임해 트랜잭션 매니저에 넘긴다.
 
 이는 해당 조합의 구현 관찰이며 지원 계약을 확장하지 않는다. 격리 수준·타임아웃 자체를 검증할 때는 테스트 바깥 트랜잭션을 제거한 뒤 서비스 경계나 명시적인 `TransactionTemplate`으로 조건을 통제한다. 테스트의 `rollbackFor`를 서비스 예외 규칙 검증 수단으로 쓰지 않는다. 테스트 종료 정책은 `@Rollback`·`@Commit`·`TestTransaction`으로 설정한다.
 
@@ -95,12 +94,12 @@ A. 콜백 실행 사실과 외부 브로커의 저장은 별개다. 커밋 후 �
 
 ## 참고 자료
 
-검증일: 2026-09-23. Spring Framework 7.0.9·Spring Boot 4.1.1의 테스트 경계와 API를 확인했다. OpenJDK 25.0.2·Boot 4.1.1 관리 의존성으로 기본 롤백, 명시 커밋과 afterCommit, REQUIRES_NEW, 별도 스레드, 속성 전달을 실행했다. DB 고유 격리·지연 제약 및 위 JPA 예제의 도메인 코드는 실행 범위에 포함하지 않는다.
+적용 범위: Spring Framework 7.0.9·Boot 4.1.1 테스트 트랜잭션과 Jakarta Persistence 3.2.
 
-- [TestContext transaction management](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html) — 기본 롤백, 생명주기, flush, 별도 스레드와 공식 속성 지원표.
+- [TestContext transaction management](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html) — 기본 롤백·생명주기·flush·별도 스레드와 공식 속성 지원표.
 - [TestTransaction 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/test/context/transaction/TestTransaction.html) — 명시적 종료·재시작 API.
 - [TransactionalTestExecutionListener 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TransactionalTestExecutionListener.java) — 서비스 AOP와 다른 테스트 경계 관리.
-- [TransactionContext 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TransactionContext.java) — 속성 전달 및 rollback flag에 따른 종료.
-- [TestContextTransactionUtils 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TestContextTransactionUtils.java) — 속성 위임 구현. 공식 지원표와 구현 관찰 차이를 확인했다.
-- [Testing Spring Boot Applications](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html) — Boot 4.1.1, 실제 서버의 별도 스레드·트랜잭션.
+- [TransactionContext 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TransactionContext.java) — 속성 전달과 rollback flag에 따른 종료.
+- [TestContextTransactionUtils 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-test/src/main/java/org/springframework/test/context/transaction/TestContextTransactionUtils.java) — 속성 위임 구현. 공식 지원표와 특정 버전의 구현 동작은 구분.
+- [Testing Spring Boot Applications](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html) — 실제 서버의 별도 스레드·트랜잭션.
 - [Jakarta Persistence 3.2 EntityManager](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/EntityManager.html) — flush·clear·1차/2차 캐시 경계.

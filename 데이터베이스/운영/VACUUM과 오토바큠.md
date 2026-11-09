@@ -2,8 +2,7 @@
 category: "데이터베이스/운영"
 tags: ["database", "postgresql", "mvcc", "vacuum", "운영"]
 aliases: ["PostgreSQL VACUUM", "Autovacuum", "오토바큠"]
-updated: 2026-10-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # VACUUM과 오토바큠
@@ -121,17 +120,12 @@ A. 아니다. 힙 스캔 뒤에도 인덱스 정리·힙 정리·파일 끝 축�
 
 ## 참고 자료
 
-확인일: 2026-09-22. PostgreSQL 18의 유지보수·임계치·잠금·관측 뷰를 공식 문서와 대조했다. SQL은 문서 기반 예시이며 PostgreSQL 서버에서 실행하지 않았다.
-
-- [Routine Vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html) — 공간 재사용, VM·동결, 장기 보존 경계, 파티션 부모 ANALYZE.
-- [VACUUM](https://www.postgresql.org/docs/18/sql-vacuum.html) — FULL·ANALYZE 옵션, 잠금, 트랜잭션 블록 제한.
-- [Vacuuming Configuration](https://www.postgresql.org/docs/18/runtime-config-vacuum.html) — 실행 임계치·worker slots·비용 조절.
-- [Statistics Views](https://www.postgresql.org/docs/18/monitoring-stats.html) — `pg_stat_user_tables` 추정치와 세션 관측.
-- [Progress Reporting](https://www.postgresql.org/docs/18/progress-reporting.html#VACUUM-PROGRESS-REPORTING) — VACUUM 단계와 카운터의 해석.
-- [Replication Slots](https://www.postgresql.org/docs/18/view-pg-replication-slots.html) — `xmin`, `catalog_xmin`, `restart_lsn`의 보존 대상 차이.
-- [Object Identifier Types](https://www.postgresql.org/docs/18/datatype-oid.html) — `regclass`의 `pg_class` 이름 해석과 DB별 관측 범위.
-
-부분 재검증: 2026-10-04. PostgreSQL 18의 복제 피드백 xmin 관측 필드와 통계 접근 권한을 확인했다. SQL은 문서 대조만 수행했으며 실제 원본·복제본에서 실행하지 않았다. VACUUM 전체의 기존 `verified`는 유지한다.
-
+- [Routine Vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html) — PostgreSQL 18: 공간 재사용, VM·동결, 장기 보존 경계, 파티션 부모 ANALYZE.
+- [VACUUM](https://www.postgresql.org/docs/18/sql-vacuum.html) — PostgreSQL 18: FULL·ANALYZE 옵션, 잠금, 트랜잭션 블록 제한.
+- [Vacuuming Configuration](https://www.postgresql.org/docs/18/runtime-config-vacuum.html) — PostgreSQL 18: 실행 임계치·worker slots·비용 조절.
+- [Statistics Views](https://www.postgresql.org/docs/18/monitoring-stats.html) — PostgreSQL 18: `pg_stat_user_tables` 추정치와 세션 관측.
+- [Progress Reporting](https://www.postgresql.org/docs/18/progress-reporting.html#VACUUM-PROGRESS-REPORTING) — PostgreSQL 18: VACUUM 단계와 카운터의 해석.
+- [Replication Slots](https://www.postgresql.org/docs/18/view-pg-replication-slots.html) — PostgreSQL 18: `xmin`, `catalog_xmin`, `restart_lsn`의 보존 대상 차이.
+- [Object Identifier Types](https://www.postgresql.org/docs/18/datatype-oid.html) — PostgreSQL 18: `regclass`의 `pg_class` 이름 해석과 DB별 관측 범위.
 - [PostgreSQL 18 Statistics: pg_stat_replication](https://www.postgresql.org/docs/18/monitoring-stats.html#MONITORING-PG-STAT-REPLICATION-VIEW) — backend_xmin의 피드백 경계, application_name·state, 통계 접근 권한.
 - [PostgreSQL 18 hot_standby_feedback](https://www.postgresql.org/docs/18/runtime-config-replication.html#GUC-HOT-STANDBY-FEEDBACK) — 원본 정리 지연과 복제본 cleanup 충돌의 관계.

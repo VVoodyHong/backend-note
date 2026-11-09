@@ -1,8 +1,7 @@
 ---
 category: "Spring/데이터 접근 심화"
 tags: ["spring", "spring-data", "rest", "hateoas", "jpa"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Data REST
@@ -80,15 +79,12 @@ PUT은 리소스 교체, PATCH는 부분 변경을 표현한다. PATCH에서도 
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Spring Data REST 5.1.1의 ETag·If-Match 경계를 확인했다. Boot 4.1.1·Hibernate 7.4.5.Final·H2 2.4.240의 실제 HTTP 통합 테스트에서 GET 200, 잘못된/오래된 If-Match의 PATCH 412, 일치하는 헤더와 헤더 누락의 PATCH 200을 확인하고 저장 결과도 검사했다. 다른 DB의 동시 트랜잭션·격리 동작을 시험한 것은 아니다.
-
-- [Conditional Operations — Data REST 5.1.1](https://docs.spring.io/spring-data/rest/reference/etags-and-other-conditionals.html) — 버전 기반 ETag와 조건부 수정.
-- [ETag 5.1.1 소스](https://raw.githubusercontent.com/spring-projects/spring-data-rest/5.1.1/spring-data-rest-webmvc/src/main/java/org/springframework/data/rest/webmvc/support/ETag.java) — NO_ETAG와 버전 비교 조건.
-
-검증일: 2026-09-08. 적용 범위: Spring Data REST 5.1.1, Spring Data Commons 3.0 이후 리포지토리 인터페이스.
+적용 범위: Spring Data REST 5.1.1, Spring Data Commons 3.0 이후 리포지토리 인터페이스.
 
 - [Repository Resources](https://docs.spring.io/spring-data/rest/reference/repository-resources.html) — CRUD와 PUT/PATCH 리소스.
-- [리포지토리 정의](https://docs.spring.io/spring-data/commons/reference/repositories/definition.html) — sorting 인터페이스와 CRUD 분리.
+- [리포지토리 정의](https://docs.spring.io/spring-data/commons/reference/repositories/definition.html) — sorting 인터페이스와 CRUD의 분리.
 - [Projections and Excerpts](https://docs.spring.io/spring-data/rest/reference/projections-excerpts.html) — excerpt 범위와 숨김 데이터 노출.
 - [Security](https://docs.spring.io/spring-data/rest/reference/security.html) — 메서드 인가.
 - [RepositoryEntityController 소스](https://raw.githubusercontent.com/spring-projects/spring-data-rest/main/spring-data-rest-webmvc/src/main/java/org/springframework/data/rest/webmvc/RepositoryEntityController.java) — 저장 전후 이벤트 발행 순서.
+- [Conditional Operations — Data REST 5.1.1](https://docs.spring.io/spring-data/rest/reference/etags-and-other-conditionals.html) — 버전 기반 ETag·If-Match와 조건부 수정.
+- [ETag 5.1.1 소스](https://raw.githubusercontent.com/spring-projects/spring-data-rest/5.1.1/spring-data-rest-webmvc/src/main/java/org/springframework/data/rest/webmvc/support/ETag.java) — NO_ETAG와 버전 비교 조건.

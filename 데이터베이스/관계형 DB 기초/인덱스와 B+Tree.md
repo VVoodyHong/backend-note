@@ -2,8 +2,7 @@
 category: "데이터베이스/관계형 DB 기초"
 tags: ["database", "index", "b-plus-tree", "성능튜닝", "rdb"]
 aliases: ["B+Tree", "B+ 트리"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 인덱스와 B+Tree
@@ -75,24 +74,12 @@ A. 쓰기 지연(INSERT/UPDATE/DELETE 응답 시간 증가), 저장 엔진의 re
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. MySQL 8.4 범위 최적화와 PostgreSQL 18 표현식 인덱스를 기준으로 함수 조건의 접근 경로 설명을 보완했다. 기존 전체 확인일은 유지한다.
-
-- [MySQL 8.4 Range Optimization](https://dev.mysql.com/doc/refman/8.4/en/range-optimization.html) — 범위 조건으로 활용되는 술어와 잔여 필터.
+- [MySQL 8.4 Range Optimization](https://dev.mysql.com/doc/refman/8.4/en/range-optimization.html) — 범위 술어·잔여 필터·skip scan·복합 키 탐색.
 - [PostgreSQL 18 Indexes on Expressions](https://www.postgresql.org/docs/18/indexes-expressional.html) — 표현식 자체를 인덱싱하는 조건.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [MySQL 8.4 Clustered/Secondary Indexes](https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html) — 클러스터드 구조·PK·lookup.
-- [MySQL 8.4 Range Optimization](https://dev.mysql.com/doc/refman/8.4/en/range-optimization.html) — skip scan·복합 키 탐색.
 - [PostgreSQL 18 Multicolumn Indexes](https://www.postgresql.org/docs/18/indexes-multicolumn.html) — 선두 컬럼 및 skip scan.
 - [PostgreSQL 18 Index-only Scans](https://www.postgresql.org/docs/18/indexes-index-only-scans.html) — visibility map과 heap fetch.
 - [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — UNIQUE와 NULL.
-
-부분 재확인: 2026-10-04. 사용 빈도만으로 인덱스를 제거한다는 설명을 관찰 기간·제약 검토로 바로잡았다. PostgreSQL 18의 통계·유니크 인덱스 근거와 18.6의 idx_scan=0 유일성 검사 실행 결과는 [[인덱스 설계 전략#조회 횟수가 0인 인덱스의 삭제 판단]] 및 해당 노트의 참고 자료에 기록했다. MySQL의 통계 카운터를 실행 검증한 것은 아니며 전체 `verified`는 유지한다.
-
 - [PostgreSQL 18 Index Statistics](https://www.postgresql.org/docs/18/monitoring-stats.html#MONITORING-PG-STAT-ALL-INDEXES-VIEW) — 조회 통계의 의미와 관찰 범위.
 - [PostgreSQL 18 Unique Indexes](https://www.postgresql.org/docs/18/indexes-unique.html) — 인덱스의 유일성 보장 역할.
-
-부분 재검증: 2026-11-04. MySQL 8.4의 보조 인덱스 MVCC 문서에서 covering 경로도 클러스터드 레코드를 확인하는 예외를 대조하고, 같은 노트 본문·커버링 인덱스 노트와 상충하던 Q&A의 lookup 제거 단정을 수정했다. 실제 MySQL I/O·실행 계획 측정은 하지 않았으며 기존 전체 `verified`는 유지한다.
-
 - [MySQL 8.4 InnoDB Multi-Versioning](https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html) — 삭제 표시·페이지 변경 시 보조 인덱스에서 clustered index·undo로 가시성 확인.

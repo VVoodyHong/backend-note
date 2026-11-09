@@ -1,8 +1,7 @@
 ---
 category: "네트워크/네트워크 보안"
 tags: ["network", "vpn", "ipsec", "wireguard", "네트워크-보안"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # VPN 기초
@@ -99,8 +98,7 @@ NAT 뒤에 있는 두 게이트웨이 간 IPsec 협상 시 NAT-T 협상·UDP 450
 
 ## 참고 자료
 
-- [RFC 7296: IKEv2](https://www.rfc-editor.org/rfc/rfc7296.html) — IKE_SA_INIT·IKE_AUTH·NAT-T. 확인: 2026-09-08.
-- [WireGuard Protocol & Cryptography](https://www.wireguard.com/protocol/) — Noise·고정 알고리즘 구성. 확인: 2026-09-08.
-- [OpenVPN 2.6 Manual](https://openvpn.net/community-docs/community-articles/openvpn-2-6-manual.html) — control/data channel·UDP/TCP transport. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. [WireGuard Cryptokey Routing](https://www.wireguard.com/#cryptokey-routing)의 공식 설계를 기준으로 AllowedIPs의 송신 목적지 선택·수신 출발지 검사와 일반 인터페이스 라우팅의 구분을 확인했다. 특정 커널·wireguard-tools 버전의 기본값은 주장하지 않으며, 실제 VPN·라우팅·방화벽 동작은 실행하지 않았다. 기존 프로토콜·성능 비교 전체는 재검증하지 않아 `verified`는 유지했다.
+- [RFC 7296: IKEv2](https://www.rfc-editor.org/rfc/rfc7296.html) — IKE_SA_INIT·IKE_AUTH·NAT-T.
+- [WireGuard Protocol & Cryptography](https://www.wireguard.com/protocol/) — Noise·고정 알고리즘 구성.
+- [OpenVPN 2.6 Manual](https://openvpn.net/community-docs/community-articles/openvpn-2-6-manual.html) — control/data channel·UDP/TCP transport.
+- [WireGuard Cryptokey Routing](https://www.wireguard.com/#cryptokey-routing) — AllowedIPs의 송신 목적지 선택·수신 출발지 검사; 인터페이스 라우팅과 구분.

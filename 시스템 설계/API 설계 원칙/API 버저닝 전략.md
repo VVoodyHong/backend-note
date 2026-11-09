@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/API 설계 원칙"
 tags: ["system-design", "api-design", "versioning", "rest", "spring"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # API 버저닝 전략
@@ -117,16 +116,10 @@ API 버전과 DB 스키마 버전이 1:1로 묶여 있으면, DB 마이그레이
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [RFC 9745](https://www.rfc-editor.org/rfc/rfc9745.html) — Deprecation의 Structured Field Date 문법 및 Link 관계.
+- [RFC 9745](https://www.rfc-editor.org/rfc/rfc9745.html) — Deprecation의 Structured Field Date 문법 및 Link 관계; Deprecation Structured Field Date와 Sunset의 날짜 형식·의미 차이.
 - [RFC 8594](https://www.rfc-editor.org/rfc/rfc8594.html) — Sunset의 HTTP-date와 폐기 시점 의미.
 - [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111.html) — 기본 캐시 키와 Vary 선택.
 - [Spring MVC API Version](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/api-version.html) — Framework 7.0.9 해석기·지원 버전·Deprecation handler.
 - [Spring MVC Request Mapping](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-requestmapping.html) — Framework 7.0.9 produces와 version 매핑.
-
-부분 재검증: 2026-09-22. [RFC 9745](https://www.rfc-editor.org/rfc/rfc9745.html)의 Deprecation Structured Field Date 문법, Sunset과 서로 다른 날짜 형식·의미를 재확인했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Google AIP-180 Backwards compatibility](https://google.aip.dev/180)의 소스·전송·의미 호환성, 응답 enum 확장 주의, 새 선택 필드의 기존 기본 동작 유지 및 페이지네이션 예를 확인했다. 적용 범위는 AIP-180 API 설계 지침이며 HTTP 전체에 강제되는 별도 RFC 규칙이 아니다. 실제 구버전 SDK·모바일 클라이언트 계약 시험과 Spring 내장 버저닝 재검증은 하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [Google AIP-180 Guidance](https://google.aip.dev/180#guidance)의 기존 클라이언트·역직렬화 기대 유지와 소비자 업데이트 통제 범위에 따른 호환성 판단을 재대조했다. 엄격한 JSON 역직렬화를 무조건 클라이언트 책임으로 돌리던 Q&A를 본문의 계약 전제와 맞췄다. 적용 범위는 API 설계 지침이며 실제 SDK 계약 시험·Spring 기능 재검증은 하지 않아 `verified`를 유지했다.
+- [Google AIP-180 Backwards compatibility](https://google.aip.dev/180) — 소스·전송·의미 호환성, 응답 enum 확장, 선택 필드의 기본 동작·페이지네이션; Google API 설계 지침.
+- [Google AIP-180 Guidance](https://google.aip.dev/180#guidance) — 기존 클라이언트·역직렬화 기대 유지와 소비자 업데이트 통제에 따른 호환성 판단.

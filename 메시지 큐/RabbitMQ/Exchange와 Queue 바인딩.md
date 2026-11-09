@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/RabbitMQ"
 tags: ["messaging", "rabbitmq", "exchange", "binding", "routing-key", "amqp"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Exchange와 Queue 바인딩
@@ -108,19 +107,11 @@ Durable은 재시작 보존 속성이며 복제본 수를 뜻하지 않는다. R
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Exchanges](https://www.rabbitmq.com/docs/exchanges) — RabbitMQ 4.3, AMQP 0-9-1 타입·바인딩·내구성·기본 exchange.
 - [Exchange-to-Exchange Bindings](https://www.rabbitmq.com/docs/e2e) — RabbitMQ 4.3, 복수 경로에서도 큐당 한 사본.
 - [Consumer ACK and Publisher Confirms](https://www.rabbitmq.com/docs/confirms) — RabbitMQ 4.3, unroutable·mandatory·미존재 exchange.
 - [Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — RabbitMQ 4.3, DLX 트리거.
-- [Spring AMQP Broker Configuration](https://docs.spring.io/spring-amqp/reference/amqp/broker-configuration.html) — 확인일 공식 문서, 선언 Bean·RabbitAdmin.
-- [AmqpTemplate](https://docs.spring.io/spring-amqp/reference/amqp/template.html) — 확인일 공식 문서, 기본 exchange·returns.
-
-부분 재검증: 2026-09-23. RabbitMQ 4.3의 transient non-exclusive 큐 기본 금지, 큐 속성 동등성·재선언 경합·classic 비복제를 공식 큐 문서로 확인했다. Spring 선언 예제의 실행 검증은 하지 않았다. 기존 전체 검증일은 유지한다.
-
+- [Spring AMQP Broker Configuration](https://docs.spring.io/spring-amqp/reference/amqp/broker-configuration.html) — 선언 Bean·RabbitAdmin.
+- [AmqpTemplate](https://docs.spring.io/spring-amqp/reference/amqp/template.html) — 기본 exchange·returns.
 - [RabbitMQ 4.3 Queues](https://www.rabbitmq.com/docs/queues) — 큐 속성 동등성·durability·exclusive 수명·복제 지원.
-
-부분 재검증: 2026-10-04. RabbitMQ 4.3의 AE 라우팅 성공과 mandatory 관계, default exchange의 AE 미지원을 공식 문서로 확인했다. AE 적체 관측은 라우팅 계약에서 도출한 운영 지침이다. 실제 RabbitMQ·Spring AMQP 실행과 나머지 큐 타입 전체는 이번 검증 범위가 아니며 전체 `verified`는 유지한다.
-
 - [RabbitMQ 4.3 Alternate Exchanges](https://www.rabbitmq.com/docs/ae) — AE 적용 조건·체인 종료·mandatory 라우팅 성공 판정·default exchange 제약.

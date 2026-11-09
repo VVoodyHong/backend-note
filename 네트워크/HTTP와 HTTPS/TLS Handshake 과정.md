@@ -2,8 +2,7 @@
 category: "네트워크/HTTP와 HTTPS"
 tags: ["network", "tls", "https", "암호화", "security"]
 aliases: ["TLS 핸드셰이크"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # TLS Handshake 과정
@@ -94,10 +93,8 @@ ECH(Encrypted Client Hello)는 ClientHello의 민감한 부분(SNI 포함)을 �
 
 ## 참고 자료
 
-- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — §2·4·7·8 인증서 handshake·(EC)DHE/PSK·0-RTT. 확인: 2026-09-08.
-- [RFC 9849: TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html) — 2026-03 표준·ClientHelloInner/Outer. 확인: 2026-09-08.
-- [RFC 8470: Using Early Data in HTTP](https://www.rfc-editor.org/rfc/rfc8470.html) — 재생 안전성·425. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [RFC 8446 §4.6.3·§7.2·Appendix E.2](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.6.3)의 TLS 1.3 KeyUpdate·트래픽 비밀 유출 이후 보호 한계와 인증서 교체의 운영상 구분을 확인했다. ECH·JDK 지원 등 기존의 다른 서술은 이번 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [RFC 8446 §4.1.1·§4.2.8](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.8)의 공통 그룹과 HRR selected_group 조건을 대조했다. JDK 25.0.4+7·SunJSSE 25, 임시 CA·loopback TLS 1.3에서 양쪽 x25519는 성공하고 서버 x25519/클라이언트 secp256r1만 허용하면 서버의 `No common named group` 오류로 실패함을 확인했다. 공통 그룹은 있지만 key_share만 없는 HRR 왕복·PSK-only·ECH·운영 로드밸런서는 실행하지 않았고 기존 `verified`는 유지한다.
+- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — §2·4·7·8 인증서 handshake·(EC)DHE/PSK·0-RTT.
+- [RFC 9849: TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html) — 2026-03 표준·ClientHelloInner/Outer.
+- [RFC 8470: Using Early Data in HTTP](https://www.rfc-editor.org/rfc/rfc8470.html) — 재생 안전성·425.
+- [RFC 8446 §4.6.3·§7.2·Appendix E.2](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.6.3) — TLS 1.3 KeyUpdate·트래픽 비밀 유출 후 보호 한계; 새 인증서 검증과 구분.
+- [RFC 8446 §4.1.1·§4.2.8](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.8) — 공통 지원 그룹과 HelloRetryRequest의 selected_group 조건.

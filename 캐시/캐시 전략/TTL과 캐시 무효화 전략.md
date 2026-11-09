@@ -1,8 +1,7 @@
 ---
 category: "캐시/캐시 전략"
 tags: ["cache", "ttl", "invalidation", "redis", "consistency"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # TTL과 캐시 무효화 전략
@@ -94,19 +93,10 @@ Jitter는 "동시에 설정된 다수 키가 동시에 만료되는" 문제만 �
 
 ## 참고 자료
 
-부분 재검증: 2026-09-23. Redis 8.10 범위의 만료 알림 시점·Pub/Sub 유실·Cluster 노드별 구독을 확인했다. 기존 Redis 8.4 TTL 명령·Caffeine 서술 전체를 재검증한 것은 아니므로 `verified`는 유지했다. Redis 서버·클러스터를 직접 실행하지 않았다.
-
-- [Keyspace Notifications](https://redis.io/docs/latest/develop/pubsub/keyspace-notifications/) — `expired` 생성 시점, 연결 중단 시 이벤트 유실, 노드별 알림 범위.
+- [Keyspace Notifications](https://redis.io/docs/latest/develop/pubsub/keyspace-notifications/) — Redis 8.10: expired 생성 시점, Pub/Sub 유실·연결 중단·노드별 알림 범위.
 - [Redis 8.10 notify.c](https://github.com/redis/redis/blob/8.10/src/notify.c) — `notifyKeyspaceEvent`의 로컬 Pub/Sub 발행 경로.
-
-부분 재확인: 2026-09-22. Redis 8.4의 키 TTL 유지·제거 조건과 축출의 차이를 확인하고 Jitter 예제를 애플리케이션 래퍼 의사코드로 명시했다. 기존 전체 확인일은 유지한다.
-
-- [SET](https://redis.io/docs/latest/commands/set/) — `EX`/`PX`와 `KEEPTTL`, 일반 SET의 기존 TTL 제거.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
+- [SET](https://redis.io/docs/latest/commands/set/) — Redis 8.4: EX/PX·KEEPTTL, 일반 SET의 기존 TTL 제거.
 - [EXPIRE](https://redis.io/docs/latest/commands/expire/) — Redis 키 TTL·만료 처리.
 - [SCAN](https://redis.io/docs/latest/commands/scan/) — 점진 순회·변경 중 보장 범위.
-- [Keyspace Notifications](https://redis.io/docs/latest/develop/pubsub/keyspace-notifications/) — PubSub 유실·만료 이벤트 시간·노드별 범위.
 - [Key Eviction](https://redis.io/docs/latest/develop/reference/eviction/) — maxmemory-policy와 TTL의 차이.
 - [Caffeine Eviction](https://github.com/ben-manes/caffeine/wiki/Eviction) — Caffeine 공식 wiki: write/access 만료와 maintenance/Scheduler.

@@ -1,8 +1,7 @@
 ---
 category: "캐시/분산 캐시 이슈"
 tags: ["cache", "consistency", "redis", "cache-aside", "event-driven"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 캐시와 DB 정합성
@@ -103,14 +102,9 @@ Redis의 client-side caching 문서는 조회 중임을 나타내는 표시를 �
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Cache-Aside Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside) — 패턴 정의·정합성 비보장·DB 갱신 후 무효화.
 - [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 2013 원논문: stale set 경쟁과 lease.
 - [Transaction-bound Events](https://docs.spring.io/spring-framework/reference/data-access/transaction/event.html) — Spring Framework: AFTER_COMMIT와 트랜잭션 이벤트.
 - [Transactional Outbox Pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html) — DB·이벤트 이중 쓰기, 재시도와 멱등 소비.
 - [Redis Replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/) — 비동기 복제와 failover 유실.
-
-부분 재검증: 2026-09-23. Redis 공식 client-side caching의 늦은 응답·무효화 경쟁과 방어 절차를 확인했다. DB 버전·무효화 세대 예시는 해당 경쟁을 DB 캐시에 적용한 설계 분석이며 특정 제품의 자동 보장으로 제시하지 않는다. 전체 verified는 유지한다.
-
 - [Redis Client-side Caching: Avoiding Race Conditions](https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions) — 무효화보다 늦은 GET 응답과 적재 중 표시의 제거.

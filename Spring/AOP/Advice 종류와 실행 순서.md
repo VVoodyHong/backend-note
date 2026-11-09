@@ -1,8 +1,7 @@
 ---
 category: "Spring/AOP"
 tags: ["spring", "aop", "advice", "aspectj", "order"]
-updated: 2026-09-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Advice 종류와 실행 순서
@@ -113,9 +112,7 @@ Spring의 `@Aspect` 클래스에서 같은 타입의 어드바이스끼리는 �
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 어드바이스 우선순위와 체인 진입 조건, 예외 대체 범위를 확인했다. 실제 AspectJProxyFactory로 proceed 생략·정상 반환 순서·AfterThrowing의 예외 대체를 실행 검사했다. 모니터링 위치는 측정하려는 경계를 기준으로 설명했고, 안쪽 트랜잭션 Advisor 미진입과 이미 존재하는 외부 트랜잭션의 롤백을 구분했다.
+적용 범위: Spring Framework 7.0·7.0.9의 @AspectJ 스타일 AOP.
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0의 @AspectJ 스타일 AOP.
-
-- [Declaring Advice](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html) — 타입별 동작, 동일 Aspect의 우선순위, 같은 타입 순서 미정의.
-- [Rolling Back a Declarative Transaction](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/rolling-back.html) — 경계를 벗어난 예외와 설정한 롤백 규칙.
+- [Declaring Advice](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html) — 어드바이스별 동작·같은 Aspect의 우선순위·proceed와 예외 대체 경계.
+- [Rolling Back a Declarative Transaction](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/rolling-back.html) — 트랜잭션 경계를 벗어난 예외와 롤백 규칙.

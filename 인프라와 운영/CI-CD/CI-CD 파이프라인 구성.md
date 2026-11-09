@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/CI-CD"
 tags: ["operations", "ci-cd", "devops", "자동화", "파이프라인"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CI-CD 파이프라인 구성
@@ -143,13 +142,12 @@ A. 빠르고 결정적인 검증(컴파일, 단위 테스트, 린트, 정적 분
 
 ## 참고 자료
 
-- [GitHub Actions Secure Use](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions) — 권한·불변 action SHA·OIDC. 확인: 2026-09-08.
-- [actions/checkout](https://github.com/actions/checkout) — v6 README. 확인: 2026-09-08.
-- [actions/setup-java](https://github.com/actions/setup-java) — v5 README. 확인: 2026-09-08.
-- [Argo CD auto sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) — selfHeal/prune 명시 설정. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [GitHub Actions Secure Use](https://docs.github.com/en/actions/reference/security/secure-use)의 특권 트리거·비신뢰 checkout/아티팩트/캐시와 스크립트 주입 방지를 확인했다. 기존 액션 태그·도구 버전·전체 파이프라인 예제를 실행한 것은 아니므로 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)의 single/max 대기 정책·cancel-in-progress 조합 제약·대기 시작 시각 기준을 확인하고 [Workflow cancellation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation)의 러너 프로세스 종료 절차와 대조했다. 적용 범위는 조회일 GitHub.com Actions 문서이며 GHES별 지원 버전은 미확인이다. 외부 배포 복구는 이 취소 경계에서 도출한 운영 절차다. 실제 워크플로·취소·배포 실행은 하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [actions/checkout v6 README](https://github.com/actions/checkout/blob/v6/README.md)와 [v6 action.yml](https://github.com/actions/checkout/blob/v6/action.yml)의 persist-credentials 기본값 true·false 선택, RUNNER_TEMP 저장과 후속 Git 인증·post-job 정리 범위를 확인했다. 적용 범위는 조회한 v6 major ref이며 특정 불변 commit을 검증한 것은 아니다. YAML 예제에서 불필요한 인증 지속을 끄고, 실제 GitHub Actions 실행·토큰 접근 시험은 하지 않았다. 나머지 액션·빌드·배포 계약의 `verified`는 유지했다.
+- [GitHub Actions Secure Use](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions) — 권한·불변 action SHA·OIDC.
+- [actions/checkout](https://github.com/actions/checkout) — v6 README.
+- [actions/setup-java](https://github.com/actions/setup-java) — v5 README.
+- [Argo CD auto sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) — selfHeal/prune 명시 설정.
+- [GitHub Actions Secure Use](https://docs.github.com/en/actions/reference/security/secure-use) — 특권 트리거·비신뢰 checkout/아티팩트/캐시·스크립트 주입 방어.
+- [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) — 2026-10-04 GitHub.com Actions 정책: single/max 대기·cancel-in-progress 제약·대기 시작 시각; GHES 지원과 구분.
+- [Workflow cancellation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation) — 러너 프로세스 종료 절차와 외부 배포 복구 경계.
+- [actions/checkout v6 README](https://github.com/actions/checkout/blob/v6/README.md) — checkout v6 major ref의 persist-credentials·RUNNER_TEMP 저장·후속 Git 인증·post-job 정리.
+- [v6 action.yml](https://github.com/actions/checkout/blob/v6/action.yml) — checkout v6 major ref의 persist-credentials 기본 true 및 false 선택; 불변 커밋 고정과 구분.

@@ -2,8 +2,7 @@
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "health-check", "graceful-shutdown", "deployment"]
 aliases: ["Kubernetes Probes", "Pod Graceful Termination"]
-updated: 2026-10-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # Kubernetes 프로브와 안전한 종료
@@ -114,16 +113,14 @@ A. 아니다. 강제 삭제는 노드에서 종료되었다는 확인을 기다�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-22. Kubernetes 문서의 표시 버전 v1.37을 기준으로 프로브·종료·PDB·Deployment 동작을 대조했다. 설정 수치는 권장 기본값이 아닌 예시이며 실제 클러스터 실행 검증은 수행하지 않았다.
-
-- [Kubernetes Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/) — 검사 역할·판정·설정·HTTPS 인증서 검증 생략.
-- [Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/) — HTTP probe YAML과 임계치·timeout 구성.
-- [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — 삭제·EndpointSlice·종료 신호.
-- [Sidecar Containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) — native sidecar의 종료 순서와 유예 시간.
-- [kubectl delete](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_delete/) — 강제 삭제와 실제 프로세스 종료 확인의 차이.
-- [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/) — preStop과 공유 종료 예산.
-- [EndpointSlice](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/) — ready/serving/terminating과 publishNotReadyAddresses 예외.
-- [Disruptions](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) — PDB와 Eviction API·rolling update·비자발적 중단의 경계.
-- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) — maxSurge/maxUnavailable·minReadySeconds·종료 중 Pod의 자원 사용.
-
-부분 재검증: 2026-10-04. [Kubernetes Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/#probe-level-terminationgraceperiodseconds) — 표시 버전 v1.37, 프로브별 종료 유예(v1.28 stable)·readiness 설정 금지·HTTP redirect 처리와 상태 코드 판정을 확인했다. [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination)로 삭제 경로의 예산과 대조했다. 실제 클러스터의 재시작·종료 시험과 전체 기존 주장 재검증은 수행하지 않아 `verified`를 유지했다.
+- [Kubernetes Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/) — Kubernetes v1.37: 검사 역할·판정·설정·HTTPS 인증서 검증 생략.
+- [Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/) — Kubernetes v1.37: HTTP probe YAML과 임계치·timeout 구성.
+- [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — Kubernetes v1.37: 삭제·EndpointSlice·종료 신호.
+- [Sidecar Containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) — Kubernetes v1.37: native sidecar의 종료 순서와 유예 시간.
+- [kubectl delete](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_delete/) — Kubernetes v1.37: 강제 삭제와 실제 프로세스 종료 확인의 차이.
+- [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/) — Kubernetes v1.37: preStop과 공유 종료 예산.
+- [EndpointSlice](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/) — Kubernetes v1.37: ready/serving/terminating과 publishNotReadyAddresses 예외.
+- [Disruptions](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) — Kubernetes v1.37: PDB와 Eviction API·rolling update·비자발적 중단의 경계.
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) — Kubernetes v1.37: maxSurge/maxUnavailable·minReadySeconds·종료 중 Pod의 자원 사용.
+- [Kubernetes Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/#probe-level-terminationgraceperiodseconds) — Kubernetes v1.37의 probe-level 종료 유예(v1.28 stable)·readiness 설정 금지·HTTP redirect/상태 판정.
+- [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination) — Kubernetes v1.37 Pod 삭제 경로의 종료 예산.

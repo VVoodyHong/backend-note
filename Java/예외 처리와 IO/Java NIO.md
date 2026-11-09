@@ -1,8 +1,7 @@
 ---
 category: "Java/예외 처리와 IO"
 tags: ["java", "io", "nio", "논블로킹", "파일시스템"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Java NIO
@@ -102,28 +101,13 @@ A. Java SE 25의 `duplicate()`, `slice()`, `asReadOnlyBuffer()`는 바이트 내
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Java SE 25 FileChannel](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html) — 파일 IO·부분 읽기·MappedByteBuffer와 Java 22+ Arena 매핑.
 - [Java SE 25 Selector](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Selector.html) — 선택 가능한 채널 및 readiness 계약.
-- [Java SE 25 WatchService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchService.html) — 플랫폼 의존·폴링·OVERFLOW 제약.
+- [Java SE 25 WatchService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchService.html) — 플랫폼 의존·폴링·미완료 쓰기와 OVERFLOW 이후 재조회.
 - [Java SE 25 Buffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html) — position·limit·flip·clear 계약.
 - [Java SE 25 Files](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html) — readAllLines와 lines 자원 수명.
-
-부분 재검증: 2026-09-22. 아래 범위를 추가 확인했으며, 그 밖의 본문은 기존 검증 날짜를 유지한다.
-
-- [Java SE 27 Buffer](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/nio/Buffer.html) — 상대 접근의 position/limit, flip·clear·compact. Oracle JDK 27+35에서 부분 버퍼·재사용·compact 예제를 실행 확인했다.
-
-### 2026-09-23 부분 재검증
-
-- [Java SE 25 ByteBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html) — slice·duplicate·asReadOnlyBuffer의 BIG_ENDIAN 초기 순서, 공유 내용과 독립 위치, 타입별 뷰의 생성 시 순서 고정을 확인했다. OpenJDK 25.0.2+10-69에서 LITTLE_ENDIAN으로 저장한 0x01020304가 순서를 다시 지정하지 않은 새 ByteBuffer 뷰에서는 0x04030201로 읽히는 사례와 원본 변경의 읽기 전용 뷰 반영을 재현했다. 네트워크·파일 매핑·가상 스레드 설명 전체를 재검증한 것은 아니다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 FileChannel.transferTo](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#transferTo(long,long,java.nio.channels.WritableByteChannel)) — 부분 전송·0 반환·원본 위치 불변과 최적화 범위. Oracle JDK 25.0.4에서 3바이트만 받는 WritableByteChannel로 부분 전송, offset 갱신 후 중복 없는 결과, 원본 position 불변, EOF와 수신 불가의 두 0 반환을 확인했다. 실제 네트워크 backpressure·OS zero-copy 경로는 측정하지 않았다.
-
-- 도식·표 대조(2026-10-04): [Java SE 25 InputStream](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html) — 도식도 read(byte[])의 일괄 읽기를 포함해 본문과 맞췄다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 WatchService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchService.html)·[WatchKey](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchKey.html)의 쓰기 미완료 가능성, OVERFLOW 이후 재조회, reset·무효화 계약을 확인했다(Context7 공식 API 검색 병행). Temurin 25.0.4.1+1/macOS 로컬 임시 디렉터리에서 작성 스트림이 열린 중간 상태의 수정 통지, reset 전 재통지 대기·후 재큐잉, cancel 뒤 reset=false를 확인했다. 이벤트 개수·지연은 보장값으로 쓰지 않으며 OVERFLOW·원격 파일시스템·크래시 내구성은 실행하지 않았다. 기존 verified는 유지한다.
+- [Java SE 27 Buffer](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/nio/Buffer.html) — 상대 접근의 position/limit, flip·clear·compact.
+- [Java SE 25 ByteBuffer](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html) — slice·duplicate·asReadOnlyBuffer의 BIG_ENDIAN 초기 순서, 공유 내용과 독립 위치, 타입별 뷰의 생성 시 순서 고정.
+- [Java SE 25 FileChannel.transferTo](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#transferTo(long,long,java.nio.channels.WritableByteChannel)) — 부분 전송·0 반환·원본 위치 불변과 최적화 범위.
+- [Java SE 25 InputStream](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html) — read(byte[])의 일괄 읽기와 반환 계약.
+- [Java SE 25 WatchKey](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/WatchKey.html) — 키의 reset·무효화·재큐잉 계약.

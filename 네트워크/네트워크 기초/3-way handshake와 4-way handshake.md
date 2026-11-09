@@ -1,8 +1,7 @@
 ---
 category: "네트워크/네트워크 기초"
 tags: ["network", "tcp", "handshake", "연결관리"]
-updated: 2026-09-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 3-way handshake와 4-way handshake
@@ -96,8 +95,7 @@ A. HTTP Keep-Alive는 하나의 TCP 연결(즉 한 번의 3-way handshake로 수
 
 ## 참고 자료
 
-- [RFC 9293: TCP](https://www.rfc-editor.org/rfc/rfc9293.html) — §3.5–3.6 수립·종료·동시 종료. 확인: 2026-09-08.
-- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — tcp_tw_reuse·tcp_fin_timeout·SYN cookies. 확인: 2026-09-08.
-- [Linux v6.17 tcp.h](https://github.com/torvalds/linux/blob/v6.17/include/net/tcp.h) — TCP_TIMEWAIT_LEN 60초 구현 범위. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Linux IP sysctl](https://kernel.org/doc/html/latest/networking/ip-sysctl.html)의 tcp_tw_reuse 안전 조건과 [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293.html)의 TCP 연결 식별·TIME-WAIT 의미에 맞춰 수신 연결과 outbound 임시 포트 설명을 구분했다. 기존 Linux v6.17의 60초 소스 값은 이번 확인 범위 밖이다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
+- [RFC 9293: TCP](https://www.rfc-editor.org/rfc/rfc9293.html) — §3.5–3.6 수립·종료·동시 종료; TCP 연결 식별·TIME-WAIT 의미.
+- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — tcp_tw_reuse·tcp_fin_timeout·SYN cookies.
+- [Linux v6.17 tcp.h](https://github.com/torvalds/linux/blob/v6.17/include/net/tcp.h) — TCP_TIMEWAIT_LEN 60초 구현 범위.
+- [Linux IP sysctl](https://kernel.org/doc/html/latest/networking/ip-sysctl.html) — tcp_tw_reuse 안전 조건·수신 연결과 outbound 임시 포트의 구분.

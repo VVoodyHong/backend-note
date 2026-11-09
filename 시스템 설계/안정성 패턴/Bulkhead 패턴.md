@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/안정성 패턴"
 tags: ["system-design", "resilience", "bulkhead", "fault-isolation", "resilience4j"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Bulkhead 패턴
@@ -111,17 +110,13 @@ Resilience4j 2.3.0의 직접 함수 데코레이터에서 `decorateSupplier`는 
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Resilience4j Bulkhead](https://resilience4j.readme.io/docs/bulkhead) — Semaphore/ThreadPool 기본 개념·대기 설정.
 - [Resilience4j Spring Boot Integration](https://resilience4j.readme.io/docs/getting-started-3) — 어노테이션·fallback·설정·변경 가능한 aspect 순서.
 - [BulkheadAspect 2.3.0 소스](https://raw.githubusercontent.com/resilience4j/resilience4j/v2.3.0/resilience4j-spring6/src/main/java/io/github/resilience4j/spring6/bulkhead/configure/BulkheadAspect.java) — THREADPOOL worker에서 본문 호출 및 future 완료 대기.
 - [FixedThreadPoolBulkhead 2.3.0 소스](https://raw.githubusercontent.com/resilience4j/resilience4j/v2.3.0/resilience4j-bulkhead/src/main/java/io/github/resilience4j/bulkhead/internal/FixedThreadPoolBulkhead.java) — core/max executor와 유한/직접 전달 큐.
 - [Resilience4j Micrometer](https://resilience4j.readme.io/docs/micrometer) — bulkhead metric 이름과 계측.
 - [Azure Bulkhead Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead) — 격리 경계와 자원 효율 trade-off.
-- [Kubernetes Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/) — 열람 문서의 namespace 할당량과 적용 한계.
+- [Kubernetes Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/) — namespace 할당량과 적용 한계.
 - [John D. C. Little — A Proof for the Queuing Formula](https://pubsonline.informs.org/doi/abs/10.1287/opre.9.3.383?journalCode=opre) — 1961 논문 초록의 평균 관계 L=λW와 정상 상태 전제.
-
-부분 재검증: 2026-09-22. [Little 원논문의 MIT 공개 사본](https://fisherp.scripts.mit.edu/wordpress/wp-content/uploads/2015/11/ContentServer.pdf) pp.383·387의 평균 관계·정상성 및 시스템 경계 일치 조건을 대조했다. 기존 INFORMS 원문 링크는 접근 제한(HTTP 403)이 있어 유지하면서 공개 사본을 보완했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Resilience4j v2.3.0 Bulkhead 고정 소스](https://raw.githubusercontent.com/resilience4j/resilience4j/v2.3.0/resilience4j-bulkhead/src/main/java/io/github/resilience4j/bulkhead/Bulkhead.java)의 decorateSupplier finally와 decorateCompletionStage whenComplete를 대조했다. 같은 2.3.0 라이브러리·JDK 25.0.4에서 한도 1과 수동 완료 future로 실행해, Supplier는 미완료 작업 2개를 허용하고 CompletionStage는 첫 완료 전 두 번째를 거부하며 완료 후 permit을 반환함을 확인했다. 실제 I/O 취소·Spring AOP·ThreadPoolBulkhead의 동작까지 시험한 것은 아니며 `verified`는 유지했다.
+- [Little 원논문의 MIT 공개 사본](https://fisherp.scripts.mit.edu/wordpress/wp-content/uploads/2015/11/ContentServer.pdf) — Little의 1961 원논문 pp.383·387: 평균 관계·정상성·시스템 경계 일치.
+- [Resilience4j v2.3.0 Bulkhead 고정 소스](https://raw.githubusercontent.com/resilience4j/resilience4j/v2.3.0/resilience4j-bulkhead/src/main/java/io/github/resilience4j/bulkhead/Bulkhead.java) — Resilience4j 2.3.0의 Supplier finally와 CompletionStage whenComplete에서 permit 반환; 실제 I/O 종료와 구분.

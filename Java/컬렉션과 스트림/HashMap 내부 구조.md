@@ -1,8 +1,7 @@
 ---
 category: "Java/컬렉션과 스트림"
 tags: ["java", "hashmap", "자료구조", "해시테이블", "jcf"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # HashMap 내부 구조
@@ -95,27 +94,8 @@ A. Java SE 25 API의 순회 비용은 `size + capacity`에 비례한다. OpenJDK
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [HashMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html) — Java SE 25 용량·로드 팩터·동시성·fail-fast.
-- [OpenJDK 25 HashMap 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/HashMap.java) — putVal·resize·treeifyBin·TreeNode.find/removeTreeNode의 조건.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 HashMap API의 순회 비용과 OpenJDK jdk-25-ga의 clear/remove·modCount·테이블 유지 경로를 확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 기존 값 교체와 빈 clear의 modCount 차이을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-### 부분 재검증: 2026-10-04
-
-Java SE 25 HashMap/Map의 computeIfAbsent null·예외·계산 중 수정 금지와 OpenJDK jdk-25+36의 콜백 후 modCount 검사를 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [Java SE 25 HashMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html) — computeIfAbsent의 null·예외 및 최선 노력 변경 감지.
+- [HashMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html) — Java SE 25 용량·로드 팩터·동시성·fail-fast와 computeIfAbsent의 null·예외.
+- [OpenJDK 25 HashMap 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/HashMap.java) — putVal·resize·treeifyBin·TreeNode 탐색·제거와 clear 이후 배열 유지.
 - [Java SE 25 Map](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html) — 계산 결과 저장과 동시성 계약의 구현별 구분.
 - [OpenJDK jdk-25+36 HashMap](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/HashMap.java) — computeIfAbsent의 mappingFunction.apply 이후 modCount 검사.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 null 반환·기존 null·예외 이후 재호출, Optional.empty의 저장, 계산 중 다른 키 수정 시 예외와 변경 잔존을 확인했다. 마지막 사례는 잘못된 사용 방식의 해당 구현 관찰이며, 그 결과 상태를 다른 구현·버전의 보장으로 삼지 않는다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode())의 동등한 객체에 대한 동일 해시·호출 간 일관성 계약을 확인했다. Temurin 25.0.4.1+1에서 hashCode만 상수로 재정의한 객체가 참조 동등성을 유지하며 서로 다른 키로 저장되는 경우와, 상위 타입에서 두 메서드를 올바르게 상속한 키의 조회를 실행 확인했다. 두 메서드의 선언 여부보다 계약 준수가 기준이며, 기존 전체 verified는 유지한다.
+- [Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()) — 동등한 객체에 대한 동일 해시·호출 간 일관성 계약.

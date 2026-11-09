@@ -1,8 +1,7 @@
 ---
 category: "Java/JVM과 메모리 관리"
 tags: ["java", "gc튜닝", "jvm옵션", "성능최적화", "트러블슈팅"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # GC 튜닝
@@ -90,18 +89,9 @@ A. JDK 25 G1은 기본 적응형 IHOP에서 이전 동작을 바탕으로 시작
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [JDK 25 G1 Tuning](https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-garbage-collector-tuning.html) — evacuation failure·Young 크기·정지시간 및 힙 선택.
+- [JDK 25 G1 Tuning](https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-garbage-collector-tuning.html) — evacuation failure·Adaptive IHOP·Young 크기·정지시간·처리량과 힙 선택.
 - [JDK 25 G1](https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html) — 병렬 Full GC와 수집 주기.
-- [JDK 25 java](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html) — GC·컨테이너·메모리 옵션.
+- [JDK 25 java](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html) — GC·컨테이너·메모리 옵션과 DisableExplicitGC·ExplicitGCInvokesConcurrent.
 - [JEP 307](https://openjdk.org/jeps/307) — Java 10 G1 Full GC 병렬화.
-
-### 2026-09-23 부분 재검증
-
-JDK 25 G1 Tuning의 pause·처리량 절충, Real/User/Sys, 적응형 IHOP 및 Young 크기 고정 제약을 재확인했다. 기존 전체 검증일은 유지한다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 System.gc](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#gc()), [JDK 25 java GC 옵션](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html) — 회수 보장 부재·DisableExplicitGC·G1 ExplicitGCInvokesConcurrent. Oracle JDK 25.0.4의 독립 32 MiB 시험 JVM에서 기본 G1의 System.gc Full GC, DisableExplicitGC의 요청 생략과 할당 압박에 따른 Young GC, concurrent 옵션의 Concurrent Start/Mark Cycle을 확인했다. 관찰한 정지 시간을 운영 성능 보장으로 사용하지 않았다.
-- [Linux cgroup v2 Memory](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory) — 회수 실패 뒤 cgroup OOM 경계로 컨테이너 즉시 종료 단정을 조정했다. Linux 메모리 압박 실험은 하지 않았다.
+- [Java SE 25 System.gc](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#gc()) — 객체 회수와 즉시 실행의 보장 부재.
+- [Linux cgroup v2 Memory](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory) — 메모리 회수 실패와 cgroup OOM의 경계.

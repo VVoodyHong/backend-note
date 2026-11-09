@@ -2,8 +2,7 @@
 category: "인프라와 운영/관측성 심화"
 tags: ["operations", "observability", "distributed-tracing", "opentelemetry", "context-propagation"]
 aliases: ["Trace Context Propagation", "트레이스 컨텍스트 전파"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 분산 트레이스 ID 전파
@@ -126,11 +125,9 @@ tracestate는 트레이싱 벤더/시스템이 스팬 연결과 관련된 자기
 
 ## 참고 자료
 
-- [W3C Trace Context Level 1](https://www.w3.org/TR/trace-context/) — traceparent·tracestate 문법·sampled 변경 규칙. 확인: 2026-09-08.
-- [OpenTelemetry Context Propagation](https://opentelemetry.io/docs/concepts/context-propagation/) — 프로세스 내외 context·baggage. 확인: 2026-09-08.
-- [OpenTelemetry Messaging Spans](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/) — 조회한 semantic conventions·batch links. 확인: 2026-09-08.
-- [OpenTelemetry Sampling](https://opentelemetry.io/docs/concepts/sampling/) — head/tail sampling 조건. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [OpenTelemetry messaging spans](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/)의 개발 중 규약에서 Process/Receive의 link 기본과 단일 메시지 parent 선택 범위를 대조해 본문·도식·Q&A를 일치시켰다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [OpenTelemetry Java v1.55.0 Context 고정 소스](https://raw.githubusercontent.com/open-telemetry/opentelemetry-java/v1.55.0/context/src/main/java/io/opentelemetry/context/Context.java)의 makeCurrent·Scope.close·wrap을 대조했다. opentelemetry-context/common 1.55.0과 JDK 25.0.4로 단일 워커를 재사용해 wrap의 예외 후 복원 및 close 생략 시 다음 작업 오염을 실행 확인했다. [OTel Baggage 보안 고려사항](https://opentelemetry.io/docs/concepts/signals/baggage/)의 기본 무결성 검사 부재도 확인했다. 실제 Java Agent·Reactor·MDC·원격 전파·인가 통합 시험은 하지 않았고 `verified`는 유지했다.
+- [W3C Trace Context Level 1](https://www.w3.org/TR/trace-context/) — traceparent·tracestate 문법·sampled 변경 규칙.
+- [OpenTelemetry Context Propagation](https://opentelemetry.io/docs/concepts/context-propagation/) — 프로세스 내외 context·baggage.
+- [OpenTelemetry Messaging Spans](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/) — semantic conventions·batch links; 개발 중 messaging 규약의 Process/Receive link 기본·단일 메시지 parent 선택.
+- [OpenTelemetry Sampling](https://opentelemetry.io/docs/concepts/sampling/) — head/tail sampling 조건.
+- [OpenTelemetry Java v1.55.0 Context 고정 소스](https://raw.githubusercontent.com/open-telemetry/opentelemetry-java/v1.55.0/context/src/main/java/io/opentelemetry/context/Context.java) — OpenTelemetry Java 1.55.0의 makeCurrent·Scope.close·wrap과 복원.
+- [OTel Baggage 보안 고려사항](https://opentelemetry.io/docs/concepts/signals/baggage/) — Baggage의 기본 무결성 검사 부재·보안 고려사항.

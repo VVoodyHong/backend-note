@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 핵심"
 tags: ["java", "equals", "hashcode", "객체지향", "컬렉션"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # equals와 hashCode
@@ -88,21 +87,9 @@ A. 아니다. `Objects.hash(x)`는 하나의 원소를 가진 가변 인자 배�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html) — equals·hashCode 계약.
-- [Java SE 25 Objects](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Objects.html) — hash 가변 인자·equals.
+- [Java SE 25 Objects](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Objects.html) — 가변 인자 hash·단일 객체 hashCode·equals의 구분.
 - [Hibernate ORM 7.1 Introduction](https://docs.hibernate.org/orm/7.1/introduction/html_single/) — 3.24 equals/hashCode·프록시와 비즈니스 키.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 BigDecimal의 scale 기반 equals·수치 기반 compareTo와 Objects의 단일 인자 hash 경고를 확인했다. 기존 전체 검증일은 유지한다.
-
 - [Java SE 25 BigDecimal](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html) — 자연 순서와 equals의 불일치.
 - [Java SE 25 Arrays](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html) — 배열 동등성과 대응 해시 계약.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 BigDecimal의 HashSet/TreeSet 차이·Objects.hash 단일 인자 차이을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode())의 동등한 객체에 대한 동일 해시·호출 간 일관성 계약을 확인했다. Temurin 25.0.4.1+1에서 hashCode만 상수로 재정의한 객체가 참조 동등성을 유지하며 서로 다른 키로 저장되는 경우와, 상위 타입에서 두 메서드를 올바르게 상속한 키의 조회를 실행 확인했다. 두 메서드의 선언 여부보다 계약 준수가 기준이며, 기존 전체 verified는 유지한다.
+- [Java SE 25 Object.equals·hashCode](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()) — 동등한 객체에 대한 동일 해시·호출 간 일관성 계약.

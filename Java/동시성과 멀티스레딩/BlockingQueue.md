@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "blockingqueue", "concurrency", "producer-consumer", "backpressure"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # BlockingQueue
@@ -101,22 +100,10 @@ A. 아니다. 대상 컬렉션에 추가하다 실패하면 일부 요소가 어
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 BlockingQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html) — 메서드 종류·null·메모리 일관성·종료.
+- [Java SE 25 BlockingQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html) — 메서드 종류·null·메모리 일관성·종료와 drainTo의 실패 경계.
 - [OpenJDK jdk-25-ga LinkedBlockingQueue](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/concurrent/LinkedBlockingQueue.java) — size AtomicInteger·2-lock·Condition.
 - [Java SE 25 DelayQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/DelayQueue.html) — peek과 만료된 제거 구분.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 BlockingQueue의 종료·drainTo 계약과 PriorityBlockingQueue의 무제한 용량을 확인했다. 기존 전체 검증일은 유지한다.
-
 - [Java SE 25 PriorityBlockingQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/PriorityBlockingQueue.html) — initialCapacity는 저장 상한이 아니며 동일 우선순위 순서는 별도 보장하지 않음.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 PriorityBlockingQueue initialCapacity를 초과한 삽입을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 SynchronousQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/SynchronousQueue.html)의 용량 0·put/poll 인계 계약을 확인했다. Temurin 25.0.4.1+1에서 take를 호출하지 않고 시간 제한 poll로 put을 완료시키며, 수신자의 후속 업무 처리 전에도 put이 반환함을 확인했다. 다른 BlockingQueue 구현의 종료·drainTo·성능 전체는 재검증하지 않아 verified를 유지한다.
-
-[OpenJDK jdk-25+36 ThreadPoolExecutor](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/ThreadPoolExecutor.java)·[Executors](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/Executors.java)의 execute/offer 분기와 newCachedThreadPool 구성을 대조해, 직접 put 호출과 실행기의 작업 제출 경로를 구분했다. 이 실행기 경로는 소스 대조 범위이며 새 부하 시험은 하지 않았다.
+- [Java SE 25 SynchronousQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/SynchronousQueue.html) — 용량 0과 put/take·poll 인계 계약.
+- [OpenJDK jdk-25+36 ThreadPoolExecutor](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/ThreadPoolExecutor.java) — execute의 offer·워커 생성·거부 분기.
+- [OpenJDK jdk-25+36 Executors](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/Executors.java) — newCachedThreadPool의 큐와 풀 구성.

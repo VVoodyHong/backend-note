@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring Boot 내부 동작"
 tags: ["spring", "spring-boot", "tomcat", "내장서버", "was"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 내장 WAS
@@ -80,18 +79,12 @@ A. Boot 4.1.1에서 Java 21 이상으로 `spring.threads.virtual.enabled=true`�
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Boot 4.1.1의 Servlet 6.1/Tomcat 11/Jetty 12.1 및 3.4 이후 graceful shutdown 기본값.
+적용 범위: Boot 4.1.1의 Servlet 6.1·Tomcat 11·Jetty 12.1 및 Boot 3.4 이후 graceful shutdown 기본값.
 
 - [Boot 시스템 요구사항](https://docs.spring.io/spring-boot/system-requirements.html) — 지원 서블릿 컨테이너.
 - [Boot 4.0 릴리스 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Release-Notes) — starter 재구성과 Undertow 지원 제거.
-- [Graceful Shutdown](https://docs.spring.io/spring-boot/reference/web/graceful-shutdown.html) — 종료 동작과 제한.
+- [Graceful Shutdown](https://docs.spring.io/spring-boot/reference/web/graceful-shutdown.html) — 종료 동작과 유예 시간의 한계.
 - [Servlet 웹 애플리케이션](https://docs.spring.io/spring-boot/reference/web/servlet.html) — 내장 서버와 자동 구성.
-
-부분 재검증: 2026-09-23. Boot 4.1.1의 가상 스레드 자동 구성 소스와 풀 설정 제약을 확인했다. OpenJDK 25.0.2·Tomcat 11.0.24를 로컬 랜덤 포트로 띄워 HTTP 요청 3개의 동시 진입과 `Thread.isVirtual()` 결과를 확인했다. 처리량 벤치마크나 운영 부하 시험은 아니다.
-
-- [Boot Virtual Threads](https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads) — 4.1.1, 활성화 조건·풀 설정 제약.
-- [TomcatVirtualThreadsWebServerFactoryCustomizer 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/module/spring-boot-tomcat/src/main/java/org/springframework/boot/tomcat/autoconfigure/TomcatVirtualThreadsWebServerFactoryCustomizer.java) — protocol handler에 가상 스레드 실행기 설치.
-
-부분 재검증: 2026-10-04. Boot 4.1.1 공식 문서에서 서블릿 WAR 배포 전제, 실행 가능한 WAR의 provided 의존성 보존, WebFlux의 WAR 배포 미지원을 확인했다. 외부 WAS 배포 실행은 검증하지 않았다.
-
-- [Boot 4.1.1 Traditional Deployment](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/how-to/pages/deployment/traditional-deployment.adoc) — WAR 패키징과 외부 컨테이너·실행 가능한 WAR의 의존성 처리.
+- [Boot Virtual Threads](https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads) — 가상 스레드 활성화 조건과 풀 설정 제약.
+- [TomcatVirtualThreadsWebServerFactoryCustomizer 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/module/spring-boot-tomcat/src/main/java/org/springframework/boot/tomcat/autoconfigure/TomcatVirtualThreadsWebServerFactoryCustomizer.java) — Tomcat protocol handler에 가상 스레드 실행기 설치.
+- [Boot 4.1.1 Traditional Deployment](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/how-to/pages/deployment/traditional-deployment.adoc) — 서블릿 WAR 패키징·외부 컨테이너·provided 의존성 보존과 WebFlux WAR 미지원.

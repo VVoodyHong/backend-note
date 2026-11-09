@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/운영 심화"
 tags: ["operations", "nginx", "리버스프록시", "인프라", "웹서버"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Nginx 리버스 프록시 설정
@@ -140,15 +139,13 @@ A. Nginx의 location 매칭은 선언 순서가 아니라 정해진 알고리즘
 
 ## 참고 자료
 
-- [NGINX Proxy module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html) — proxy_pass·retry·timeout·1.29.7 HTTP/1.1 기본 변경. 확인: 2026-09-08.
-- [NGINX Upstream module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html) — keepalive idle cache·1.29.7 기본32. 확인: 2026-09-08.
-- [NGINX Core module](https://nginx.org/en/docs/http/ngx_http_core_module.html) — location·server_tokens·sendfile. 확인: 2026-09-08.
-- [NGINX HTTP/2 module](https://nginx.org/en/docs/http/ngx_http_v2_module.html) — http2 on은1.25.1+. 확인: 2026-09-08.
-- [NGINX Limit connections](https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html) — HTTP/2·3 request counting. 확인: 2026-09-08.
-- [NGINX Limit requests](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html) — burst·nodelay·기본503. 확인: 2026-09-08.
-- [NGINX Health checks](https://nginx.org/en/docs/http/ngx_http_upstream_hc_module.html) — 상용 모듈. 확인: 2026-09-08.
-- [Apache event MPM](https://httpd.apache.org/docs/2.4/mod/event.html) — 2.4·keepalive 비동기 처리. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [NGINX Proxy module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)의 next-upstream 시간 범위·재시도 조건·read timeout 의미를 대조했다. `proxy_next_upstream_timeout`은 1.7.5 이상 지시어다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [NGINX proxy_request_buffering](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering) — 1.7.11+ 지시어의 기본 `on`·전송 시작 후 다음 upstream 재시도 불가·chunked 본문의 proxy HTTP 버전 조건과 [proxy_buffering](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering)의 메모리·임시 파일 사용을 확인했다. 같은 문서의 proxy_busy_buffers_size·proxy_max_temp_file_size와 대조해 Q&A의 무조건 즉시 반환 표현도 좁혔다. 자원 점유 비교는 이 계약에서 도출한 운영 판단이다. 실제 nginx 설정 검사·느린 업로드/응답 시험과 기존 전체 주장은 재검증하지 않아 `verified`를 유지했다.
+- [NGINX Proxy module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html) — proxy_pass·read timeout·재시도 조건·next-upstream 시간 범위(1.7.5+)·HTTP/1.1 기본 변경(1.29.7).
+- [NGINX Upstream module](https://nginx.org/en/docs/http/ngx_http_upstream_module.html) — keepalive idle cache·1.29.7 기본32.
+- [NGINX Core module](https://nginx.org/en/docs/http/ngx_http_core_module.html) — location·server_tokens·sendfile.
+- [NGINX HTTP/2 module](https://nginx.org/en/docs/http/ngx_http_v2_module.html) — http2 on은1.25.1+.
+- [NGINX Limit connections](https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html) — HTTP/2·3 request counting.
+- [NGINX Limit requests](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html) — burst·nodelay·기본503.
+- [NGINX Health checks](https://nginx.org/en/docs/http/ngx_http_upstream_hc_module.html) — 상용 모듈.
+- [Apache event MPM](https://httpd.apache.org/docs/2.4/mod/event.html) — 2.4·keepalive 비동기 처리.
+- [NGINX proxy_request_buffering](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering) — proxy_request_buffering(1.7.11+) 기본 on·전송 후 upstream 재시도 불가·chunked 본문의 proxy HTTP 버전 조건.
+- [proxy_buffering](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering) — 응답 buffering의 메모리·임시 파일·busy buffer 한도.

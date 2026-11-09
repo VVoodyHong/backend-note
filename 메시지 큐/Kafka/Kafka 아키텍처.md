@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/Kafka"
 tags: ["messaging", "kafka", "아키텍처", "broker", "kraft"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Kafka 아키텍처
@@ -81,17 +80,9 @@ A. 아니다. 팔로워 복제본이 리더로부터 데이터를 가져오는 �
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. Kafka 4.3 ELR 공식 운영 문서에서 엄격한 최소 ISR 조건과 HW 진행 제약을 확인했다. 기존 전체 확인일은 유지한다.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Kafka Design](https://kafka.apache.org/43/design/design/) — Kafka 4.3, 로그·복제·ACK·follower fetching.
-- [KRaft Operations](https://kafka.apache.org/43/operations/kraft/) — Kafka 4.3, controller 역할 분리·쿼럼·마이그레이션.
+- [KRaft Operations](https://kafka.apache.org/43/operations/kraft/) — Kafka 4.3: controller 역할 분리·과반수·쿼럼·마이그레이션, 데이터 복제와의 구분.
 - [Eligible Leader Replicas](https://kafka.apache.org/43/operations/eligible-leader-replicas/) — 4.0 도입·4.1 신규 기본 활성화, ISR 밖 안전한 리더 후보.
 - [Producer Configs](https://kafka.apache.org/43/configuration/producer-configs/) — Kafka 4.3, 파티셔너와 ACK 내구성 경계.
-
-부분 재검증: 2026-09-23. Kafka 4.3의 rack-aware 배치·정상 종료와 controller/데이터 복제 경계를 공식 운영·KRaft·producer 문서로 대조했다. 실제 다중 브로커 재시작 실험은 하지 않았다. 기존 전체 검증일은 유지한다.
-
 - [Kafka 4.3 Basic Operations](https://kafka.apache.org/43/operations/basic-kafka-operations/) — 랙별 복제본 배치, graceful shutdown, 재시작 후 리더 분포.
-- [Kafka 4.3 KRaft](https://kafka.apache.org/43/operations/kraft/) — controller 과반수와 broker 역할의 구분.
 - [Kafka 4.3 Topic Configs](https://kafka.apache.org/43/configuration/topic-configs/) — min.insync.replicas와 acks=all의 쓰기 실패 경계.

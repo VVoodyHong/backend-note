@@ -1,8 +1,7 @@
 ---
 category: "데이터베이스/저장 엔진과 로그"
 tags: ["database", "innodb", "버퍼풀", "mysql", "저장엔진"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # InnoDB 저장 구조와 버퍼풀
@@ -76,18 +75,9 @@ A. 세컨더리 인덱스 페이지가 버퍼풀에 이미 있다면 바로 반�
 
 ## 참고 자료
 
-부분 재확인: 2026-10-04. MySQL 8.4의 버퍼풀 공유·페이지 해시 배정과 scan-resistant 정책을 대조해 별도 커넥션이 캐시를 격리한다는 표현을 바로잡았다. 배치 시간대·복제본 분리는 이 공유 구조를 바탕으로 한 운영 판단이며 격리 효과·성능을 실행 측정하지 않았다. 전체 `verified`는 유지한다.
-
 - [MySQL 8.4 Multiple Buffer Pool Instances](https://dev.mysql.com/doc/refman/8.4/en/innodb-multiple-buffer-pools.html) — 인스턴스별 내부 목록·페이지 해시 배정; 세션별 할당이 아니다.
-- [MySQL 8.4 Buffer Pool](https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html) — 테이블·인덱스 페이지 캐싱과 스캔에 의한 기존 페이지 축출.
-
-부분 재확인: 2026-09-22. MySQL 8.4 `innodb_page_size`의 고정 시점·압축 제약과 버퍼풀 인스턴스 크기 지침을 확인했다. 기존 전체 확인일은 유지한다.
-
+- [MySQL 8.4 Buffer Pool](https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html) — 페이지 캐싱·LRU·미드포인트, 스캔에 의한 기존 페이지 축출.
 - [MySQL 8.4 InnoDB Variables](https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html#sysvar_innodb_page_size) — 32/64 KiB 페이지의 `ROW_FORMAT=COMPRESSED` 제한; 같은 문서의 `innodb_buffer_pool_instances`.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [MySQL 8.4 Buffer Pool](https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html) — 페이지·LRU·미드포인트.
 - [MySQL 8.4 Buffer Pool Flushing](https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool-flushing.html) — LRU scan·dirty 비율·adaptive flush.
 - [MySQL 8.4 InnoDB Variables](https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html) — 페이지 크기·1000ms·인스턴스·dump/load 기본값.
 - [MySQL 8.4 Change Buffer](https://dev.mysql.com/doc/refman/8.4/en/innodb-change-buffer.html) — 기본 none·적용 조건.

@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/API 설계 원칙"
 tags: ["system-design", "api-design", "rest", "http", "spring"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # RESTful API 설계 원칙
@@ -122,11 +121,10 @@ HTTP 스펙상 PUT은 멱등성이 요구되지만 PATCH는 필수는 아니다.
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) — §9.2 안전성·멱등성, §9.3 메서드, §15 상태 코드와 Location/인증 challenge.
 - [RFC 5789](https://www.rfc-editor.org/rfc/rfc5789.html) — PATCH의 비필수 멱등성과 조건부 적용.
 - [Fielding Dissertation Chapter 5](https://roy.gbiv.com/pubs/dissertation/rest_arch_style.htm) — REST 제약과 uniform interface.
 - [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html) — HTTP API 성숙도 모델의 설명 및 REST와의 관계.
-
-부분 재확인: 2026-09-23. [RFC 9110 §13.1.1·§13.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.1)의 If-Match 강한 비교·조건 평가, [RFC 6585 §3](https://www.rfc-editor.org/rfc/rfc6585.html#section-3)의 428, [RFC 7396 §2](https://www.rfc-editor.org/rfc/rfc7396.html#section-2)의 null·배열·전체 대체를 확인했다. 저장소 갱신의 원자성은 이를 적용한 구현 요건이다. 기존 REST 모델과 모든 상태 코드를 다시 검증한 것은 아니므로 `verified`는 유지한다.
+- [RFC 9110 §13.1.1·§13.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.1) — If-Match 강한 비교·조건 평가.
+- [RFC 6585 §3](https://www.rfc-editor.org/rfc/rfc6585.html#section-3) — 428 Precondition Required.
+- [RFC 7396 §2](https://www.rfc-editor.org/rfc/rfc7396.html#section-2) — JSON Merge Patch의 null·배열·전체 대체 의미.

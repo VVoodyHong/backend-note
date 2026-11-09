@@ -2,8 +2,7 @@
 category: "Spring/테스트 전략"
 tags: ["spring", "testcontainers", "통합테스트", "docker", "serviceconnection"]
 aliases: ["테스트컨테이너"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # TestContainers
@@ -109,17 +108,14 @@ A. 대표적으로 포트 바인딩과 호스트 접근 방식이다. Docker Des
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Testcontainers Java 2.0.5의 JUnit Jupiter 병렬 실행 제한과 Spring Boot 4.1.1의 `@Bean` 반환 타입 기반 ServiceConnection 판별을 확인했다. 이 두 항목은 공식 문서 검증이며 컨테이너 실행 시험은 수행하지 않았다.
-
-- [JUnit Jupiter 확장 제한](https://java.testcontainers.org/test_framework_integration/junit_5/#limitations) — 병렬 테스트 실행 지원 여부.
-- [Boot Testcontainers 서비스 연결](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html#testing.testcontainers.service-connections) — 정적 필드와 `@Bean`의 서비스 판별 차이.
-
-검증일: 2026-09-08. 적용 범위: Testcontainers Java 2.0.x, Spring Boot 4.1; ServiceConnection은 Boot 3.1부터.
+적용 범위: Testcontainers Java 2.0.x·2.0.5, Boot 4.1·4.1.1. ServiceConnection은 Boot 3.1 도입.
 
 - [Testcontainers JUnit Jupiter](https://java.testcontainers.org/test_framework_integration/junit_5/) — 클래스/메서드 생명주기.
+- [JUnit Jupiter 확장 제한](https://java.testcontainers.org/test_framework_integration/junit_5/#limitations) — JUnit Jupiter 병렬 테스트 실행 지원 범위.
 - [Boot Testcontainers](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html) — ConnectionDetails·컨텍스트와 컨테이너 생명주기.
+- [Boot Testcontainers 서비스 연결](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html#testing.testcontainers.service-connections) — 정적 필드와 @Bean 반환 타입의 서비스 판별 차이.
 - [Reusable containers](https://java.testcontainers.org/features/reuse/) — 실험적 재사용·사용자 설정 파일·수동 시작.
-- [PostgreSQL module](https://java.testcontainers.org/modules/databases/postgres/) — 2.x 컨테이너 API.
+- [PostgreSQL module](https://java.testcontainers.org/modules/databases/postgres/) — 2.x PostgreSQL 컨테이너 API.
 - [Runtime requirements](https://java.testcontainers.org/supported_docker_environment/) — 호환 런타임과 원격 환경.
 - [Wait strategies](https://java.testcontainers.org/features/startup_and_waits/) — 프로세스 시작과 준비 상태 구분.
-- [JUnit 4 support](https://java.testcontainers.org/test_framework_integration/junit_4/) — 2.x에도 남아 있는 JUnit 4 통합.
+- [JUnit 4 support](https://java.testcontainers.org/test_framework_integration/junit_4/) — 2.x의 JUnit 4 통합.

@@ -1,8 +1,7 @@
 ---
 category: "네트워크/애플리케이션 프로토콜"
 tags: ["network", "rest", "graphql", "grpc", "api-design"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # REST와 GraphQL과 gRPC 비교
@@ -87,13 +86,11 @@ REST는 파일 업로드를 `multipart/form-data`로 처리하지만 진행 중 
 
 ## 참고 자료
 
-- [GraphQL September 2025 Specification](https://spec.graphql.org/September2025/) — 타입·검증·실행·subscription. 확인: 2026-09-08.
-- [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — 4가지 RPC 방식·기본 protobuf. 확인: 2026-09-08.
-- [Protocol Buffers proto3 guide](https://protobuf.dev/programming-guides/proto3/#updating) — wire-safe 변경과 reserved. 확인: 2026-09-08.
-- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — 캐싱·메서드와 리소스. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html)의 Schema Object와 도구 활용 범위로 REST의 스키마 강제 가능성을 대조했다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [GraphQL September 2025 §6.4.4](https://spec.graphql.org/September2025/#sec-Handling-Execution-Errors)와 [§7.1 응답 형식](https://spec.graphql.org/September2025/#sec-Response-Format)을 기준으로 실행 오류의 부분 data·Non-Null 전파·errors.path와 실행 전 오류의 data 부재를 확인했다. 실제 HTTP 서버·클라이언트 캐시·HTTP 바인딩과 기존 세 방식 비교 전체는 재검증하지 않아 `verified`는 유지했다.
-
-실행 확인: 2026-10-04, Node.js v26.5.0과 graphql-js 16.11.0의 메모리 내 실행기로 검증했다. 같은 resolver 오류가 nullable 필드에서는 해당 값만 null, Non-Null 필드에서는 nullable 부모 null, 루트까지 Non-Null이면 data 전체 null이 되는 결과와 검증 오류 때 data 속성이 없음을 assertion으로 확인했다. errors.path는 응답 별칭을 사용하고 부모가 null이 되어도 원래 실패 위치를 유지했다. [graphql-js v16.11.0 execute 소스](https://raw.githubusercontent.com/graphql/graphql-js/v16.11.0/src/execution/execute.ts)와 대조한 핵심 실행 범위이며 전송 계층이나 September 2025 명세 전체의 구현 적합성을 검증한 것은 아니다.
+- [GraphQL September 2025 Specification](https://spec.graphql.org/September2025/) — 타입·검증·실행·subscription.
+- [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — 4가지 RPC 방식·기본 protobuf.
+- [Protocol Buffers proto3 guide](https://protobuf.dev/programming-guides/proto3/#updating) — wire-safe 변경과 reserved.
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — 캐싱·메서드와 리소스.
+- [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html) — OpenAPI 3.1.1 Schema Object와 도구를 통한 계약 검증.
+- [GraphQL September 2025 §6.4.4](https://spec.graphql.org/September2025/#sec-Handling-Execution-Errors) — GraphQL September 2025의 실행 오류·부분 data·Non-Null 전파·errors.path.
+- [§7.1 응답 형식](https://spec.graphql.org/September2025/#sec-Response-Format) — GraphQL September 2025의 응답 형식과 실행 전 오류의 data 부재.
+- [graphql-js v16.11.0 execute 소스](https://raw.githubusercontent.com/graphql/graphql-js/v16.11.0/src/execution/execute.ts) — graphql-js 16.11.0 메모리 내 실행기의 오류 전파·응답 경로 처리; HTTP 바인딩과 구분.

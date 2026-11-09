@@ -2,8 +2,7 @@
 category: "캐시/Redis"
 tags: ["cache", "redis", "memory", "eviction", "운영"]
 aliases: ["Redis Eviction", "maxmemory"]
-updated: 2026-10-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # Redis 메모리와 축출 정책
@@ -95,15 +94,10 @@ A. 기본 복제본은 독립 축출을 하지 않으며 복제 버퍼와 자료
 
 ## 참고 자료
 
-확인일: 2026-09-22. Redis Open Source 8.4의 정책·복제본 기본 동작을 소스 설정과 대조하고 공식 명령 문서에서 지표·샘플링 의미를 확인했다. Redis 서버에서 명령을 실행하지 않았다.
-
 - [Redis 8.4 redis.conf](https://raw.githubusercontent.com/redis/redis/8.4/redis.conf) — 지원 정책, 기본 `noeviction`, 근사 알고리즘, `replica-ignore-maxmemory`.
-- [Key Eviction](https://redis.io/docs/latest/develop/reference/eviction/) — 축출 판단·제외 버퍼·정책 선택. 이 노트는 8.4 정책 범위만 사용한다.
+- [Key Eviction](https://redis.io/docs/latest/develop/reference/eviction/) — 축출 판단·제외 버퍼·정책 선택. Redis Open Source 8.4 정책 범위.
 - [INFO](https://redis.io/docs/latest/commands/info/) — allocator·RSS·축출/만료·CoW 지표.
 - [MEMORY USAGE](https://redis.io/docs/latest/commands/memory-usage/) — 관리 비용 포함과 `SAMPLES`의 추정·전수 조사.
 - [Redis Replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/#maxmemory-on-replicas) — 복제본 독립 축출을 기본적으로 하지 않는 이유.
-
-부분 재검증: 2026-10-04. WATCH의 만료·축출 중단 계약과 Redis 8.10.2 EXEC 구현을 확인했다. 격리 Redis 6.2.11에서 감시 키의 TTL 만료 후 EXEC가 null을 반환하고 예정된 쓰기는 없음을 재현했다. 새 값을 읽어 재시도한 대조 실험은 성공했다. 강제 eviction·Redis 8.10.2 서버 실행은 하지 않았고 본문의 8.4 정책·기본값 `verified`는 유지한다.
-
 - [Redis Transactions: WATCH Explained](https://redis.io/docs/latest/develop/using-commands/transactions/#watch-explained) — 만료·축출 조건과 6.0.9 이전 차이, 실행 오류와 CAS 실패 구분.
 - [Redis 8.10.2 multi.c](https://github.com/redis/redis/blob/8.10.2/src/multi.c) — EXEC의 isWatchedKeyExpired·CLIENT_DIRTY_CAS와 null 응답.

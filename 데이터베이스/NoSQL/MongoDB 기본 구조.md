@@ -1,8 +1,7 @@
 ---
 category: "데이터베이스/NoSQL"
 tags: ["database", "mongodb", "document-db", "wiredtiger", "복제셋"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # MongoDB 기본 구조
@@ -122,7 +121,7 @@ const result = db.inventory.updateOne(
 MongoDB 8.3의 `write concern: majority`는 정해진 수의 데이터 보유 투표 멤버가 쓰기를 oplog에 기록할 때까지 기다린다. 필요한 수는 중재자(arbiter)를 포함한 전체 투표 멤버의 과반수와 데이터 보유 투표 멤버 수 중 작은 값이며 `rs.status().writeMajorityCount`로 확인한다. 기본 `writeConcernMajorityJournalDefault=true`에서는 저널의 내구 저장도 기다린다. 복제본의 실제 데이터 적용은 이후 비동기로 진행될 수 있어 쓰기 승인만으로 모든 복제본에서 즉시 새 값을 읽는다고 가정하지 않는다. `read concern: majority`와 함께 쓰면 "커밋되어 롤백되지 않을 데이터만 읽는다"는 보장을 얻을 수 있다. 반대로 `w: 1`과 `local` read concern 조합은 지연은 짧지만 Primary 장애 시 아직 복제되지 않은 데이터가 롤백될 수 있다. `majority` 읽기도 항상 최신값을 의미하지는 않는다. 자신의 쓰기 읽기 보장은 인과 일관성 세션·적절한 concern 조합까지 포함해 설계하고, 허용 가능한 유실·읽기 지연을 기준으로 설정을 선택한다. `wtimeout` 오류는 이미 성공한 쓰기를 되돌리지 않으므로 결과 불확실성을 처리하고 재시도 시 중복 효과를 막는다.
 
 ### Q. MongoDB 8.x에서 도입된 벡터 검색(Vector Search)이 기존 문서 모델과 결합되는 방식은 무엇이며 어떤 경우에 검토할 만한가?
-2026-09-08 확인한 self-managed Search 1.x 문서는 Community와 Enterprise에서 별도 `mongot` 배포를 지원한다. `$scoreFusion`은 MongoDB 8.3+에 제공되는 기능으로 문서화되어 있다. 이는 기존 문서에 임베딩(embedding) 벡터 필드를 추가하고 별도 벡터 인덱스를 생성해, 하나의 데이터베이스 안에서 정형 쿼리와 의미 기반 검색을 함께 수행할 수 있게 한다. RAG(retrieval-augmented generation) 기반 검색 기능을 이미 MongoDB에 저장된 데이터 위에 얹어야 하는 경우, 별도의 전용 벡터 DB를 추가하지 않고 기존 인프라를 재사용할 수 있다는 점에서 검토 가치가 있다. 다만 아직 상대적으로 신생 기능이므로 프로덕션 도입 전 `mongod`·`mongot` 호환성, 에디션별 배포 지원, 라이선스 조건을 확인해야 한다. 검색 인덱스는 change stream으로 비동기 동기화되므로 일반 문서 읽기와 같은 최신성 보장을 전제하지 않는다.
+Self-managed MongoDB Search 1.x 문서는 Community와 Enterprise에서 별도 `mongot` 배포를 지원한다. `$scoreFusion`은 MongoDB 8.3+에 제공되는 기능으로 문서화되어 있다. 이는 기존 문서에 임베딩(embedding) 벡터 필드를 추가하고 별도 벡터 인덱스를 생성해, 하나의 데이터베이스 안에서 정형 쿼리와 의미 기반 검색을 함께 수행할 수 있게 한다. RAG(retrieval-augmented generation) 기반 검색 기능을 이미 MongoDB에 저장된 데이터 위에 얹어야 하는 경우, 별도의 전용 벡터 DB를 추가하지 않고 기존 인프라를 재사용할 수 있다는 점에서 검토 가치가 있다. 다만 아직 상대적으로 신생 기능이므로 프로덕션 도입 전 `mongod`·`mongot` 호환성, 에디션별 배포 지원, 라이선스 조건을 확인해야 한다. 검색 인덱스는 change stream으로 비동기 동기화되므로 일반 문서 읽기와 같은 최신성 보장을 전제하지 않는다.
 
 ## 관련 개념
 - [[NoSQL 데이터 모델 비교]]
@@ -132,33 +131,19 @@ MongoDB 8.3의 `write concern: majority`는 정해진 수의 데이터 보유 �
 
 ## 참고 자료
 
-부분 재검증: 2026-09-23. MongoDB 8.3 공식 문서에서 단일 필드 unique의 누락·null 처리, sparse와 partial의 차이, 필터에 한정되는 유일성 및 기존 중복 데이터의 생성 실패를 확인했다. 예제는 공식 구문과 대조했으며 MongoDB 서버에서 실행하지 않았다. 그 밖의 엔진·Search·복제 서술 전체는 이번 확인 범위가 아니므로 `verified`를 유지했다.
-
-- [Unique Indexes](https://www.mongodb.com/docs/manual/core/index-unique/) — 확인본 MongoDB 8.3, null·누락 키, 생성 실패, 샤딩 시 제약.
-- [Sparse Indexes](https://www.mongodb.com/docs/manual/core/index-sparse/) — 확인본 MongoDB 8.3, 누락 필드 제외와 명시적 null 포함.
-- [Partial Indexes](https://www.mongodb.com/docs/manual/core/index-partial/) — 확인본 MongoDB 8.3, `$type` 필터 지원과 필터 대상에만 적용되는 unique.
-
-부분 재확인: 2026-09-22. MongoDB 8.3 공식 문서에서 다중 문서 트랜잭션의 비교 대상, majority 계산·oplog 승인·저널 기본값·wtimeout의 비롤백 동작을 확인했다. Search·샤딩 등 나머지 서술 전체를 재검증한 것은 아니므로 기존 `verified`를 유지했다.
-
-- [Write Concern](https://www.mongodb.com/docs/manual/reference/write-concern/) — 확인본 MongoDB 8.3, majority 계산과 승인·타임아웃 범위.
-- [Transactions](https://www.mongodb.com/docs/manual/core/transactions/) — 확인본 MongoDB 8.3, 단일 문서 쓰기와 분산 트랜잭션의 비용 비교.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [MongoDB WiredTiger Storage Engine](https://www.mongodb.com/docs/manual/core/wiredtiger/) — MongoDB 문서 확인본: 동시성, 7.0+ 티켓, 60초 체크포인트, 캐시 기본값.
+- [Unique Indexes](https://www.mongodb.com/docs/manual/core/index-unique/) — MongoDB 8.3, null·누락 키, 생성 실패, 샤딩 시 제약.
+- [Sparse Indexes](https://www.mongodb.com/docs/manual/core/index-sparse/) — MongoDB 8.3, 누락 필드 제외와 명시적 null 포함.
+- [Partial Indexes](https://www.mongodb.com/docs/manual/core/index-partial/) — MongoDB 8.3, `$type` 필터 지원과 필터 대상에만 적용되는 unique.
+- [Write Concern](https://www.mongodb.com/docs/manual/reference/write-concern/) — MongoDB 8.3, majority 계산과 승인·타임아웃 범위.
+- [Transactions](https://www.mongodb.com/docs/manual/core/transactions/) — MongoDB 8.3, 단일 문서 쓰기와 분산 트랜잭션의 비용 비교.
+- [MongoDB WiredTiger Storage Engine](https://www.mongodb.com/docs/manual/core/wiredtiger/) — MongoDB: 동시성, 7.0+ 티켓, 60초 체크포인트·캐시 기본값.
 - [MongoDB Limits](https://www.mongodb.com/docs/manual/reference/limits/) — BSON 16 MiB 제약.
 - [MongoDB Data Modeling](https://www.mongodb.com/docs/manual/data-modeling/) — embedding·reference 선택과 문서 설계.
 - [MongoDB Shard Keys](https://www.mongodb.com/docs/manual/core/sharding-shard-key/) — 샤딩·카디널리티·키 변경.
 - [MongoDB Read Concern majority](https://www.mongodb.com/docs/manual/reference/read-concern-majority/) — 복제 읽기 보장과 최신성 경계.
 - [Self-managed MongoDB Search 1.x](https://www.mongodb.com/docs/search/self-managed/current/) — mongot 구조와 Community/Enterprise 배포.
 - [$scoreFusion](https://www.mongodb.com/docs/manual/reference/operator/aggregation/scoreFusion/) — MongoDB 8.3+ 적용 범위.
-
-부분 재검증: 2026-10-22. 버전이 고정된 MongoDB 8.0 공식 문서의 조건부 단일 문서 갱신·$inc·updateMany 원자성 범위를 확인했다. 재고 예제는 이 계약의 적용 예이며 MongoDB 서버 실행·재시도 가능한 쓰기와 업무 멱등성의 통합 시험은 하지 않았다. 기존 8.3·Search 등 전체 `verified`는 유지한다.
-
 - [MongoDB 8.0 Atomicity and Transactions](https://www.mongodb.com/docs/v8.0/core/write-operations-atomicity/) — 갱신 시 필터 재검사, 읽기 후 덮어쓰기 경쟁, 단일 문서와 여러 문서의 원자성 경계.
 - [MongoDB 8.0 updateOne](https://www.mongodb.com/docs/v8.0/reference/method/db.collection.updateOne/) — `acknowledged`·`matchedCount` 반환값.
-
-부분 재검증: 2026-11-04. MongoDB 8.0 공식 문서의 카디널리티·빈도·단조성 구분과 compound hashed key의 선두 해시 용도를 확인했다. createdAt+eventId 사례는 단조 증가 범위 키의 라우팅 규칙에 적용한 분석이며 실제 샤딩·리샤딩 시험은 아니다. 기존 단일 문서 갱신·8.3·Search 서술의 `verified`는 유지한다.
-
 - [MongoDB 8.0 Choose a Shard Key](https://www.mongodb.com/docs/v8.0/core/sharding-choose-a-shard-key/) — 높은 카디널리티만으로 균등 분산을 보장하지 않으며 단조성을 별도 평가.
 - [MongoDB 8.0 Hashed Sharding](https://www.mongodb.com/docs/v8.0/core/hashed-sharding/) — hashed prefix의 단조성 대응, 충분한 키 다양성과 범위 조회 비용.

@@ -1,8 +1,7 @@
 ---
 category: "Spring/설정과 확장"
 tags: ["spring", "bean", "configuration", "beandefinition"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Bean 정의 방법 비교
@@ -104,10 +103,9 @@ A. 등록 순서(컴포넌트 스캔이 먼저, 자동 구성이 나중)와 이�
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0의 빈 정의와 Spring AOT 처리.
+적용 범위: Spring Framework 7.0·7.0.9의 빈 정의와 Spring AOT 처리.
 
-- [Java 설정 기본 개념](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html) — full/lite와 직접 호출.
+- [Java 설정 기본 개념](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html) — full/lite 구성과 직접 호출.
+- [Framework 7.0.9의 @Bean 고정 문서](https://github.com/spring-projects/spring-framework/blob/v7.0.9/framework-docs/modules/ROOT/pages/core/beans/java/bean-annotation.adoc) — @Bean 선언 반환형과 생성 전 타입 예측의 경계.
 - [Spring AOT](https://docs.spring.io/spring-framework/reference/core/aot.html) — 빈 정의 처리·조건 고정·생성 코드와 힌트.
-- [사용자 자동 구성](https://docs.spring.io/spring-boot/reference/features/developing-auto-configuration.html) — 빈 조건과 사용자 설정.
-
-부분 재검증: 2026-11-04. [Framework 7.0.9의 @Bean 고정 문서](https://github.com/spring-projects/spring-framework/blob/v7.0.9/framework-docs/modules/ROOT/pages/core/beans/java/bean-annotation.adoc)에서 반환 타입과 생성 전 타입 예측의 경계를 확인했다. Temurin 25.0.4.1+1·Framework 7.0.9에서 지연 싱글톤을 구현 타입으로 조회할 때 인터페이스 반환은 생성 전 미노출·생성 후 노출, 구체 타입 반환은 생성 전 노출됨을 포함한 4조건을 실행 확인했다. AOT 빌드·전체 빈 등록 방식은 이번 실행 범위 밖이며 기존 `verified`는 유지한다.
+- [사용자 자동 구성](https://docs.spring.io/spring-boot/reference/features/developing-auto-configuration.html) — 자동 구성의 빈 조건과 사용자 설정.

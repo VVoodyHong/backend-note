@@ -2,8 +2,7 @@
 category: "Java/JVM과 메모리 관리"
 tags: ["java", "jit", "hotspot", "성능최적화", "바이트코드"]
 aliases: ["Just-In-Time Compiler", "JIT 컴파일"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JIT 컴파일러
@@ -82,20 +81,9 @@ C2만 사용하면 컴파일 자체에 시간이 오래 걸려 애플리케이�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [HotSpot JDK 25 Performance Enhancements](https://docs.oracle.com/en/java/javase/25/vm/java-hotspot-virtual-machine-performance-enhancements.html) — 계층형 컴파일·code cache·Escape Analysis.
-- [JEP 514](https://openjdk.org/jeps/514) — Java 25 AOT 명령.
-- [JEP 515](https://openjdk.org/jeps/515) — Java 25 AOT 메서드 프로파일.
-- [JDK 25 java](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html) — PrintCompilation·컴파일 옵션.
-
-### 2026-09-23 부분 재검증
-
-OpenJDK jdk-25-ga compilationPolicy.cpp의 티어 전이·부하 적응과 JDK 25 HotSpot 성능 문서의 계층형 컴파일·code cache를 확인했다. 기존 전체 검증일은 유지한다.
-
+- [JEP 514](https://openjdk.org/jeps/514) — Java 25 AOT 학습·캐시 생성 명령.
+- [JEP 515](https://openjdk.org/jeps/515) — Java 25 AOT 메서드 프로파일과 자식 JVM.
+- [JDK 25 java](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html) — PrintCompilation·컴파일 옵션과 AOTMode·클래스 경로 제약.
 - [OpenJDK jdk-25-ga compilationPolicy.cpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/hotspot/share/compiler/compilationPolicy.cpp) — 0–4 레벨 및 가능한 티어 전이.
 - [OpenJDK jdk-25-ga compilationPolicy.hpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/hotspot/share/compiler/compilationPolicy.hpp) — 레벨별 프로파일링과 중간 티어를 건너뛰는 경로 설명.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69의 PrintCompilation에서 동일 hot 메서드의 레벨 3 → 4 컴파일 후 기존 코드의 `made not entrant: not used`, OSR 상위 티어 전환의 `OSR invalidation of lower level`을 관찰했다. 해당 문구 자체를 최적화 가정 실패로 단정할 수 없음을 확인했으며 성능 벤치마크는 아니다.
-
-추가 부분 확인: 2026-09-23, [JEP 514](https://openjdk.org/jeps/514)·[JEP 515](https://openjdk.org/jeps/515)의 JDK 25 훈련/생성 흐름·추가 프로파일링·자식 JVM 메모리와 [JDK 25 java](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html)의 classpath 제약·AOTMode를 대조했다. OpenJDK 25.0.2에서 비어 있지 않은 클래스 디렉터리의 캐시 생성 실패, JAR 패키징 후 생성 성공과 `Using AOT-linked classes: true` 로그를 확인했다. 기동 시간 비교나 실제 서비스의 캐시 호환성 검증은 아니다.

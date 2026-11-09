@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "sealed", "patternmatching", "jep", "타입시스템"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Sealed Interface와 Pattern Matching
@@ -124,8 +123,6 @@ if (obj instanceof String s || obj instanceof Integer) {
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §8.1.6](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.1.6) — sealed 클래스 허용 타입과 위치.
 - [JLS 25 §9.1.4](https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.1.4) — sealed 인터페이스 permits 추론.
 - [JLS 25 §14.11](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11) — switch 완전성·지배 관계·null.
@@ -133,9 +130,5 @@ if (obj instanceof String s || obj instanceof Integer) {
 - [JEP 394](https://openjdk.org/jeps/394) — Java 16 instanceof 패턴과 흐름 스코프.
 - [JEP 441](https://openjdk.org/jeps/441) — Java 21 패턴 switch·분리 컴파일 MatchException.
 - [JEP 440](https://openjdk.org/jeps/440) — Java 21 record 패턴.
-
-부분 재검증: 2026-09-22. [Java 27 Language Changes](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html)의 프리뷰 상태를 확인했다. JDK 27에서 long→int 패턴이 옵션 없이 컴파일 오류이고, 프리뷰 활성화 시 int 범위 값과 Long.MAX_VALUE를 구분함을 실행 확인했다. sealed 계층의 나머지 설명은 기존 검증 범위를 유지한다.
-
-### 2026-11-04 부분 재검증
-
-[JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1)의 무가드·상수 true 가드의 지배 관계와 비상수 가드 구분을 확인했다. Temurin 25.0.4.1+1에서 가드가 있는 Number 뒤의 Integer 패턴 컴파일·선택과 겹치는 비상수 가드의 허용을 확인했고, 무가드 및 when true의 Number 뒤에 Integer를 둔 코드는 각각 지배 관계 컴파일 오류를 확인했다. 프리뷰 기능이나 별도 컴파일 후 계층 변경은 이번 범위 밖이므로 verified는 유지한다.
+- [Java 27 Language Changes](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html) — Java 27 기본형 패턴·switch의 프리뷰 상태.
+- [JLS 25 §14.11.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1) — 무가드·상수 true 가드의 지배 관계와 비상수 가드 구분.

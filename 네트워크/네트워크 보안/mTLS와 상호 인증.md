@@ -2,8 +2,7 @@
 category: "네트워크/네트워크 보안"
 tags: ["network", "mtls", "tls", "인증", "service-mesh"]
 aliases: ["mTLS", "Mutual TLS"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # mTLS와 상호 인증
@@ -111,13 +110,10 @@ AWS ALB의 `mutual TLS passthrough`는 TLS 암호문을 그대로 백엔드로 �
 
 ## 참고 자료
 
-- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — 클라이언트 인증·CertificateVerify. 확인: 2026-09-08.
-- [SPIFFE Concepts](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/) — SPIFFE ID와 X.509-SVID. 확인: 2026-09-08.
-- [Istio Security](https://istio.io/latest/docs/concepts/security/) — peer authentication·인증서 회전. 확인: 2026-09-08.
-- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — SSL key/trust store 구성. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Istio Security](https://istio.io/latest/docs/concepts/security/)의 SPIFFE 신원·PeerAuthentication과 [Linkerd Automatic mTLS](https://linkerd.io/docs/features/automatic-mtls/)의 ServiceAccount 신원·비메시 평문 기본 허용을 대조했다. 적용 범위는 열람 문서의 신원·정책 계약이다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [AWS ALB Mutual authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html)의 passthrough/verify 책임 분담과 X-Amzn-Mtls-Clientcert 형식을 확인했다. 적용 범위는 AWS ALB의 관리형 mTLS 기능이며 NLB/L4 TLS passthrough와 구분한다. 백엔드 경로·헤더 신뢰는 이 구조에 따른 운영 설계 조건이다. 실제 ALB·인증서 체인·우회 요청 시험과 Spring SSL 예제 재실행은 하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [RFC 8446 §2.2·§4.3.2·§4.6.1](https://www.rfc-editor.org/rfc/rfc8446.html#section-2.2)의 PSK 재개·주 핸드셰이크의 인증서 요청 생략·이전 인증 상태 연결을 확인했다. JDK 25.0.4.1/SunJSSE, TLS 1.3, 임시 자체 서명 인증서를 신뢰한 loopback mTLS에서 동일 SSLContext로 새 TCP 연결 2개를 열었다. 양쪽 peerPrincipal은 유지되지만 각 X509ExtendedTrustManager의 검증은 첫 연결에서만 1회씩 호출됨을 6개 assertion으로 확인했다. 만료·폐기·티켓 무효화·ALB·서비스 메시의 구현별 정책은 실행하지 않았으며 `verified`는 유지했다.
+- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — 클라이언트 인증·CertificateVerify.
+- [SPIFFE Concepts](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/) — SPIFFE ID와 X.509-SVID.
+- [Istio Security](https://istio.io/latest/docs/concepts/security/) — peer authentication·인증서 회전; SPIFFE 신원·PeerAuthentication 정책.
+- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — SSL key/trust store 구성.
+- [Linkerd Automatic mTLS](https://linkerd.io/docs/features/automatic-mtls/) — ServiceAccount 신원·비메시 평문 기본 허용.
+- [AWS ALB Mutual authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html) — 2026-10-04 AWS ALB 정책: passthrough/verify 책임·X-Amzn-Mtls-Clientcert 형식; L4 TLS passthrough와 구분.
+- [RFC 8446 §2.2·§4.3.2·§4.6.1](https://www.rfc-editor.org/rfc/rfc8446.html#section-2.2) — TLS 1.3 PSK 재개·주 핸드셰이크의 인증서 요청 생략·이전 인증 상태 연결.

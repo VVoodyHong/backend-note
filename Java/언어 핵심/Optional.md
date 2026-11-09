@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 핵심"
 tags: ["java", "optional", "nullpointerexception", "함수형스타일"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Optional
@@ -83,12 +82,5 @@ A. `orElseGet(makeSupplier())`의 makeSupplier 호출은 일반 인자 평가이
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 Optional](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html) — API 도입 버전·map/flatMap null·value-based·반환 용도.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 Optional의 반환 용도와 orElseGet 계약, JLS 25 §15.12.4.2의 인자 평가를 확인했다. 부재·실패 구분은 그 API 범위를 바탕으로 한 설계 기준이다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 orElseGet 인자 Supplier 생성 시점·null 반환을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
+- [Java SE 25 Optional](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html) — API 도입 버전·map/flatMap의 null·value-based·반환 용도와 orElse/orElseGet의 평가 경계.
+- [JLS 25 §15.12.4.2](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.4.2) — 메서드 호출 인수와 Supplier 생성 표현식의 평가 시점.

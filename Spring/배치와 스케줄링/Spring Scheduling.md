@@ -1,8 +1,7 @@
 ---
 category: "Spring/배치와 스케줄링"
 tags: ["spring", "spring-scheduling", "taskscheduler", "virtual-thread", "distributed-lock", "배치"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Scheduling
@@ -93,22 +92,15 @@ A. 스케줄 작업이 애플리케이션과 동일한 커넥션 풀(예: Hikari
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Framework 6.1~7.0, JDK 25 ScheduledThreadPoolExecutor, Boot 스케줄러 구성.
+적용 범위: Framework 6.1–7.0·7.0.9, JDK 25 ScheduledThreadPoolExecutor, Boot 4.1.1 스케줄러 구성.
 
-- [Spring Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — 스케줄러·비동기·리액티브·가상 스레드.
-- [ScheduledThreadPoolExecutor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ScheduledThreadPoolExecutor.html) — 동일 주기 작업 중첩 금지.
+- [Spring Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — 스케줄러·비동기·리액티브·가상 스레드와 실행기 정책.
+- [ScheduledThreadPoolExecutor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ScheduledThreadPoolExecutor.html) — 동일 주기 작업의 중첩 금지.
 - [ExecutorConfigurationSupport](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/concurrent/ExecutorConfigurationSupport.html) — 6.2 virtualThreads API.
 - [SimpleAsyncTaskScheduler](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/concurrent/SimpleAsyncTaskScheduler.html) — fixed-delay 실행 방식.
-
-부분 재검증: 2026-09-23. Framework 7.0.9·Boot 4.1.1의 리액티브 재구독, cron 문법·시간대, 스케줄러 자동 구성 조건을 확인했다. 7.0.9·OpenJDK 25.0.2에서 메서드 조립 1회/구독 3회 이상을 직접 검증했다. 나머지 기존 설명의 전체 재검증 날짜는 유지한다.
-
 - [Scheduled 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/annotation/Scheduled.html) — 반복 구독·fixedDelay 완료 대기·zone 기본값.
-- [CronExpression 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/support/CronExpression.html) — 6필드·요일 번호와 next API.
-- [Boot task execution and scheduling](https://docs.spring.io/spring-boot/reference/features/task-execution-and-scheduling.html) — Boot 4.1.1 자동 구성과 가상 스레드.
-
-부분 재검증: 2026-10-04. Framework 7.0.9·JDK 25.0.4에서 고정 지연 실행기 분리, SimpleAsyncTaskScheduler의 단발 Future 조기 완료, ThreadPoolTaskScheduler의 본문 완료 대기 3건을 실행했다. 첫 고정 지연 작업을 보류한 동안 두 번째 고정 지연 작업은 대기하고 단발 작업은 실행됨을 확인했다. 배포 종료·cron·외부 executor 조합 전체를 시험한 결과는 아니다.
-
-추가 확인: 같은 버전의 공식 실행기 문서와 [[Spring Event와 비동기 처리]]의 Async 포화 시험으로 “항상 즉시 다른 스레드로 넘긴다”는 설명을 교정했다. Scheduled와 Async를 함께 등록한 통합 실행 시험으로 확대 해석하지 않는다.
-
-- [SimpleAsyncTaskScheduler 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-context/src/main/java/org/springframework/scheduling/concurrent/SimpleAsyncTaskScheduler.java) — triggerExecutor와 fixedDelayExecutor, 작업 전달 경계.
-- [SimpleAsyncTaskScheduler 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/concurrent/SimpleAsyncTaskScheduler.html) / [ThreadPoolTaskScheduler 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/concurrent/ThreadPoolTaskScheduler.html) — 반환 Future의 완료 의미.
+- [CronExpression 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/support/CronExpression.html) — cron 6필드·요일 번호와 next API.
+- [Boot task execution and scheduling](https://docs.spring.io/spring-boot/reference/features/task-execution-and-scheduling.html) — 스케줄러 자동 구성과 가상 스레드.
+- [SimpleAsyncTaskScheduler 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-context/src/main/java/org/springframework/scheduling/concurrent/SimpleAsyncTaskScheduler.java) — triggerExecutor/fixedDelayExecutor 분리와 작업 전달 경계.
+- [SimpleAsyncTaskScheduler 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/concurrent/SimpleAsyncTaskScheduler.html) — 반환 Future의 작업 전달 완료 의미.
+- [ThreadPoolTaskScheduler 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/concurrent/ThreadPoolTaskScheduler.html) — 스케줄러 스레드의 실행과 반환 Future의 본문 완료 의미.

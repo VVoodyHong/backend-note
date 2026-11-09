@@ -1,8 +1,7 @@
 ---
 category: "Spring/API 설계와 문서화"
 tags: ["spring", "hateoas", "rest", "hypermedia", "spring-mvc"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring HATEOAS
@@ -68,8 +67,8 @@ A. API 버저닝 전략에서 유용할 수 있다. 리소스 관계가 URL 하�
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring HATEOAS 3.1.2의 표현 모델·링크 생성·미디어 타입.
+적용 범위: Spring HATEOAS 3.1.2.
 
-- [Spring HATEOAS Reference](https://docs.spring.io/spring-hateoas/docs/current/reference/html/) — 모델·methodOn 제약·Affordances·미디어 타입·forwarded headers.
-
-부분 재검증: 2026-11-04. Context7과 [HATEOAS 3.1.2 CollectionModel 소스](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/java/org/springframework/hateoas/CollectionModel.java), [3.1.2 빈 컬렉션 처리 문서](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/asciidoc/server.adoc)를 대조했다. Temurin 25.0.4.1+1·Framework 7.0.9·HATEOAS 3.1.2에서 빈 모델의 원소 타입 미확정, 명시적 empty 타입, withFallbackType의 원소 타입 유지 3조건을 실행했다. HAL 직렬화·실제 processor 호출·웹 응답은 실행하지 않았으며 전체 `verified`는 유지한다.
+- [Spring HATEOAS Reference](https://docs.spring.io/spring-hateoas/docs/current/reference/html/) — 표현 모델·methodOn 제약·Affordances·미디어 타입·forwarded headers.
+- [HATEOAS 3.1.2 CollectionModel 소스](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/java/org/springframework/hateoas/CollectionModel.java) — 빈 CollectionModel의 원소 타입 추론과 fallback type.
+- [3.1.2 빈 컬렉션 처리 문서](https://github.com/spring-projects/spring-hateoas/blob/3.1.2/src/main/asciidoc/server.adoc) — empty 타입 지정과 withFallbackType 사용.

@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/아키텍처 패턴"
 tags: ["system-design", "msa", "모놀리식", "아키텍처", "분산시스템"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # MSA와 모놀리식 비교
@@ -97,12 +96,9 @@ Azure Strangler Fig 지침은 기존 스키마와 동기화 경로가 유지되�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Microservices — Lewis/Fowler](https://martinfowler.com/articles/microservices.html) — 독립 배포·분산 데이터·장애 설계의 아키텍처 설명.
 - [Monolith First](https://martinfowler.com/bliki/MonolithFirst.html) — 도메인 경계를 검증하며 단계적으로 분리하는 전략과 한계.
 - [Database per Service Pattern](https://microservices.io/patterns/data/database-per-service.html) — 전용 테이블·스키마·DB 서버별 소유권 구현.
 - [Saga Pattern](https://microservices.io/patterns/data/saga.html) — 로컬 트랜잭션·보상·격리 한계.
 - [Azure Strangler Fig Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) — 점진 전환과 라우팅·데이터 이행.
-
-부분 재확인: 2026-09-23. [Azure Strangler Fig Pattern — Database migration considerations](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig#database-migration-considerations)의 레거시 DB 병행·ETL/CDC 검증·새 DB 기준 전환·정리 전후 롤백 차이를 확인했다. 쓰기 소유권과 대사 종료 조건은 이 절차를 적용한 설계 판단이다. 기존 MSA 비교와 Saga 설명 전체는 재검증하지 않아 `verified`는 유지한다.
+- [Azure Strangler Fig Pattern — Database migration considerations](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig#database-migration-considerations) — 레거시 DB 병행·ETL/CDC 검증·새 DB 전환·정리 전후 롤백 범위.

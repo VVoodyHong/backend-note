@@ -2,8 +2,7 @@
 category: "Java/성능 최적화"
 tags: ["java", "jit", "escapeanalysis", "메모리최적화", "hotspot"]
 aliases: ["탈출 분석", "Escape Analysis", "Scalar Replacement"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Escape Analysis와 스칼라 치환
@@ -94,25 +93,10 @@ A. 분석 경계는 소스 메서드 경계와 같지 않다. 호출자가 인�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [HotSpot JDK 25 Performance Enhancements](https://docs.oracle.com/en/java/javase/25/vm/java-hotspot-virtual-machine-performance-enhancements.html) — Escape 상태·할당 제거·스택 할당 미지원.
 - [OpenJDK jdk-25-ga escape.hpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/hotspot/share/opto/escape.hpp) — C2 EscapeState 정의와 분석 경계.
 - [JEP 401 Value Objects](https://openjdk.org/jeps/401) — 값 객체 설계 목표; 릴리스 지원 여부 주장에 사용하지 않음.
-
-### 2026-09-23 부분 재검증
-
-JDK 25 HotSpot 성능 문서와 OpenJDK jdk-25-ga escape.cpp의 NoEscape·scalar_replaceable 별도 판정, 인라이닝 후 분석 범위를 확인했다. 기존 전체 검증일은 유지한다.
-
 - [OpenJDK jdk-25-ga escape.cpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/hotspot/share/opto/escape.cpp) — 별도 스칼라 치환 적합성·배열 크기·메모리 접근 제약.
-
-### 부분 재검증: 2026-10-04
-
-OpenJDK jdk-25+36의 두 출력 플래그가 develop으로 선언됨과 빌드의 debug-level 종류를 확인했다. 기존 notproduct 명칭·fastdebug만 가능하다는 표현을 교정했으며, 전체 `verified`는 유지한다.
-
 - [OpenJDK jdk-25+36 c2_globals.hpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/hotspot/share/opto/c2_globals.hpp) — PrintEscapeAnalysis·PrintEliminateAllocations의 develop 선언.
 - [OpenJDK jdk-25+36 빌드 문서](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/doc/building.md) — --with-debug-level의 release·fastdebug·slowdebug 등 구분.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)의 release JVM에서 UnlockDiagnosticVMOptions와 함께 각 옵션을 지정해도 `is develop and is available only in debug version of VM` 오류로 기동이 실패함을 확인했다. 디버그 JDK 빌드·할당 제거율 측정은 실행하지 않았다.
-
-- 도식·표 대조(2026-10-04): [OpenJDK jdk-25+36 escape.hpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/hotspot/share/opto/escape.hpp) — 도식도 컴파일 범위의 탈출 상태와 별도의 스칼라 치환 가능 조건을 구분한다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
+- [OpenJDK jdk-25+36 escape.hpp](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/hotspot/share/opto/escape.hpp) — 컴파일 범위의 탈출 상태와 별도의 스칼라 치환 가능 조건.

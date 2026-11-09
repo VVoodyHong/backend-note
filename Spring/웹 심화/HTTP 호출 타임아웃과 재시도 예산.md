@@ -2,8 +2,7 @@
 category: "Spring/웹 심화"
 tags: ["spring", "http-client", "webclient", "timeout", "retry", "안정성"]
 aliases: ["HTTP 타임아웃", "재시도 예산"]
-updated: 2026-10-23
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # HTTP 호출 타임아웃과 재시도 예산
@@ -93,12 +92,12 @@ A. 원격 작업이 아직 실행 중이면 같은 작업이 겹치고, 풀 대�
 
 ## 참고 자료
 
-검증일: 2026-09-22. 적용 범위: Spring Framework 7.0.9, Reactor Netty 1.3.7, Reactor Core 3.8.7, HTTP 의미론 RFC 9110. 로컬 HTTP 서버의 느린 청크 응답과 Reactor 가상 시간 테스트로 읽기 간격·전체 제한·재시도 위치의 차이를 확인했다. 본문 예제를 추출해 502·503·504의 재시도, 500·타임아웃의 미재시도, 재시도 소진 시 원인 예외 보존도 검사했다. 외부 서비스의 처리 취소는 보장 범위에 포함하지 않는다.
+적용 범위: Spring Framework 7.0.9, Reactor Netty 1.3.7, Reactor Core 3.8.7 및 HTTP RFC 9110.
 
 - [Reactor Netty HTTP Client](https://projectreactor.io/docs/netty/release/reference/http-client.html#timeout-configuration) — 연결·풀·응답 제한의 범위와 기본값.
 - [HttpClient API](https://projectreactor.io/docs/netty/release/api/reactor/netty/http/client/HttpClient.html) — responseTimeout과 disableRetry.
-- [Mono API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) / [Flux API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html) — timeout과 재구독.
-- [RetryBackoffSpec](https://projectreactor.io/docs/core/release/api/reactor/util/retry/RetryBackoffSpec.html) — 횟수·필터·백오프·지터.
+- [Mono API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) — timeout과 재구독.
+- [Flux API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html) — timeout과 재구독.
+- [RetryBackoffSpec](https://projectreactor.io/docs/core/release/api/reactor/util/retry/RetryBackoffSpec.html) — 재시도 횟수·필터·백오프·지터.
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) — 멱등성과 자동 재시도 조건.
-
-부분 재검증: 2026-10-23. [RFC 9110 §10.2.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3)의 Retry-After 두 형식·단위·응답 수신 기준을 확인하고 기존 예제에 헤더 처리 로직이 없음을 대조했다. 예산 초과 시 중단·지연 작업 전환은 운영 설계 지침이며, HTTP 클라이언트 자동 처리나 새 파서 구현을 실행 검증한 것은 아니다. 기존 전체 `verified`는 유지한다.
+- [RFC 9110 §10.2.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3) — Retry-After의 날짜/초 형식·단위·응답 수신 기준.

@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "stampedlock", "optimistic-read", "concurrency", "lock"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # StampedLock과 낙관적 읽기
@@ -114,16 +113,5 @@ A. `tryConvertToWriteLock(readStamp)`가 0이면 기존 읽기 락은 그대로 
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 StampedLock](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/StampedLock.html) — 낙관적 검증·interruptible·변환·재진입·스케줄링 계약.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 StampedLock의 낙관적 검증 범위·변환 실패·소유권 없는 stamp 계약을 다시 확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 복수 reader의 승격 실패·읽기 락 유지, 단일 reader 승격, 쓰기 후 낙관적 stamp 무효화을 재현했다. 구현 관측을 다른 JVM·버전의 추가 보장으로 일반화하지 않는다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 StampedLock](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/StampedLock.html)의 상태 일치·소유권 부재 계약과 [OpenJDK jdk-25+36 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/locks/StampedLock.java)의 초기 상태·unlockRead 검사를 확인했다. Temurin 25.0.4.1+1에서 별도 인스턴스의 동일 숫자 read stamp로 잘못된 해제가 수락되는 반례와 read stamp를 unlockWrite에 전달할 때의 거부를 확인했다. 잘못된 인스턴스 혼용은 금지할 사용 방식이며 수락 자체를 API 보장으로 일반화하지 않는다. 낙관적 읽기·승격 전체는 재검증하지 않아 verified를 유지한다.
+- [Java SE 25 StampedLock](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/StampedLock.html) — 낙관적 검증·인터럽트 가능한 획득·변환·비재진입·소유권과 stamp 유효성.
+- [OpenJDK jdk-25+36 StampedLock](https://raw.githubusercontent.com/openjdk/jdk/jdk-25%2B36/src/java.base/share/classes/java/util/concurrent/locks/StampedLock.java) — 초기 상태와 unlockRead 검사; stamp를 고유 소유자 식별자로 볼 수 없는 경계.

@@ -1,8 +1,7 @@
 ---
 category: "캐시/Redis"
 tags: ["cache", "redis", "자료구조", "캐시전략", "인메모리db"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Redis 자료구조
@@ -104,33 +103,14 @@ List는 양쪽 끝에서의 push/pop이 빈번하고 크기가 무한정 커질 
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Redis Data Types](https://redis.io/docs/latest/develop/data-types/) — 대표 자료형과 명령; 전체 타입 목록이 아닌 기초 자료구조 비교.
 - [Redis 8.4 object.c](https://raw.githubusercontent.com/redis/redis/8.4/src/object.c) — 문자열 int/embstr/raw 및 44바이트 구현 임계값.
 - [Redis 8.4 t_list.c](https://raw.githubusercontent.com/redis/redis/8.4/src/t_list.c) — listpack/quicklist 전환과 삭제 후 축소.
 - [Redis 8.4 t_set.c](https://raw.githubusercontent.com/redis/redis/8.4/src/t_set.c) — intset/listpack/hashtable과 인코딩 전환.
-
-링크 확인: 2026-09-22. 위 소스 URL에서 누락된 `src/` 경로를 수정하고 접근을 확인했다. 본문 전체의 기술 재검증 날짜는 변경하지 않았다.
-
 - [Redis HyperLogLog](https://redis.io/docs/latest/develop/data-types/probabilistic/hyperloglogs/) — 표준 오차·레지스터 메모리.
 - [PFMERGE](https://redis.io/docs/latest/commands/pfmerge/) — HLL 합집합 추정, 병합 오차 누적 오해.
-- [SCAN](https://redis.io/docs/latest/commands/scan/) — 순회 중복과 COUNT 힌트.
-- [SINTERCARD](https://redis.io/docs/latest/commands/sintercard/) — Redis 7.0+: 교집합 카디널리티와 LIMIT.
-
-부분 재검증: 2026-09-23. Redis 8.4 Sorted Set의 double 점수 표현을 소스로 확인하고 공식 ZADD 문서의 정수 정밀도·동점 순서·멤버 갱신 계약을 대조했다. 다른 자료구조의 전체 검증일은 유지한다.
-
+- [SCAN](https://redis.io/docs/latest/commands/scan/) — Redis 2.8.0+: 반환 커서 0·빈 배치·COUNT 힌트·중복·변경 중 원소와 전체 순회 보장; 스냅샷이 아닌 순회.
+- [SINTERCARD](https://redis.io/docs/latest/commands/sintercard/) — Redis 7.0.0+: 교집합 카디널리티, LIMIT의 조기 종료·기본 0·반환값과 O(N×M) 최악 비용.
 - [Redis ZADD](https://redis.io/docs/latest/commands/zadd/) — 정수 점수 범위·바이트 사전순·기존 멤버 갱신.
 - [Redis 8.4 t_zset.c](https://raw.githubusercontent.com/redis/redis/8.4/src/t_zset.c) — double score와 동일 점수의 멤버 비교.
-
-부분 재검증: 2026-09-23. 추가로 Redis Open Source 8.10의 compact hash·HIMPORT 도입을 확인했다. 8.4 내부 인코딩 표를 8.10 전체의 소스 검증 결과로 바꾸지 않았다. 기존 전체 검증일은 유지한다.
-
 - [Redis 8.10 What's New](https://redis.io/docs/latest/develop/whats-new/8-10/) — compact hash의 필드명 공유와 HIMPORT 추가.
-
-부분 재검증: 2026-10-22. Redis 공식 SCAN 문서의 공통 명령 계약(2.8.0 도입, 확인일 문서)을 대조해 빈 배치와 종료 커서, COUNT, 중복·변경 중인 원소의 경계를 보완했다. 서버 실행이나 Cluster 전체 순회는 검증하지 않았으며 내부 인코딩의 기존 `verified`는 유지한다.
-
-- [Redis SCAN](https://redis.io/docs/latest/commands/scan/) — 전체 순회 보장, 반환 커서 0, 빈 목록·COUNT 힌트. 재생성 키의 삭제 주의는 비스냅샷 계약에서 도출한 운영 판단이다.
-
-부분 재검증: 2026-11-04. Redis Open Source 7.0.0+ SINTERCARD의 공식 명령 계약에서 LIMIT 조기 종료·반환값·기본 0과 최악 시간 복잡도를 확인했다. 교집합 수가 작을 때의 지연 주의는 이 탐색·종료 조건에서 도출했다. Redis 서버를 실행하지 않았고 내부 인코딩의 기존 `verified`는 유지한다.
-
-- [Redis SINTERCARD](https://redis.io/docs/latest/commands/sintercard/) — 실제 총수와 제한값의 차이, O(N×M) 최악 비용. 반환 크기 절약과 계산량 절약의 구분.

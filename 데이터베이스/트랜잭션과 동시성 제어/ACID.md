@@ -2,8 +2,7 @@
 category: "데이터베이스/트랜잭션과 동시성 제어"
 tags: ["database", "transaction", "acid", "동시성제어", "데이터베이스이론"]
 aliases: ["트랜잭션의 ACID 속성"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ACID
@@ -77,16 +76,11 @@ A. 아니다. PostgreSQL 18의 `nextval()`로 얻은 시퀀스 값은 트랜잭�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [InnoDB and the ACID Model](https://dev.mysql.com/doc/refman/8.4/en/mysql-acid.html) — MySQL 8.4: ACID와 엔진·저장소 설정.
 - [InnoDB Error Handling](https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html) — MySQL 8.4: 문장 롤백과 전체 롤백의 구분.
 - [Transaction Isolation](https://www.postgresql.org/docs/18/transaction-iso.html) — PostgreSQL 18: 직렬성 및 성능·재시도.
 - [Write-Ahead Logging](https://www.postgresql.org/docs/18/wal-intro.html) — PostgreSQL 18: WAL과 그룹 커밋.
 - [Using @Transactional](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html) — Spring Framework 6.2+ 전역 롤백 규칙.
-- [MongoDB Transactions](https://www.mongodb.com/docs/manual/core/transactions/) — 공식 현행 문서: 복제 셋·샤드 트랜잭션.
-- [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 공식 stable 문서: 원자성·격리 및 경량 트랜잭션.
-
-부분 재검증: 2026-09-23. PostgreSQL 18 시퀀스의 비롤백 특성과 커밋 응답이 데이터 페이지 flush 완료를 기다릴 필요가 없다는 WAL 설명을 확인했다. 다른 제품·Spring의 전체 재검증은 하지 않았다.
-
-- [PostgreSQL 18 Sequence Manipulation Functions](https://www.postgresql.org/docs/18/functions-sequence.html) — nextval·ON CONFLICT·번호 공백과 트랜잭션 경계. 위 WAL 문서의 커밋 flush 경계도 재확인.
+- [MongoDB Transactions](https://www.mongodb.com/docs/manual/core/transactions/) — 복제 셋·샤드 트랜잭션.
+- [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 원자성·격리 및 경량 트랜잭션.
+- [PostgreSQL 18 Sequence Manipulation Functions](https://www.postgresql.org/docs/18/functions-sequence.html) — nextval·ON CONFLICT·번호 공백과 트랜잭션 경계.

@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/보안 운영"
 tags: ["operations", "aws", "iam", "클라우드보안", "접근제어"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 클라우드 IAM 최소 권한 원칙
@@ -112,14 +111,10 @@ A. 두 시스템 모두 "주체(principal)-액션-리소스"를 명시적으로 
 
 ## 참고 자료
 
-- [AWS IAM policy evaluation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic_policy-eval-denyallow.html) — 동일 계정 resource policy·principal type 예외. 확인: 2026-09-08.
-- [IAM Permissions boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) — identity 권한 상한과 resource grants. 확인: 2026-09-08.
-- [AWS Organizations SCP](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) — management account·service-linked role 제외. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [AWS IAM 평가 로직](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic_policy-eval-denyallow.html)의 identity Allow 경로와 session policy를 도식에 반영하고, [ECS 역할 구분](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html)·[task execution role](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html)을 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재확인: 2026-09-23. [AWS IAM Permissions Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)의 identity 정책 교집합, 동일 계정 role ARN/session ARN 직접 허용 차이, Deny+NotPrincipal 주의와 권고 대안을 확인했다. 기존 조직·역할·MFA 계약 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [AWS STS AssumeRole — DurationSeconds](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)의 역할 체인 CLI/API 세션 최대 1시간·초과 요청 실패를 확인했다. 적용 범위는 STS AssumeRole 역할 체인이며 모든 OIDC·콘솔 세션에 같은 상한을 일반화하지 않는다. 환경변수 복사와 갱신 확인은 이를 적용한 운영 점검 항목이다. 실제 STS 발급·SDK 자동 갱신·장시간 배치는 실행하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [AWS IAM aws:MultiFactorAuthPresent](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-multifactorauthpresent)의 장기 키·연합 신원에서의 키 부재, Deny+Bool/BoolIfExists 및 Allow+BoolIfExists 조합을 확인했다. 적용 범위는 조회일 AWS IAM 관리형 서비스 문서이며 표의 “거부 미적용”은 최종 Allow를 뜻하지 않는다. 실제 IAM 정책 배포·시뮬레이터·STS 인증은 실행하지 않았고 `verified`는 유지했다.
+- [AWS IAM policy evaluation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic_policy-eval-denyallow.html) — 동일 계정 resource policy·principal type 예외; identity Allow·session policy 평가 경로.
+- [IAM Permissions boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) — identity 권한 상한과 resource grants; identity 정책 교집합·동일 계정 role/session ARN 직접 허용·Deny+NotPrincipal 주의.
+- [AWS Organizations SCP](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) — management account·service-linked role 제외.
+- [ECS 역할 구분](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html) — ECS task role과 execution role 구분.
+- [task execution role](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html) — ECS task execution role의 권한 범위.
+- [AWS STS AssumeRole — DurationSeconds](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) — 2026-10-04 STS AssumeRole 정책: 역할 체인 CLI/API 세션 최대 1시간·초과 요청 실패.
+- [AWS IAM aws:MultiFactorAuthPresent](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-multifactorauthpresent) — 2026-11-04 IAM 정책: 장기 키/연합 신원의 MFA 키 부재·Deny Bool/BoolIfExists·Allow BoolIfExists; 조건 미적용과 최종 Allow 구분.

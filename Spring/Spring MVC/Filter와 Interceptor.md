@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring MVC"
 tags: ["spring", "spring-mvc", "filter", "interceptor", "servlet"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Filter와 Interceptor
@@ -94,18 +93,13 @@ A. `CorsFilter`는 MVC 핸들러를 찾기 전에 CORS를 처리할 수 있다. 
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Framework 7.0.9 CorsFilter의 정책 적용과 OncePerRequestFilter의 디스패치 계약으로 “오류 경로에도 항상 적용”, “비동기 사용에는 AsyncListener가 필수”라는 과장을 교정했다. 실제 컨테이너의 오류 디스패치를 실행 검증한 것은 아니다.
+적용 범위: Jakarta Servlet 기반 Spring MVC 7.0·7.0.9의 필터·인터셉터·요청/응답 캐시.
 
-- [CorsFilter 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/filter/CorsFilter.html) / [OncePerRequestFilter 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/filter/OncePerRequestFilter.html) — CORS 정책과 필터 매핑·ASYNC/ERROR 실행 조건.
-
-검증일: 2026-09-08. 적용 범위: Jakarta Servlet 기반 Spring MVC 7.0; 비동기와 요청 캐시 계약.
-
-- [HandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/HandlerInterceptor.html) — 인가 계층 권고와 완료 예외.
-- [ContentCachingRequestWrapper API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/ContentCachingRequestWrapper.html) — 읽힌 바이트 캐시와 제한.
-- [AsyncHandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 비동기 완료 처리.
+- [CorsFilter 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/filter/CorsFilter.html) — CORS 정책 처리와 필터 매핑 경계.
+- [OncePerRequestFilter 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/filter/OncePerRequestFilter.html) — ASYNC/ERROR 디스패치별 실행 조건.
 - [OncePerRequestFilter API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/filter/OncePerRequestFilter.html) — async/error dispatch 정책.
-
-부분 재검증: 2026-09-23. Framework 7.0.9의 응답 캐시·인터셉터 호출 계약을 확인했다. MockMvc에서 응답 래퍼의 복사 누락 시 빈 본문, `copyBodyToResponse()` 호출 시 원래 본문이 전달되는 두 경로를 실행했다. 비동기·스트리밍 래퍼의 별도 구현을 검증한 것은 아니다.
-
-- [ContentCachingResponseWrapper 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/util/ContentCachingResponseWrapper.html) — `flushBuffer`와 본문 복사 계약.
-- [MVC Interception](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-servlet/handlermapping-interceptor.html) — 7.0.9, `postHandle` 이전 응답 작성과 `ResponseBodyAdvice` 대안.
+- [HandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/HandlerInterceptor.html) — 인가 계층 권고와 완료 예외.
+- [ContentCachingRequestWrapper API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/ContentCachingRequestWrapper.html) — 읽힌 바이트의 캐시와 크기 제한.
+- [AsyncHandlerInterceptor API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/AsyncHandlerInterceptor.html) — 비동기 완료 처리.
+- [ContentCachingResponseWrapper 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/util/ContentCachingResponseWrapper.html) — flushBuffer와 copyBodyToResponse의 본문 복사 계약.
+- [MVC Interception](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-servlet/handlermapping-interceptor.html) — postHandle 이전 응답 작성과 ResponseBodyAdvice 대안.

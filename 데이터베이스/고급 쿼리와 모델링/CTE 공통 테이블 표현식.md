@@ -2,8 +2,7 @@
 category: "데이터베이스/고급 쿼리와 모델링"
 tags: ["database", "cte", "recursive-query", "sql", "mysql", "postgresql"]
 aliases: ["CTE", "Common Table Expression"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CTE 공통 테이블 표현식
@@ -154,18 +153,11 @@ PostgreSQL은 버전에 따라 다르다. `MATERIALIZED`로 강제하거나 옵�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [PostgreSQL 18 WITH Queries](https://www.postgresql.org/docs/18/queries-with.html) — 반복 평가·중복 제거·배열·CYCLE·물질화.
 - [MySQL 8.4 WITH](https://dev.mysql.com/doc/refman/8.4/en/with.html) — 재귀 문법·타입·깊이 기본값·LIMIT.
 - [MySQL 8.4 CTE Optimization](https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html) — 1회 물질화 및 MERGE/NO_MERGE.
-
-부분 재검증: 2026-09-23. PostgreSQL 18 데이터 변경 CTE의 실행 횟수·동일 스냅샷·RETURNING 전달 경계를 확인했다. 추가 SQL은 공식 문서와 대조했으며 실제 PostgreSQL에서는 실행하지 않았다. 기존 전체 검증일은 유지한다.
-
 - [PostgreSQL 18 Data-Modifying Statements in WITH](https://www.postgresql.org/docs/18/queries-with.html#QUERIES-WITH-MODIFYING) — 미참조 변경 CTE 실행과 같은 행 중복 변경 제약.
-
-부분 재검증: 2026-10-22. MySQL 8.4의 재귀 CTE 타입 추론·비엄격 모드 잘림·엄격 모드 오류·앵커 CAST를 확인했다. 추가 SQL은 문서와 대조했으며 MySQL에서 실행하지 않았다. 다른 엔진과 기존 `verified`는 유지한다.
-
 - [MySQL 8.4 Recursive CTEs](https://dev.mysql.com/doc/refman/8.4/en/with.html#common-table-expressions-recursive) — 앵커 기준 결과 타입과 재귀 문자열 확장 조건.
-
-부분 재검증: 2026-11-04. [PostgreSQL 11 WITH §7.8.1](https://www.postgresql.org/docs/11/queries-with.html), [PostgreSQL 12 WITH](https://www.postgresql.org/docs/12/queries-with.html), [PostgreSQL 18 물질화](https://www.postgresql.org/docs/18/queries-with.html#QUERIES-WITH-CTE-MATERIALIZATION)를 대조해 최적화 장벽과 SELECT CTE의 조기 평가 종료를 구분했다. 정렬·조인 등 부모 연산에 따라 전체 결과가 필요할 수 있으며, 데이터 변경 CTE의 끝까지 실행하는 규칙과는 다르다. 이번에는 PostgreSQL 실행 계획을 실제 측정하지 않았고 기존 `verified`는 유지한다.
+- [PostgreSQL 11 WITH §7.8.1](https://www.postgresql.org/docs/11/queries-with.html) — PostgreSQL 11: 부모 쿼리와의 최적화 장벽·SELECT CTE 조기 종료.
+- [PostgreSQL 12 WITH](https://www.postgresql.org/docs/12/queries-with.html) — PostgreSQL 12: 비재귀·부작용 없는 SELECT CTE의 병합과 MATERIALIZED/NOT MATERIALIZED.
+- [PostgreSQL 18 물질화](https://www.postgresql.org/docs/18/queries-with.html#QUERIES-WITH-CTE-MATERIALIZATION) — PostgreSQL 18: 물질화·부모 요구량에 따른 조기 종료, 정렬·조인의 전체 소비 경계.

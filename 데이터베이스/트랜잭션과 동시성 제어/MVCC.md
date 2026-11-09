@@ -2,8 +2,7 @@
 category: "데이터베이스/트랜잭션과 동시성 제어"
 tags: ["database", "mvcc", "동시성제어", "transaction", "스냅샷격리"]
 aliases: ["Multi-Version Concurrency Control", "다중 버전 동시성 제어"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # MVCC
@@ -83,8 +82,6 @@ A. 다르다. MVCC는 DBMS 엔진 내부의 동시성 제어 메커니즘으로,
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [System Columns](https://www.postgresql.org/docs/18/ddl-system-columns.html) — PostgreSQL 18: xmin/xmax와 튜플 버전.
 - [Routine Vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html) — PostgreSQL 18: dead tuple 회수·freeze.
 - [Heap-Only Tuples](https://www.postgresql.org/docs/18/storage-hot.html) — PostgreSQL 18: HOT 조건과 BRIN 예외.
@@ -92,10 +89,5 @@ A. 다르다. MVCC는 DBMS 엔진 내부의 동시성 제어 메커니즘으로,
 - [Consistent Nonlocking Reads](https://dev.mysql.com/doc/refman/8.4/en/innodb-consistent-read.html) — MySQL 8.4: read view와 locking read 구분.
 - [InnoDB Multi-Versioning](https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html) — MySQL 8.4: undo 이전 버전 및 purge.
 - [Hibernate Optimistic Locking](https://docs.hibernate.org/orm/7.1/userguide/html_single/#locking-optimistic) — Hibernate ORM 7.1: 버전 검사.
-
-부분 재검증: 2026-10-04. PostgreSQL 18의 DDL과 기존 스냅샷 가시성 예외, 선행 테이블 접근 시 잠금 조건을 확인했다. 아래 TRUNCATE 경계만 실제 서버에서 추가 확인했고 테이블 재작성 ALTER TABLE은 실행하지 않았다. 기존 MySQL·Hibernate 서술의 전체 검증일은 유지한다.
-
 - [PostgreSQL 18 MVCC Caveats](https://www.postgresql.org/docs/18/mvcc-caveats.html) — TRUNCATE·테이블 재작성 DDL의 가시성 예외와 ACCESS SHARE 조건.
 - [PostgreSQL 18 TRUNCATE](https://www.postgresql.org/docs/18/sql-truncate.html) — ACCESS EXCLUSIVE 잠금·MVCC 비안전성·트랜잭션 롤백 가능성의 구분.
-
-추가 실행 확인: 2026-10-04. 격리한 PostgreSQL 18.6 실제 서버와 pgJDBC 42.7.13의 두 연결을 사용했다. A가 REPEATABLE READ에서 별도 기준 테이블을 읽어 스냅샷을 얻고, B가 대상 테이블의 TRUNCATE를 커밋한 뒤 A가 처음 조회하면 원래 1행이 있던 대상의 count는 0이었다. 대조 실험에서 A가 대상을 먼저 읽으면 B의 TRUNCATE는 `lock_timeout=100ms`에서 SQLSTATE `55P03`으로 실패했고, A가 종료한 후에는 성공했다. MySQL의 DDL·다른 격리 수준·복제 환경에 일반화하지 않는다.

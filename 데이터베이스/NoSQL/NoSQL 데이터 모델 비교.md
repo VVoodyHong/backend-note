@@ -1,8 +1,7 @@
 ---
 category: "데이터베이스/NoSQL"
 tags: ["database", "nosql", "데이터모델링", "분산시스템", "cap-theorem"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # NoSQL 데이터 모델 비교
@@ -82,15 +81,10 @@ Cassandra는 리더가 없는(leaderless) 구조로 설계되어 있어 파티�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 서비스 문서: 테이블·LSI·GSI 및 global tables 일관성.
+- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 기준: 테이블·LSI·GSI 및 global tables 일관성.
 - [Cassandra Dynamo Architecture](https://cassandra.apache.org/doc/stable/cassandra/architecture/dynamo.html) — Cassandra stable 문서: 토큰 분산·쿼럼·last-write-wins.
 - [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 일관성 수준 및 LWT 보장.
 - [Cassandra Data Modeling](https://cassandra.apache.org/doc/stable/cassandra/developing/data-modeling/intro.html) — query-first 모델링과 CQL 스키마.
 - [MongoDB Data Modeling](https://www.mongodb.com/docs/manual/data-modeling/) — 문서 모델과 embedding 선택.
 - [MongoDB Read Concern majority](https://www.mongodb.com/docs/manual/reference/read-concern-majority/) — 문서 모델과 일관성 구분.
-
-부분 재검증: 2026-11-04. MongoDB 8.0 공식 모델링 지침의 함께 조회·갱신·보관하는 embedding 조건과 독립 갱신·무한 증가 시 reference 조건을 대조했다. 모델별 속도 우열은 이 지침만으로 입증할 수 없어 단정 표현도 제거했다. 실제 워크로드·DB 실행은 하지 않았으며 Cassandra·DynamoDB·그래프의 기존 `verified`는 유지한다.
-
 - [MongoDB 8.0 Data Modeling Best Practices](https://www.mongodb.com/docs/v8.0/data-modeling/best-practices/) — 자주 함께 갱신하는 데이터의 embedding, 쓰기 집약 환경의 독립 갱신과 참조 선택.

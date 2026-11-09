@@ -1,8 +1,7 @@
 ---
 category: "네트워크/HTTP와 HTTPS"
 tags: ["network", "http2", "http3", "quic", "성능최적화"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # HTTP 1.1과 HTTP 2 HTTP 3 비교
@@ -93,12 +92,12 @@ gRPC는 HTTP/2를 기반 전송으로 사용하며, 하나의 연결로 다수�
 
 ## 참고 자료
 
-- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — HTTP 의미·안전성. 확인: 2026-09-08.
-- [RFC 9114: HTTP/3](https://www.rfc-editor.org/rfc/rfc9114.html) — §3 연결 협상·§4.6 server push. 확인: 2026-09-08.
-- [RFC 9000: QUIC](https://www.rfc-editor.org/rfc/rfc9000.html) — 스트림 오프셋·패킷 번호·연결 마이그레이션. 확인: 2026-09-08.
-- [RFC 9204: QPACK](https://www.rfc-editor.org/rfc/rfc9204.html) — §2 blocked streams. 확인: 2026-09-08.
-- [RFC 8470: Using Early Data in HTTP](https://www.rfc-editor.org/rfc/rfc8470.html) — 0-RTT 재생 위험·425. 확인: 2026-09-08.
-- [Chrome HTTP/2 Server Push removal](https://developer.chrome.com/blog/removing-push) — Chrome 106 비활성화. 확인: 2026-09-08.
-- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — 4.1.1 HTTP/2·h2c 구성. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [RFC 9113 §5.2·§5.3·§6.9](https://www.rfc-editor.org/rfc/rfc9113.html#section-5.2)의 두 수준 흐름 제어와 기존 우선순위 방식, [RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html)의 HTTP 버전별 우선순위 전달을 확인했다. 브라우저·Spring Boot 지원표 등은 이번 범위 밖이므로 `verified`는 유지했다.
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — HTTP 의미·안전성.
+- [RFC 9114: HTTP/3](https://www.rfc-editor.org/rfc/rfc9114.html) — §3 연결 협상·§4.6 server push.
+- [RFC 9000: QUIC](https://www.rfc-editor.org/rfc/rfc9000.html) — 스트림 오프셋·패킷 번호·연결 마이그레이션.
+- [RFC 9204: QPACK](https://www.rfc-editor.org/rfc/rfc9204.html) — §2 blocked streams.
+- [RFC 8470: Using Early Data in HTTP](https://www.rfc-editor.org/rfc/rfc8470.html) — 0-RTT 재생 위험·425.
+- [Chrome HTTP/2 Server Push removal](https://developer.chrome.com/blog/removing-push) — Chrome 106 비활성화.
+- [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — 4.1.1 HTTP/2·h2c 구성.
+- [RFC 9113 §5.2·§5.3·§6.9](https://www.rfc-editor.org/rfc/rfc9113.html#section-5.2) — HTTP/2의 연결·스트림 흐름 제어와 기존 우선순위 방식.
+- [RFC 9218](https://www.rfc-editor.org/rfc/rfc9218.html) — HTTP 버전별 우선순위 힌트 전달.

@@ -2,8 +2,7 @@
 category: "인프라와 운영/IaC와 배포"
 tags: ["operations", "terraform", "iac", "devops", "provisioning"]
 aliases: ["Infrastructure as Code", "IaC"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Terraform과 IaC 원칙
@@ -112,12 +111,11 @@ A. 일반적으로 Terraform은 클러스터 자체, VPC, IAM, 관리형 데이�
 
 ## 참고 자료
 
-- [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3) — use_lockfile·DynamoDB deprecation. 확인: 2026-09-08.
-- [Terraform lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) — create_before_destroy·prevent_destroy. 확인: 2026-09-08.
-- [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data) — sensitive·ephemeral(1.10+)·write-only(1.11+). 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Terraform apply](https://docs.hashicorp.com/terraform/tutorials/cli/apply)의 부분 적용·자동 rollback 부재와 [terraform_remote_state](https://developer.hashicorp.com/terraform/language/state/remote-state-data)의 전체 snapshot 접근 경고를 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Terraform State Locking](https://developer.hashicorp.com/terraform/language/state/locking)와 [plan 명령](https://developer.hashicorp.com/terraform/cli/commands/plan#out-filename) — 조회 문서 v1.16.x의 backend별 잠금 지원·자신의 lock 해제 조건·saved plan의 민감 데이터 저장을 확인했다. CI 실행 종료 확인과 아티팩트 관리는 이 계약에 따른 운영 절차다. 실제 backend 잠금·force-unlock·apply 실행과 전체 기존 주장은 재검증하지 않아 `verified`를 유지했다.
-
-부분 재검증: 2026-10-22. [Terraform lifecycle — create_before_destroy](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#create_before_destroy)의 표시 v1.17.x 문서에서 생성·삭제 순서, 공존 제약, 의존 리소스 전파와 destroy-time provisioner 생략을 확인했다. 준비 상태·트래픽 전환의 별도 설계는 이 옵션이 리소스 수명 주기 순서를 제어한다는 계약에서 도출한 운영 지침이다. 실제 provider 리소스 교체·서비스 무중단 시험 및 기존 backend 설정 전체는 재검증하지 않아 `verified`를 유지했다.
+- [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3) — use_lockfile·DynamoDB deprecation.
+- [Terraform lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) — create_before_destroy·prevent_destroy.
+- [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data) — sensitive·ephemeral(1.10+)·write-only(1.11+).
+- [Terraform apply](https://docs.hashicorp.com/terraform/tutorials/cli/apply) — Terraform 부분 적용·자동 rollback 부재.
+- [terraform_remote_state](https://developer.hashicorp.com/terraform/language/state/remote-state-data) — 원격 state의 전체 snapshot 접근 경고.
+- [Terraform State Locking](https://developer.hashicorp.com/terraform/language/state/locking) — Terraform 1.16.x의 backend별 잠금 지원·자신의 lock 해제 조건.
+- [plan 명령](https://developer.hashicorp.com/terraform/cli/commands/plan#out-filename) — Terraform 1.16.x saved plan의 민감 데이터 저장.
+- [Terraform lifecycle — create_before_destroy](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#create_before_destroy) — Terraform 1.17.x의 생성/삭제 순서·공존 제약·의존 리소스 전파·destroy-time provisioner 생략.

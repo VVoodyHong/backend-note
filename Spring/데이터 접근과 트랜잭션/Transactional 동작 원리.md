@@ -2,8 +2,7 @@
 category: "Spring/데이터 접근과 트랜잭션"
 tags: ["spring", "transactional", "aop", "proxy"]
 aliases: ["@Transactional", "선언적 트랜잭션 관리"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Transactional 동작 원리
@@ -101,19 +100,14 @@ Spring AOP는 프록시를 통해서만 부가 기능을 적용한다. 클래스
 
 ## 참고 자료
 
-부분 재검증: 2026-09-23. Framework 7.0.9의 TestContext 기본 롤백·별도 스레드·REQUIRES_NEW 경계를 확인하고 H2 재현 테스트를 실행했다. 아래 기존 proxy·JPA 전체 검증 범위는 2026-09-08을 유지한다.
+적용 범위: Spring Framework 6.2·7.0의 기본 proxy 모드와 동기 JDBC/JPA 트랜잭션. readOnly 구현 경계는 Framework 7.0.9·pgJDBC 42.7.13·PostgreSQL 18 기준.
 
-- [TestContext transaction management](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html) — 테스트 관리 트랜잭션과 애플리케이션 트랜잭션의 구분.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 6.2·7.0의 기본 proxy 모드와 동기 JDBC/JPA 트랜잭션.
-
-- [Using @Transactional](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html) — 가시성, 기본 속성, rollbackOn, 매니저 지정.
+- [Using @Transactional](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html) — 가시성·기본 속성·rollbackOn·매니저 지정.
 - [Transaction Propagation](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-propagation.html) — 참여 트랜잭션과 rollback-only.
 - [JpaTransactionManager API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/orm/jpa/JpaTransactionManager.html) — 리소스 바인딩과 JDBC/JPA 경계.
-
-부분 재검증: 2026-10-04. Framework 7.0.9·pgJDBC 42.7.13·PostgreSQL 18.6의 독립 로컬 트랜잭션에서 기본 readOnlyMode의 INSERT 거부, ignore의 쓰기 허용, ignore+enforceReadOnly의 거부를 JUnit 2건으로 실행했다. 각 트랜잭션의 `SHOW transaction_read_only`와 SQLSTATE·최종 저장 결과를 확인했다. JPA·다른 DB·사용자 지정 풀 전체의 동작을 검증한 것은 아니다.
-
-- [pgJDBC 연결 설정](https://jdbc.postgresql.org/documentation/use/#connection-parameters) / [42.7.13 PGProperty](https://github.com/pgjdbc/pgjdbc/blob/REL42.7.13/pgjdbc/src/main/java/org/postgresql/PGProperty.java) — readOnlyMode의 기본값·BEGIN READ ONLY 조건.
+- [TestContext transaction management](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html) — 테스트 관리 트랜잭션·별도 스레드·독립 애플리케이션 트랜잭션.
+- [pgJDBC 연결 설정](https://jdbc.postgresql.org/documentation/use/#connection-parameters) — readOnlyMode 설정과 BEGIN READ ONLY 조건.
+- [42.7.13 PGProperty](https://github.com/pgjdbc/pgjdbc/blob/REL42.7.13/pgjdbc/src/main/java/org/postgresql/PGProperty.java) — readOnlyMode의 기본값.
 - [DataSourceTransactionManager 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/jdbc/datasource/DataSourceTransactionManager.html#setEnforceReadOnly(boolean)) — JDBC 힌트와 명시 SQL 강제의 차이.
 - [PostgreSQL 18 SET TRANSACTION](https://www.postgresql.org/docs/18/sql-set-transaction.html) — 읽기 전용 트랜잭션의 명령 제한과 임시 테이블 예외.
-- [AbstractPlatformTransactionManager 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/support/AbstractPlatformTransactionManager.java) — 2026-10-04 도식 대조: 참여 트랜잭션과 새 물리 트랜잭션의 commit 경계, rollback-only 분기.
+- [AbstractPlatformTransactionManager 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/support/AbstractPlatformTransactionManager.java) — 참여/새 물리 트랜잭션의 commit 경계와 rollback-only 분기.

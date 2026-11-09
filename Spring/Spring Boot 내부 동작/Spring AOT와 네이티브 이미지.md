@@ -2,8 +2,7 @@
 category: Spring/Spring Boot 내부 동작
 tags: [spring, spring-boot, aot, graalvm]
 aliases: [Spring AOT, GraalVM Native Image]
-updated: 2026-09-23
-verified: 2026-09-23
+updated: 2026-11-09
 ---
 
 # Spring AOT와 네이티브 이미지
@@ -93,9 +92,7 @@ A. 아니다. Spring AOT는 프레임워크 빈 구성과 초기화 코드를 �
 
 ## 참고 자료
 
-검증일: 2026-09-23. Boot 4.1.1·Framework 7.0.9 공식 문서의 AOT 제한·힌트·빌드 흐름을 확인했다. OpenJDK 25.0.2와 Maven 3.9.11에서 `process-aot`·패키징 및 일반/AOT JVM 실행을 비교했다. 빌드 때 활성화한 빈이 AOT JVM에서 유지되고 일반 URL 값은 런타임 값으로 바뀌는 것을 확인했다. `RuntimeHintsPredicates`로 예시 리소스 패턴의 포함·제외 경로도 검사했다. GraalVM 네이티브 컴파일·성능 비교는 실행하지 않았다.
-
-- [Introducing GraalVM Native Images](https://docs.spring.io/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html) — Boot 4.1.1, 폐쇄 세계 가정과 Spring 생성 산출물.
-- [Ahead of Time Optimizations](https://docs.spring.io/spring-framework/reference/core/aot.html) — Framework 7.0.9, 빈 구성 고정·힌트 API·AOT JVM 실행.
-- [Maven AOT plugin](https://docs.spring.io/spring-boot/maven-plugin/aot.html) — Boot 4.1.1, process-aot와 빌드 시 환경 인수.
-- [Advanced Native Images Topics](https://docs.spring.io/spring-boot/reference/packaging/native-image/advanced-topics.html) — Boot 4.1.1, 실행 JAR의 플랫폼별 변환과 추적 기반 검증.
+- [Introducing GraalVM Native Images](https://docs.spring.io/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html) — Boot 4.1.1의 폐쇄 세계 가정과 Spring 생성 산출물.
+- [Ahead of Time Optimizations](https://docs.spring.io/spring-framework/reference/core/aot.html) — Framework 7.0.9의 빈 구성 고정·RuntimeHints API·AOT JVM 실행.
+- [Maven AOT plugin](https://docs.spring.io/spring-boot/maven-plugin/aot.html) — Boot 4.1.1의 process-aot와 빌드 시 환경 인수.
+- [Advanced Native Images Topics](https://docs.spring.io/spring-boot/reference/packaging/native-image/advanced-topics.html) — Boot 4.1.1 실행 JAR의 플랫폼별 변환과 추적 기반 힌트 수집.

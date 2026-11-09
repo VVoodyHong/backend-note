@@ -2,8 +2,7 @@
 category: "보안/인증과 인가"
 tags: ["security", "authorization", "rbac", "abac", "access-control"]
 aliases: ["RBAC", "ABAC"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # RBAC와 ABAC 권한 모델
@@ -109,9 +108,6 @@ A. 매 요청마다 DB에서 권한을 조회하면 정확하지만 지연시간
 
 ## 참고 자료
 
-- [OWASP Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) — deny-by-default·모든 요청 검사·속성/객체 접근제어. 확인: 2026-09-08.
-- [Spring Security Method Security](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html) — 7.x @EnableMethodSecurity·hasRole·SpEL. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)의 모든 요청·객체에 대한 검사, 기본 거부, 안전한 실패 범위를 확인해 정책 판단 캐시와 집행 경로를 보강했다. 캐시 키·정책 버전·시간 경계는 이 원칙을 적용한 설계 제안이며, Spring Security API와 나머지 기존 설명을 모두 재검증한 것은 아니므로 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [Spring Security 7.1.1 Method Security: Using Method Parameters](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html#using_method_parameters)의 `@P`·컴파일 파라미터 이름 사용 전제를 확인했다. 예제의 속성 조회·정책·TOCTOU를 실행한 검증은 아니며 이름 해석 실행 결과는 연결된 대표 노트에 둔다. 나머지 모델 설명의 `verified`는 유지한다.
+- [OWASP Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) — 모든 요청·객체의 인가·기본 거부·안전한 실패; 정책 캐시와 집행 설계의 근거.
+- [Spring Security Method Security](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html) — 7.x @EnableMethodSecurity·hasRole·SpEL.
+- [Spring Security 7.1.1 Method Security: Using Method Parameters](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html#using_method_parameters) — Spring Security 7.1.1의 @P·컴파일 파라미터 이름 사용 전제.

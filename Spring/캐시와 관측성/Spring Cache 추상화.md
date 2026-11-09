@@ -2,8 +2,7 @@
 category: "Spring/캐시와 관측성"
 tags: ["spring", "cache", "aop", "spel", "redis"]
 aliases: ["Spring Cache", "스프링 캐시"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Cache 추상화
@@ -131,26 +130,17 @@ flowchart LR
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 6.1–7.0, Spring Data Redis 4.x.
+적용 범위: Spring Framework 6.1–7.0과 Spring Data Redis 4.x. 캐시 프록시·트랜잭션 세부 구현은 Framework 7.0.9 기준.
 
-- [Cache annotations](https://docs.spring.io/spring-framework/reference/integration/cache/annotations.html) — 키 생성·sync·리액티브 처리·애너테이션 실행.
-- [Redis Cache](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html) — writer 락 범위·직렬화·트랜잭션.
+- [Cache annotations](https://docs.spring.io/spring-framework/reference/integration/cache/annotations.html) — 키 생성·sync·리액티브 처리·애노테이션 실행.
+- [Cacheable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/annotation/Cacheable.html) — sync의 제공자 위임 범위·Optional 언래핑·unless 계약.
+- [Redis Cache](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html) — Redis cache writer 락 범위·직렬화·트랜잭션.
 - [TransactionAwareCacheDecorator](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/transaction/TransactionAwareCacheDecorator.html) — 커밋 후 반영과 즉시 연산 예외.
+- [TransactionAwareCacheDecorator 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-context-support/src/main/java/org/springframework/cache/transaction/TransactionAwareCacheDecorator.java) — 일반 put의 커밋 후 처리와 로더 호출의 직접 위임.
+- [TransactionSynchronization.afterCommit 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/transaction/support/TransactionSynchronization.html#afterCommit()) — 커밋 완료 후 콜백의 예외 전파.
 - [CompositeCacheManager](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/support/CompositeCacheManager.html) — 캐시 이름으로 관리자 선택.
 - [CacheAspectSupport](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/interceptor/CacheAspectSupport.html) — 리액티브 호환 모드 시스템 프로퍼티.
 - [GenericJackson2JsonRedisSerializer](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/serializer/GenericJackson2JsonRedisSerializer.html) — 4.0 deprecation과 Jackson 3 대체 타입.
 - [Boot Caching](https://docs.spring.io/spring-boot/reference/io/caching.html) — 캐시 제공자 자동 구성 조건.
-
-부분 재검증: 2026-09-23. Framework 7.0.9에서 기본 캐시 오류 전파와 AopContext 사용 조건을 공식 문서·API로 확인했다. 캐시 get 오류가 호출자에게 전파되고 대상 메서드가 실행되지 않는 것을 프록시 호출 테스트로 재현했다. 기존의 제공자별 구현 설명 전체를 재검증한 것은 아니다.
-
-- [SimpleCacheErrorHandler 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/interceptor/SimpleCacheErrorHandler.html) — 기본 오류 전파.
-- [AopContext 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/aop/framework/AopContext.html) — 노출 설정과 프록시 호출 문맥.
-
-부분 재검증: 2026-10-04. Framework 7.0.9·TransactionAwareCacheManagerProxy·ConcurrentMapCacheManager·H2 2.4.240에서 실제 Cacheable 프록시를 호출했다. 일반 캐시 적재는 롤백 시 반영되지 않았지만 sync=true의 로더는 미커밋 값을 즉시 적재해 롤백 뒤 조회에도 반환하는 것을 JUnit 2건으로 확인했다. Redis/Caffeine의 모든 설정이나 분산 경쟁을 실행 검증한 것은 아니다.
-
-- [TransactionAwareCacheDecorator 7.0.9 소스](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-context-support/src/main/java/org/springframework/cache/transaction/TransactionAwareCacheDecorator.java) — 일반 put의 커밋 후 처리와 로더 호출의 직접 위임.
-- [Cacheable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/annotation/Cacheable.html) — sync의 제공자 위임 범위.
-
-부분 재검증: 2026-11-04. [TransactionSynchronization.afterCommit 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/transaction/support/TransactionSynchronization.html#afterCommit())과 위 TransactionAwareCacheDecorator 고정 소스로 커밋 후 예외 전파를 확인했다. Temurin 25.0.4.1+1·Framework 7.0.9·H2 2.4.240에서 실제 DB 트랜잭션과 put 실패를 주입한 캐시를 사용해 트랜잭션 안에서는 지연되고, 커밋 뒤 호출자에게 예외가 전파되며, 새 DB 조회에 행이 남는 3조건을 실행했다. Redis/Caffeine의 네트워크 장애·실제 @CachePut 프록시 조합은 이번 범위 밖이며 `verified`는 유지한다.
-
-같은 날 위 [Cacheable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/annotation/Cacheable.html)의 Optional 처리·unless 계약을 확인했다. ConcurrentMapCacheManager와 실제 Cacheable 프록시로 빈 결과의 재사용·null 저장, unless로 빈 결과 제외, 값이 있는 Optional의 재사용·내부 값 저장을 5조건으로 실행했다. Redis의 null 저장 설정이나 TTL은 이 재현에 포함하지 않았다.
+- [SimpleCacheErrorHandler 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/cache/interceptor/SimpleCacheErrorHandler.html) — 기본 캐시 오류 전파.
+- [AopContext 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/aop/framework/AopContext.html) — 프록시 노출 설정과 호출 문맥.

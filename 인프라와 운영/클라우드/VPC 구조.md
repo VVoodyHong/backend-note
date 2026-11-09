@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/클라우드"
 tags: ["operations", "aws", "vpc", "network", "보안그룹"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # VPC 구조
@@ -106,17 +105,16 @@ A. EKS의 기본 VPC CNI(Container Network Interface)는 파드(pod)마다 VPC �
 
 ## 참고 자료
 
-- [AWS VPC subnet sizing](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) — 일반 IPv4 예약5주소·CIDR. 확인: 2026-09-08.
-- [AWS Internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) — IPv4 public주소·routing·SG. 확인: 2026-09-08.
-- [AWS Regional NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html) — regional/zonal·자동AZ확장·최대60분. 확인: 2026-09-08.
-- [AWS NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) — public/private NAT. 확인: 2026-09-08.
-- [Lambda VPC](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — subnet+SG 조합 Hyperplane ENI 공유. 확인: 2026-09-08.
-- [AWS Gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) — S3/DynamoDB·endpoint 자체 추가요금없음. 확인: 2026-09-08.
-- [VPC Security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html) — stateful allow·ENI. 확인: 2026-09-08.
-- [VPC NACL](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html) — stateless·번호순. 확인: 2026-09-08.
-- [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html) — CIDR중복·nontransitive. 확인: 2026-09-08.
-- [Direct Connect Encryption](https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html) — 기본비암호화·MACsec/VPN. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [AWS Interface Endpoint 설정](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html)의 private DNS 전제와 [Endpoint policy](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)의 기본 허용·서비스별 지원·다른 인가 정책과의 관계를 확인했다. 네트워크 경로별 진단은 이를 적용한 운영 절차다. 기존 NAT·Lambda·CIDR 한도 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-11-04. [Lambda VPC 연결](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html)과 [인터넷 접근](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html)의 public subnet 선택 시 public IP 미할당·인터넷 접근 불가, private subnet의 NAT/IGW 경로와 dual-stack 전제를 확인했다. 적용 범위는 AWS Lambda VPC 연결의 조회일 문서이며 IPv4와 선택적 IPv6 송신을 구분했다. 실제 Lambda 호출·NAT·Endpoint 구성은 하지 않았고 `verified`는 유지했다.
+- [AWS VPC subnet sizing](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html) — 일반 IPv4 예약5주소·CIDR.
+- [AWS Internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) — IPv4 public주소·routing·SG.
+- [AWS Regional NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html) — regional/zonal·자동AZ확장·최대60분.
+- [AWS NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) — public/private NAT.
+- [Lambda VPC](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — subnet+SG 조합 Hyperplane ENI 공유; 2026-11-04 Lambda VPC 정책: public subnet의 public IP 미할당·IPv4 인터넷 접근 경계.
+- [AWS Gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) — S3/DynamoDB·endpoint 자체 추가요금없음.
+- [VPC Security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html) — stateful allow·ENI.
+- [VPC NACL](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html) — stateless·번호순.
+- [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html) — CIDR중복·nontransitive.
+- [Direct Connect Encryption](https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html) — 기본비암호화·MACsec/VPN.
+- [AWS Interface Endpoint 설정](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html) — AWS Interface Endpoint의 private DNS 전제.
+- [Endpoint policy](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html) — AWS endpoint policy 기본 허용·서비스별 지원·다른 인가 정책과의 관계.
+- [인터넷 접근](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html) — 2026-11-04 Lambda VPC의 private subnet NAT/IGW 경로·선택적 dual-stack IPv6 송신.

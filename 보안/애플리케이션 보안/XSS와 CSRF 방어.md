@@ -1,8 +1,7 @@
 ---
 category: "보안/애플리케이션 보안"
 tags: ["security", "xss", "csrf", "시큐어코딩", "spring-security"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # XSS와 CSRF 방어
@@ -107,14 +106,8 @@ A. 자동으로 보장되지는 않는다. 사전 요청(Preflight)이 필요한
 
 ## 참고 자료
 
-- [OWASP Cross Site Scripting Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) — 출력 문맥·sanitizer·안전한 sink. 확인: 2026-09-08.
-- [OWASP Cross-Site Request Forgery Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) — SameSite·custom header·token·CORS. 확인: 2026-09-08.
-- [Spring Security CSRF](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html) — 7.x safe methods·token lifecycle·DSL. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Spring Security CSRF](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html)와 [OWASP CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)의 자동 자격증명·로그인/로그아웃·custom header 방어 조건을 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-09-23. [OWASP CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)의 simple request·custom header/preflight·client-side CSRF 범위를 확인했다. CORS가 항상 응답 읽기에만 관여한다는 Q&A를 수정하고, 인증된 클라이언트 코드가 공격자 입력으로 요청을 조합하는 경계를 보완했다. 브라우저별 실행 시험은 하지 않았고 기존 전체 검증일은 유지했다.
-
-- [Fetch Standard: HTTP fetch](https://fetch.spec.whatwg.org/#http-fetch) — 2026-09-23 확인. preflight 실패 시 조기 반환과 본 응답 CORS 검사를 구분한다.
-
-부분 재검증: 2026-10-04. [OWASP XSS: Reflected/Stored와 Attack Consequences](https://community.owasp.org/attacks/xss/)의 전달 경로·실행 영향 구분을 대조해 Reflected에 직접 링크 클릭이 필수라는 설명을 정정하고 저장 여부 중심의 위험도 비교를 보완했다. 웹 보안 원리 범위이며 특정 브라우저·Spring API 버전의 전체 검증이 아니다. 실제 공격 페이지·브라우저 실행은 하지 않았고 기존 `verified`는 유지한다.
+- [OWASP Cross Site Scripting Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) — 출력 문맥·sanitizer·안전한 sink.
+- [OWASP Cross-Site Request Forgery Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) — SameSite·token·CORS·simple request·custom header/preflight·client-side CSRF 경계.
+- [Spring Security CSRF](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html) — 7.x safe methods·token lifecycle·DSL; Spring Security의 자동 자격증명·로그인/로그아웃 CSRF 보호.
+- [Fetch Standard: HTTP fetch](https://fetch.spec.whatwg.org/#http-fetch) — preflight 실패 시 조기 반환과 본 응답 CORS 검사를 구분한다.
+- [OWASP XSS: Reflected/Stored와 Attack Consequences](https://community.owasp.org/attacks/xss/) — Reflected/Stored XSS의 전달 경로와 실행 영향; 직접 링크 클릭·저장 여부만으로 위험도를 단정하지 않음.

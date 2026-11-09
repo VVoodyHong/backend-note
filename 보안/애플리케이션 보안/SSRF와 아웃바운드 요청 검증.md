@@ -2,8 +2,7 @@
 category: "보안/애플리케이션 보안"
 tags: ["security", "ssrf", "http", "클라우드보안", "input-validation"]
 aliases: ["SSRF", "Server-Side Request Forgery"]
-updated: 2026-10-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # SSRF와 아웃바운드 요청 검증
@@ -90,15 +89,11 @@ A. IMDSv2가 요청의 애플리케이션 업무 의도를 검증하지는 않�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-22. OWASP의 방어 지침, CWE-918 정의, AWS EC2 IMDS 계약을 대조했다. 특정 HTTP client 구현의 완전한 검증 코드나 런타임 테스트 결과를 제시하는 노트는 아니다.
-
 - [CWE-918](https://cwe.mitre.org/data/definitions/918.html) — CWE 4.20의 정의·신뢰 경계·영향.
-- [OWASP API7:2023](https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/) — fetch 격리·scheme/port 허용 목록·redirect·응답 노출 방어.
+- [OWASP API7:2023](https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/) — fetch 격리·scheme/port 허용 목록·redirect·응답 노출 방어; redirect 비활성화·목적지 검증 원칙.
 - [OWASP SSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html) — 주소·도메인 검증, A/AAAA, DNS 변경과 네트워크 통제.
 - [OWASP URL Parser 연구 자료](https://cheatsheetseries.owasp.org/assets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet_Orange_Tsai_Talk.pdf) — 검증 후 재해석과 URL 파서 불일치의 원리.
 - [AWS IMDS 사용](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html) — IMDSv2 세션 토큰과 요청 흐름.
 - [AWS IMDS 옵션](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-options.html) — HttpTokens와 PUT 응답 hop limit, 컨테이너 고려 사항.
-
-부분 재검증: 2026-10-04. [Java SE 25 HttpClient.Redirect](https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Redirect.html)와 [HttpClient.Builder](https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Builder.html) — `NEVER` 기본값·`NORMAL`의 HTTPS→HTTP 예외·기본 ProxySelector를 확인했다. [OWASP API7:2023](https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/)의 redirect 비활성화·목적지 검증과 연결한 적용 지침이다. 실제 프록시·DNS 경합·IPv6·메타데이터 접근 시험 및 기존 전체 주장은 재검증하지 않아 `verified`를 유지했다.
-
-실행 확인: 2026-10-04, JDK 25.0.4에서 통제된 loopback HTTP 서버 두 개로 검증했다. 기본 정책은 302를 반환하고 목적지 호출 0회, `NORMAL`은 다른 포트로 redirect되어 목적지 호출 1회였다. 이 결과는 HTTP 자동 redirect의 포트 경계만 확인하며 HTTPS 하향 전환·프록시·DNS 재해석·IPv6·외부망 SSRF 방어를 검증한 것은 아니다.
+- [Java SE 25 HttpClient.Redirect](https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Redirect.html) — Java SE 25 Redirect 정책의 NEVER·NORMAL과 HTTPS→HTTP 예외.
+- [HttpClient.Builder](https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Builder.html) — Java SE 25의 기본 redirect 정책·ProxySelector.

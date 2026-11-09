@@ -1,8 +1,7 @@
 ---
 category: "Spring/IoC와 DI"
 tags: ["spring", "bean", "lifecycle", "ioc"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Bean 생명주기
@@ -93,18 +92,12 @@ A. phase는 lifecycle의 시작·정지 순서다. 작은 값부터 시작하고
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0의 일반적인 singleton 초기화와 종료.
+적용 범위: Spring Framework 7.0·7.0.9의 일반적인 singleton 초기화와 종료.
 
-- [Customizing the Nature of a Bean](https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html) — 초기화/소멸 순서, 초기화 잠금, AOP 적용 시점.
+- [Customizing the Nature of a Bean](https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html) — 초기화/소멸 순서·초기화 잠금·AOP 적용 시점.
 - [Dependency Injection](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html) — 생성자·필드 주입 시점과 순환 의존성.
 - [Bean Scopes](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html) — prototype의 소멸 관리 책임.
-
-부분 재검증: 2026-09-23. Framework 7.0.9의 SmartLifecycle phase·의존 관계·비동기 정지 callback 계약을 확인했다. 실제 컨텍스트에서 오름차순 시작/내림차순 정지 및 callback 호출 전후의 종료 완료 2건을 실행했다. 운영 프로세스의 강제 종료·종료 유예 시간은 이 실행 범위가 아니다.
-
 - [SmartLifecycle 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/SmartLifecycle.html) — phase·depends-on·정지 callback·lazy 초기화.
 - [DefaultLifecycleProcessor 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/support/DefaultLifecycleProcessor.html) — phase별 시작·정지와 종료 대기 제한.
-
-부분 재검증: 2026-10-04. Framework 7.0.9에서 `PriorityOrdered` 후처리기에 서비스 빈을 직접 주입한 구성과 의존성 없는 구성을 비교했다. 전자는 기동 경고·프록시 부재·트랜잭션 비활성, 후자는 프록시 생성·트랜잭션 활성을 실제 컨텍스트 시험 2건으로 확인했다. 모든 등록 순서에서 같은 결과가 난다는 뜻은 아니다.
-
-- [Container Extension Points](https://docs.spring.io/spring-framework/reference/core/beans/factory-extension.html) — 7.0.9, 후처리기의 조기 초기화와 static·의존성 없는 등록 권고.
+- [Container Extension Points](https://docs.spring.io/spring-framework/reference/core/beans/factory-extension.html) — 후처리기의 조기 초기화와 static·의존성 없는 등록 권고.
 - [PostProcessorRegistrationDelegate 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/context/support/PostProcessorRegistrationDelegate.java) — 후처리기 단계별 등록과 조기 생성 경고.

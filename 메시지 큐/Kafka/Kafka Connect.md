@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/Kafka"
 tags: ["messaging", "kafka", "kafka-connect", "cdc", "데이터-파이프라인"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Kafka Connect
@@ -88,23 +87,12 @@ A. Converter가 스키마 레지스트리를 사용하는 경우, 호환성 모�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Apache Kafka Connect User Guide](https://kafka.apache.org/43/kafka-connect/user-guide/) — Kafka 4.3, 워커·내부 토픽·오류 처리·소스 EOS.
 - [Connect Worker Configs](https://kafka.apache.org/43/generated/connect_config.html) — Kafka 4.3, exactly.once.source.support 기본값과 전환.
-- [Debezium MySQL Connector](https://debezium.io/documentation/reference/stable/connectors/mysql.html) — 확인일 stable 문서, 스냅샷·binlog·단일 태스크 범위.
+- [Debezium MySQL Connector](https://debezium.io/documentation/reference/stable/connectors/mysql.html) — stable 문서: 스냅샷·binlog·단일 태스크 범위.
 - [Schema Evolution and Compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html) — Confluent Schema Registry, Avro 호환성 방향과 형식별 차이.
-
-부분 재검증: 2026-09-23. Kafka 4.3 Connect의 커넥터/태스크 상태·재시작 기본 범위·내부 토픽 조건·오프셋 변경의 STOPPED 요구를 공식 User Guide에서 확인했다. 다른 커넥터 제품의 전체 검증일은 유지한다.
-
-- [Kafka 4.3 Connect REST API](https://kafka.apache.org/43/kafka-connect/user-guide/#rest-interface) — 상태·includeTasks·stop·offsets API. 같은 문서의 분산 모드 내부 토픽 설정도 재확인.
-
-부분 재검증: 2026-10-04. Debezium 3.3 PostgreSQL 커넥터의 unchanged TOAST·replica identity·placeholder 기본값과 별도 조회의 경쟁 조건을 공식 문서에서 확인했다. 싱크의 덮어쓰기·병합 경계는 이 값 표현에서 도출한 설계 판단이다. Debezium·Kafka·싱크를 실행한 결과가 아니며 다른 커넥터와 기존 EOS 설명 전체는 이번 검증 범위가 아니다. 전체 `verified`는 유지한다.
-
+- [Kafka 4.3 Connect REST API](https://kafka.apache.org/43/kafka-connect/user-guide/#rest-interface) — 상태·includeTasks·stop·offsets API.
 - [Debezium 3.3 PostgreSQL — Toasted values](https://debezium.io/documentation/reference/3.3/connectors/postgresql.html#postgresql-toasted-values) — DEFAULT/FULL의 TOAST 처리, `unavailable.value.placeholder`, 원본 DB 별도 조회로 빠진 값을 안전하게 복원할 수 없는 이유.
-
-부분 재검증: 2026-10-04. Debezium 3.3 MySQL·PostgreSQL의 초기 스냅샷 완료 기록과 중단 후 재시작, 3.3.2.Final 고정 소스의 snapshotInProgress 판단을 확인했다. 워커 인계가 항상 마지막 행 다음부터의 재개를 뜻한다는 기존 문장을 수정했고, CDC의 부하 설명은 반복 조회 감소로 한정했다. 초기 스냅샷 재시작·리밸런스의 통합 실행은 하지 않았으며 전체 `verified`는 유지한다.
-
 - [Debezium 3.3 MySQL snapshots](https://debezium.io/documentation/reference/3.3/connectors/mysql.html#mysql-snapshots) — 초기 스냅샷 완료 전 중단·재시작과 로그 재개 조건.
 - [Debezium 3.3 PostgreSQL snapshots](https://debezium.io/documentation/reference/3.3/connectors/postgresql.html#postgresql-snapshots) — 초기 스냅샷 완료의 offset 기록, 장애·리밸런스 시 새 스냅샷.
 - [InitialSnapshotter — v3.3.2.Final](https://github.com/debezium/debezium/blob/v3.3.2.Final/debezium-core/src/main/java/io/debezium/snapshot/mode/InitialSnapshotter.java) — offset이 있어도 snapshotInProgress이면 데이터 스냅샷을 수행하는 판단.

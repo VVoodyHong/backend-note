@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/대규모 트래픽 설계"
 tags: ["system-design", "distributed-systems", "id-generation", "snowflake", "uuid"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 분산 ID 생성
@@ -100,16 +99,11 @@ Snowflake ID는 타임스탬프가 상위 비트에 그대로 드러나므로 �
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562.html) — 2024 UUID v4/v7 비트 구조·단조성 선택·정렬·보안 고려.
+- [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562.html) — 2024 UUID v4/v7 비트 구조·단조성 선택·정렬·보안 고려; UUIDv7 밀리초 내 추가 단조성 선택·카운터 overflow.
 - [Twitter Snowflake IdWorker](https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/src/main/scala/com/twitter/service/snowflake/IdWorker.scala) — snowflake-2010 브랜치의 비트 배치·시계 역행·동기화·시퀀스 넘침.
 - [Meituan Leaf](https://github.com/Meituan-Dianping/Leaf) — segment 모드의 DB 구간 할당 및 Snowflake 모드 구분.
 - [PostgreSQL UUID Functions](https://www.postgresql.org/docs/18/functions-uuid.html) — 18 uuidv7 생성 함수.
 - [PostgreSQL Sequence Functions](https://www.postgresql.org/docs/18/functions-sequence.html) — 18 시퀀스 gap·롤백 시 번호 비회수.
 - [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) — StatefulSet 내 ordinal identity 범위.
 - [OWASP IDOR Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html) — 복잡한 식별자와 객체별 인가 구분.
-
-부분 재검증: 2026-09-22. [RFC 9562 §5.7·§6.2](https://www.rfc-editor.org/rfc/rfc9562.html)의 UUIDv7 밀리초 내 추가 단조성 선택과 카운터 overflow 처리를 재확인했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [RFC 8259 §6 Numbers](https://www.rfc-editor.org/rfc/rfc8259.html#section-6)의 정밀도·상호운용 범위를 확인하고 Node.js v26.5.0의 JSON.parse/stringify로 인접한 큰 정수의 충돌 및 문자열 왕복 보존을 assertion 검증했다. 실제 Snowflake 생성기·서버 직렬화 설정·브라우저·SDK 통합은 실행하지 않았으며, 기존 생성 알고리즘 전체는 재검증하지 않아 `verified`는 유지했다.
+- [RFC 8259 §6 Numbers](https://www.rfc-editor.org/rfc/rfc8259.html#section-6) — JSON 숫자의 정밀도·상호운용 범위; 큰 정수 ID의 문자열 전달 근거.

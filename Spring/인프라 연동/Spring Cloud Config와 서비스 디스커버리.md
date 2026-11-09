@@ -1,8 +1,7 @@
 ---
 category: "Spring/인프라 연동"
 tags: ["spring", "spring-cloud", "config-server", "서비스-디스커버리", "eureka", "kubernetes"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Cloud Config와 서비스 디스커버리
@@ -82,18 +81,14 @@ A. `{label}`은 Git 브랜치·태그·커밋 ID, `{profile}`은 활성 설정 �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Cloud Context 5.0.3의 AOP 프록시가 아닌 일반 `@ConfigurationProperties` 빈의 재바인딩만 실행 확인했다. 기본 생성자·setter가 있는 빈에서 동일 인스턴스 유지와 삭제된 일반/중첩 프로퍼티의 기본값 복귀를 컴포넌트 JUnit 테스트로 재현했다. Config Server·Bus·다중 인스턴스 전파 및 release train 전체 호환성을 실행 검증한 것은 아니다.
+적용 범위: Spring Cloud Config/Commons/Netflix 5.0.x, Spring Cloud 2025.1–Boot 4.0.x 호환 조합. 재바인딩 구현은 Cloud Context 5.0.3 기준.
 
+- [Config Client](https://docs.spring.io/spring-cloud-config/reference/client.html) — Config Data import·필수 설정과 재시도.
+- [Refresh Scope](https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/application-context-services.html) — Environment Changes·Refresh Scope의 차이, 프록시 재생성과 재바인딩 제한.
 - [ConfigurationPropertiesRebinder 5.0.3](https://raw.githubusercontent.com/spring-cloud/spring-cloud-commons/v5.0.3/spring-cloud-context/src/main/java/org/springframework/cloud/context/properties/ConfigurationPropertiesRebinder.java) — 기본값 초기화 조건과 동시 읽기 한계.
-- [Cloud Commons 5.0.3 Context Services](https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/application-context-services.html) — Environment Changes와 Refresh Scope의 차이.
-
-검증일: 2026-09-08. 적용 범위: Spring Cloud Config/Commons/Netflix 5.0.x, Spring Cloud 2025.1–Boot 4.0.x 호환 조합.
-
-- [Config Client](https://docs.spring.io/spring-cloud-config/reference/client.html) — Config Data import, 필수 설정과 재시도.
-- [Refresh Scope](https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/application-context-services.html) — 프록시 재생성과 재바인딩 제한.
-- [Eureka Client](https://docs.spring.io/spring-cloud-netflix/reference/spring-cloud-netflix.html) — 등록·heartbeat·캐시·자기 보호.
+- [Eureka Client](https://docs.spring.io/spring-cloud-netflix/reference/spring-cloud-netflix.html) — Eureka 등록·heartbeat·캐시·자기 보호.
+- [Eureka config properties](https://docs.spring.io/spring-cloud-netflix/reference/configprops.html) — heartbeat·lease·fetch 기본값.
 - [Cloud Commons](https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/common-abstractions.html) — DiscoveryClient와 LoadBalanced builder.
 - [Supported Versions](https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions) — release train별 Boot 호환.
-- [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) — Service와 EndpointSlice·DNS의 역할.
+- [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) — Service·EndpointSlice·DNS의 역할.
 - [Istio Architecture](https://istio.io/latest/docs/ops/deployment/architecture/) — 메시 제어부와 데이터 경로.
-- [Eureka config properties](https://docs.spring.io/spring-cloud-netflix/reference/configprops.html) — heartbeat·lease·fetch 기본값.

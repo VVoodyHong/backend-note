@@ -2,8 +2,7 @@
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "container-orchestration", "deployment", "statefulset", "devops"]
 aliases: ["쿠버네티스 오브젝트"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Kubernetes 핵심 오브젝트
@@ -99,13 +98,10 @@ A. Pod 템플릿의 `restartPolicy`는 `Never` 또는 `OnFailure`만 허용된�
 
 ## 참고 자료
 
-- [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) — apps/v1·eligible node·scheduler. 확인: 2026-09-08.
-- [Kubernetes Virtual IPs](https://kubernetes.io/docs/reference/networking/virtual-ips/) — iptables/IPVS/nftables·IPVS v1.35 deprecated. 확인: 2026-09-08.
-- [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — 조회한 v1.37 문서·requests/limits·defaulting·Pod-level resources. 확인: 2026-09-08.
-- [Kubernetes Node pressure eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/) — requests 초과·priority·사용량 순서. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [StatefulSets 공식 문서](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)의 v1.37 표시 내용을 기준으로 객체 삭제 시 순서 미보장, OrderedReady의 강제 롤백 복구 조건, PVC retention의 whenScaled 경계를 확인했다. 실제 클러스터 삭제·롤백·스토리지 동작은 실행하지 않았으며 다른 오브젝트 전체의 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [Kubernetes Persistent Volumes — Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)의 표시 v1.37 문서에서 RWO의 노드 범위·RWOP의 Pod 범위·CSI 전제·v1.29 stable과 일반 access mode의 쓰기 보호 비보장을 대조했다. 실제 CSI 드라이버·롤링 배포·마운트·장애 fencing 시험은 실행하지 않았고 기존 오브젝트 전체의 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. 표시 v1.37의 [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)에서 일정당 Job 생성의 중복/누락 가능성, concurrencyPolicy의 동일 CronJob 범위, Forbid의 누락·지연 시작 정책, timeZone 및 suspend 해제 경계를 확인했다. 업무 실행 키·보충 절차는 이 스케줄링 계약을 적용한 설계 기준이다. 실제 CronJob 지연·중복 생성·중단·catch-up은 실행하지 않았고 다른 오브젝트의 `verified`는 유지했다.
+- [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) — apps/v1·eligible node·scheduler.
+- [Kubernetes Virtual IPs](https://kubernetes.io/docs/reference/networking/virtual-ips/) — iptables/IPVS/nftables·IPVS v1.35 deprecated.
+- [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — v1.37 문서·requests/limits·defaulting·Pod-level resources.
+- [Kubernetes Node pressure eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/) — requests 초과·priority·사용량 순서.
+- [StatefulSets 공식 문서](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) — Kubernetes v1.37의 StatefulSet 삭제 순서 비보장·OrderedReady 강제 롤백 복구·PVC whenScaled.
+- [Kubernetes Persistent Volumes — Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) — Kubernetes v1.37의 RWO 노드/RWOP Pod 범위·CSI 전제·v1.29 stable·일반 access mode의 쓰기 보호 비보장.
+- [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) — Kubernetes v1.37 CronJob의 Job 중복/누락·동일 CronJob 내 concurrencyPolicy·Forbid 지연/누락·timeZone·suspend 해제.

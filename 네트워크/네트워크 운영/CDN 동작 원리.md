@@ -1,8 +1,7 @@
 ---
 category: "네트워크/네트워크 운영"
 tags: ["network", "cdn", "캐싱", "엣지"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CDN 동작 원리
@@ -91,11 +90,9 @@ A. CDN 사업자의 IP 허용목록은 그 사업자에서 온 트래픽을 제�
 
 ## 참고 자료
 
-- [RFC 4786: Anycast Services](https://www.rfc-editor.org/rfc/rfc4786.html) — 경로 선택·철회·수렴. 확인: 2026-09-08.
-- [RFC 9111: HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111.html) — 공유 캐시·Vary·Cache-Control. 확인: 2026-09-08.
-- [CloudFront expiration](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) — min/default/max TTL·origin 헤더 우선 관계. 확인: 2026-09-08.
-- [CloudFront cache policies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html) — cache key·Minimum TTL 예외. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. [CloudFront: Control origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)에서 cache policy 값의 자동 전달과 origin request policy 값의 캐시 키 제외를 확인했다. 적용 범위는 AWS CloudFront의 두 정책을 사용하는 배포이며 관리형 서비스 문서에는 고정 제품 버전이 없다. 사용자별 오응답 사례는 이 동작에서 도출한 설정 검토 기준이다. 실제 배포·캐시 적중·무효화 시험은 하지 않았으며 노트 전체의 `verified`는 유지했다.
-
-부분 재검증: 2026-10-22. [CloudFront의 ALB 접근 제한](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html)에서 관리형 prefix list의 서비스 범위, 비밀 헤더 검사·기본 거부·HTTPS·헤더 교체 및 VPC origin 경로를 확인했다. 적용 범위는 조회일 AWS 관리형 서비스 문서이며 고정 제품 버전은 없다. 다른 배포 경유 검사는 서비스 범위 허용과 배포 인증의 차이에서 도출한 운영 점검이다. 실제 AWS 배포·우회 시험과 캐시 정책 전체는 재검증하지 않아 `verified`를 유지했다.
+- [RFC 4786: Anycast Services](https://www.rfc-editor.org/rfc/rfc4786.html) — 경로 선택·철회·수렴.
+- [RFC 9111: HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111.html) — 공유 캐시·Vary·Cache-Control.
+- [CloudFront expiration](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) — min/default/max TTL·origin 헤더 우선 관계.
+- [CloudFront cache policies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html) — cache key·Minimum TTL 예외.
+- [CloudFront: Control origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html) — 2026-10-04 CloudFront 정책: cache policy 값의 자동 전달과 origin request policy 값의 캐시 키 제외.
+- [CloudFront의 ALB 접근 제한](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html) — 2026-10-22 CloudFront 정책: 관리형 prefix list 범위·ALB 비밀 헤더 검사·HTTPS·헤더 교체·VPC origin.

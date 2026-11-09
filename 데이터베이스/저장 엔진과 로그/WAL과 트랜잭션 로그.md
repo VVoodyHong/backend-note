@@ -2,8 +2,7 @@
 category: "데이터베이스/저장 엔진과 로그"
 tags: ["database", "wal", "redo로그", "undo로그", "트랜잭션로그", "innodb"]
 aliases: ["Write-Ahead Logging", "WAL"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # WAL과 트랜잭션 로그
@@ -93,23 +92,12 @@ A. 목적(장애 복구를 위한 선기록)은 같지만 세부 구현이 다�
 
 ## 참고 자료
 
-부분 재확인: 2026-10-04. MySQL 8.4의 redo write/flush 정책과 `sync_binlog=1`의 커밋 전 동기화를 대조해 `innodb_flush_log_at_trx_commit=2`를 즉시 커밋으로 설명한 문장을 바로잡았다. MySQL 서버 실행·지연 비교는 하지 않았다. 전체 `verified`는 유지한다.
-
 - [MySQL 8.4 InnoDB Flush Policy](https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit) — 1·2의 write/flush 차이와 주기 보장 범위.
 - [MySQL 8.4 sync_binlog](https://dev.mysql.com/doc/refman/8.4/en/replication-options-binary-log.html#sysvar_sync_binlog) — 1일 때 커밋 전 binlog 디스크 동기화.
-
-부분 재확인: 2026-09-22. WAL 선기록 규칙과 커밋 응답 시점의 차이, MySQL 8.4 커밋 로그 flush 조건을 확인했다. 그 밖의 내용은 아래 기존 확인 범위를 유지한다.
-
 - [PostgreSQL 18 Asynchronous Commit](https://www.postgresql.org/docs/18/wal-async-commit.html) — 비동기 커밋의 유실 창과 crash recovery 일관성.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [MySQL 8.4 Redo Log](https://dev.mysql.com/doc/refman/8.4/en/innodb-redo-log.html) — 8.0.30+ 용량·구 파라미터·순환 파일.
 - [MySQL 8.4 InnoDB Variables](https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html) — 0/1/2·플러시 주기 비보장·내구성 조건.
 - [MySQL 8.4 Undo Logs](https://dev.mysql.com/doc/refman/8.4/en/innodb-undo-logs.html) — 롤백·MVCC·redo 보호.
 - [MySQL 8.4 Doublewrite](https://dev.mysql.com/doc/refman/8.4/en/innodb-doublewrite-buffer.html) — torn page와 완전한 페이지 복구.
 - [PostgreSQL 18 WAL](https://www.postgresql.org/docs/18/wal-intro.html) — WAL 원칙과 커밋 flush.
-
-부분 재검증: 2026-09-23. PostgreSQL 18의 full_page_writes·wal_compression·fsync와 비동기 커밋의 장애 보장 차이를 공식 문서로 확인했다. 실제 crash recovery는 실행하지 않았으며 기존 InnoDB 서술의 전체 검증일은 유지한다.
-
 - [PostgreSQL 18 WAL Configuration](https://www.postgresql.org/docs/18/runtime-config-wal.html) — 체크포인트 이후 FPI·압축 대상·fsync 해제의 손상 위험.

@@ -1,8 +1,7 @@
 ---
 category: "캐시/Redis"
 tags: ["cache", "redis", "분산시스템", "sharding", "고가용성"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Redis Cluster
@@ -89,13 +88,8 @@ Cluster 자체는 크로스 슬롯 트랜잭션을 지원하지 않는다. 해�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Redis Cluster Specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/) — Redis Open Source Cluster: 슬롯·해시 태그·리다이렉션·투표·쓰기 유실 경계.
 - [WAIT](https://redis.io/docs/latest/commands/wait/) — Redis 3.0+: 복제 확인과 강한 일관성의 차이.
 - [Redis 8.4 redis.conf](https://raw.githubusercontent.com/redis/redis/8.4/redis.conf) — 8.4: cluster 설정과 버스 포트.
 - [Redis 8.4 Release Features](https://redis.io/docs/latest/develop/whats-new/8-4/) — 8.4 atomic slot migration과 기존 key migration 경로 차이.
-
-부분 재검증: 2026-09-23. Redis Open Source Cluster 명세의 같은 슬롯 제약·클라이언트 직접 라우팅·광고 주소를 확인했다. 8.4 리샤딩 모드 등 나머지 전체 검증일은 유지한다.
-
 - [Redis Cluster Specification: Redirection](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#redirection-and-resharding) — 슬롯 기반 요청 검사·MOVED 목적지·CLUSTER SHARDS 갱신. 여러 GET 분해의 원자성 차이는 이 명령 경계에서 도출한 설명이다.

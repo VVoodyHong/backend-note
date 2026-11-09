@@ -2,8 +2,7 @@
 category: "Spring/Spring Security"
 tags: ["spring", "spring-security", "filter-chain", "servlet-filter", "authentication"]
 aliases: ["SecurityFilterChain", "보안 필터 체인"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Security Filter Chain
@@ -103,15 +102,13 @@ A. 빈 구성은 설정 의존성과 여러 체인의 범위를 명시하기 쉽
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Security 7.1.1; SecurityFilterChain 컴포넌트 구성.
+적용 범위: Spring Security 7.1.1의 SecurityFilterChain 컴포넌트 구성.
 
 - [Servlet Architecture](https://docs.spring.io/spring-security/reference/servlet/architecture.html) — 체인 선택과 예외 변환 필터.
 - [Resource Server JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) — 기본 JWT 인증 구성.
 - [CSRF](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html) — 헤더 전용 인증과 CSRF 구분.
-- [Authentication persistence](https://docs.spring.io/spring-security/reference/servlet/authentication/persistence.html) — SecurityContextHolderFilter 읽기와 명시적 저장.
-
-부분 재검증: 2026-09-23. Spring Security 7.1.1의 체인 제공 로그인 엔드포인트 범위와 `permitAll()` 이전 Bearer 인증 실패 처리만 확인했다. CSRF 실행 순서는 기존 설명과 대조했으며 전체 `verified`는 유지한다.
-
-- [Security 7.1.1 Java Configuration 고정 문서](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/docs/modules/ROOT/pages/servlet/configuration/java.adoc) — securityMatcher와 기본 로그인 URL 불일치·커스텀 로그인 페이지의 책임.
-- [BearerTokenAuthenticationFilter 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-resource-server/src/main/java/org/springframework/security/oauth2/server/resource/web/authentication/BearerTokenAuthenticationFilter.java) — 토큰이 있으면 인증 후 다음 필터로 진행하며 인증 실패는 failure handler에서 처리.
-- [FilterOrderRegistration 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/config/src/main/java/org/springframework/security/config/annotation/web/builders/FilterOrderRegistration.java)·[CsrfFilter 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/web/src/main/java/org/springframework/security/web/csrf/CsrfFilter.java) — AuthorizationFilter보다 먼저 실행되는 CSRF 검사와 실패 시 다음 필터로 진행하지 않는 경로.
+- [Authentication persistence](https://docs.spring.io/spring-security/reference/servlet/authentication/persistence.html) — SecurityContextHolderFilter의 읽기와 명시적 저장.
+- [Security 7.1.1 Java Configuration 고정 문서](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/docs/modules/ROOT/pages/servlet/configuration/java.adoc) — securityMatcher와 기본 로그인 URL 범위·커스텀 로그인 페이지의 책임.
+- [BearerTokenAuthenticationFilter 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-resource-server/src/main/java/org/springframework/security/oauth2/server/resource/web/authentication/BearerTokenAuthenticationFilter.java) — Bearer 토큰 인증과 실패 시 failure handler 처리.
+- [FilterOrderRegistration 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/config/src/main/java/org/springframework/security/config/annotation/web/builders/FilterOrderRegistration.java) — AuthorizationFilter보다 앞선 CSRF 필터 순서.
+- [CsrfFilter 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/web/src/main/java/org/springframework/security/web/csrf/CsrfFilter.java) — CSRF 검사 실패 시 다음 필터로 진행하지 않는 경로.

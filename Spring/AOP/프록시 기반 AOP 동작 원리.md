@@ -2,8 +2,7 @@
 category: "Spring/AOP"
 tags: ["spring", "aop", "proxy", "spring-framework", "di"]
 aliases: ["Spring AOP", "스프링 AOP"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 프록시 기반 AOP 동작 원리
@@ -73,12 +72,9 @@ Spring AOP는 런타임 프록시 기반으로 메서드 실행 조인포인트(
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Framework 7.0.9 공식 프록시·실행기 문서로 수동 프록시 허용과 Async 실행 위치를 대조했다. `@Async`·ThreadPoolTaskExecutor·H2 2.4.240의 정상 워커/CallerRuns 포화 경로 2건에서 실행 스레드·트랜잭션 활성 여부·미커밋 행 가시성을 비교했다. 자세한 적용 경계는 [[Spring Event와 비동기 처리]]에 둔다.
+적용 범위: Spring Framework 7.0·7.0.9의 프록시 AOP. 선언적 기능별 메서드 가시성 정책은 별도.
 
-- [Task Execution and Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — 실행기 위임과 CallerRunsPolicy의 제출 스레드 실행. 아래 Proxying Mechanisms의 수동 ProxyFactory 예제도 재확인했다.
-- [Declaring Advice](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html) — 2026-10-04 도식 대조: 정상 반환의 AfterReturning, 예외의 AfterThrowing, finally 성격의 After를 구분한다.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0의 프록시 AOP; 선언적 기능별 가시성 정책은 별도.
-
-- [Proxying Mechanisms](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html) — 자기 호출, 프록시 종류, final/private 제약.
+- [Proxying Mechanisms](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html) — 자기 호출·프록시 종류·final/private 제약과 수동 ProxyFactory 구성.
 - [Declaring a Pointcut](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html) — CGLIB의 protected/package-visible 메서드 지원.
+- [Declaring Advice](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html) — 정상 반환의 AfterReturning·예외의 AfterThrowing·finally 성격의 After.
+- [Task Execution and Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — 실행기 위임과 CallerRunsPolicy의 제출 스레드 실행.

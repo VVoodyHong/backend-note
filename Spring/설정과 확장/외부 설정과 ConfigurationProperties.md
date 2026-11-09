@@ -2,8 +2,7 @@
 category: "Spring/설정과 확장"
 tags: ["spring", "spring-boot", "configuration", "validation"]
 aliases: ["ConfigurationProperties", "외부화 설정", "Externalized Configuration"]
-updated: 2026-10-22
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # 외부 설정과 ConfigurationProperties
@@ -99,11 +98,10 @@ app:
 
 ## 참고 자료
 
-검증일: 2026-09-22. 적용 범위: Spring Boot 4.1.1 외부 설정·바인딩. Boot Binder 실행으로 소스 우선순위, 리스트 교체, Map의 객체 필드 병합, Duration 단위 변환을 확인했다. 실제 컨텍스트 기동으로 record 기본값과 Environment의 분리, 필수값 누락·최솟값 위반의 기동 실패도 확인했다. 실제 배포의 환경 변수·원격 Config Server까지 실행한 검증은 아니다.
+적용 범위: Spring Boot 4.1.1의 외부 설정과 바인딩.
 
-- [Boot Externalized Configuration](https://docs.spring.io/spring-boot/reference/features/external-config.html) — 입력 우선순위, 파일 검색, 생성자 바인딩, 컬렉션·단위·검증.
+- [Boot Externalized Configuration](https://docs.spring.io/spring-boot/reference/features/external-config.html) — 입력 우선순위·파일 검색·생성자 바인딩·컬렉션 병합·단위·검증.
 - [ConfigurationProperties API](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/context/properties/ConfigurationProperties.html) — prefix·ignoreUnknownFields와 바인딩 계약.
 - [Binder API](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/context/properties/bind/Binder.html) — 여러 ConfigurationPropertySource에서 타입으로 바인딩.
 - [Boot Validation](https://docs.spring.io/spring-boot/reference/io/validation.html) — Jakarta Validation 구현체와 검증 통합.
-
-부분 재검증: 2026-10-22. [Boot 4.1.1 Externalized Configuration 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/features/external-config.adoc)로 Map 키의 대괄호·점·환경 변수 소문자 변환과 JSON null의 우선순위 한계를 확인했다. 이번에는 바인딩을 실행하지 않았으며 기존 전체 `verified`는 유지한다.
+- [Boot 4.1.1 Externalized Configuration 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/features/external-config.adoc) — Map 키의 대괄호·점·환경 변수 소문자 변환과 JSON null의 우선순위 한계.

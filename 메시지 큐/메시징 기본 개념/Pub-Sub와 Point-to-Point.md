@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/메시징 기본 개념"
 tags: ["messaging", "메시지큐", "pubsub", "kafka", "rabbitmq"]
-updated: 2026-09-08
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Pub-Sub와 Point-to-Point
@@ -72,8 +71,6 @@ Kafka는 같은 파티션 안에서만 순서를 보장하므로, 순서가 중�
 - [[메시지 큐 선택 기준]]
 
 ## 참고 자료
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
 
 - [KafkaConsumer API](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html) — Kafka 4.3.1, 논리 구독·파티션 소유권·재처리.
 - [KafkaShareConsumer API](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html) — Kafka 4.3.1, 공유 소비 모델.

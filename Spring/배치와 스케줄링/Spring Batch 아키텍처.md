@@ -2,8 +2,7 @@
 category: "Spring/배치와 스케줄링"
 tags: ["spring", "spring-batch", "batch-processing", "job", "chunk"]
 aliases: ["Spring Batch", "스프링 배치"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Batch 아키텍처
@@ -91,20 +90,15 @@ A. Boot 3의 배치 자동 구성 대신 EnableBatchProcessing을 선택하면 �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Batch 5.2의 완료 Step 재실행 조건과 Batch 6.0 마이그레이션의 incrementer·실패 실행 호환성을 확인했다. 마이그레이션 안내의 incrementer 설명은 고정 6.0.3·6.0.5 소스와 실행으로 `start`/`run` 경계를 구분했다. 새 ResourcelessJobRepository에서 legacy run·operator start·operator run·incrementer 없는 start의 4경로 16조건을 두 버전에 각각 실행했다. `run.id=42`와 업무 날짜 입력은 start+incrementer 경로에서만 `run.id=1`·날짜 없음으로 바뀌었다. JDBC 저장소·청크·재시작의 실행 시험은 아니며 전체 노트 검증일은 유지한다.
+적용 범위: 코드와 청크 설명은 Spring Batch 5.2.6. Batch 6.0.5의 start/run·incrementer 차이는 고정 소스 기준.
 
-- [Step 재시작 설정 — Batch 5.2](https://docs.spring.io/spring-batch/reference/5.2/step/chunk-oriented-processing/restart.html) — 완료 Step 건너뛰기와 `allowStartIfComplete`.
-- [Batch 6.0 Migration Guide](https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide) — JobParametersIncrementer 변경과 v5 실패 인스턴스의 재시작 제한.
-- [SimpleJobOperator 6.0.5](https://raw.githubusercontent.com/spring-projects/spring-batch/v6.0.5/spring-batch-core/src/main/java/org/springframework/batch/core/launch/support/SimpleJobOperator.java) / [TaskExecutorJobLauncher 6.0.5](https://raw.githubusercontent.com/spring-projects/spring-batch/v6.0.5/spring-batch-core/src/main/java/org/springframework/batch/core/launch/support/TaskExecutorJobLauncher.java) — start의 incrementer 분기와 run의 전달 파라미터 사용. TaskExecutorJobOperator는 이 start 구현을 호출한다.
-
-부분 재검증: 2026-09-22. Batch 5.2.6의 JobRepository 트랜잭션·동시 생성 제어와 청크 처리 문서를 대조하고 출처 버전을 고정했다.
-
-- [Configuring a JobRepository 5.2](https://docs.spring.io/spring-batch/reference/5.2/job/configuring-repository.html) — 메타데이터 트랜잭션과 create 격리 수준.
-
-검증일: 2026-09-08. 적용 범위: 코드와 청크 설명은 Spring Batch 5.2.6; 6.0.5 차이는 별도 표기.
-
-- [Chunk Processing 5.2](https://docs.spring.io/spring-batch/reference/5.2/step/chunk-oriented-processing.html) — read/process/write와 커밋. 2026-10-04에 도식의 청크 경계를 읽기 개수 기준과 다시 대조했다.
-- [Batch 5.2 변경](https://docs.spring.io/spring-batch/reference/5.2/whatsnew.html) — Mongo와 Resourceless 저장소.
-- [Batch 6 변경](https://docs.spring.io/spring-batch/reference/whatsnew.html) — 저장소 구성·통합된 운영 인터페이스·새 청크 모델.
+- [Chunk Processing 5.2](https://docs.spring.io/spring-batch/reference/5.2/step/chunk-oriented-processing.html) — read/process/write와 읽기 개수 기준 청크 커밋.
+- [Configuring a JobRepository 5.2](https://docs.spring.io/spring-batch/reference/5.2/job/configuring-repository.html) — JobRepository 메타데이터 트랜잭션과 create 격리 수준.
+- [Step 재시작 설정 — Batch 5.2](https://docs.spring.io/spring-batch/reference/5.2/step/chunk-oriented-processing/restart.html) — 완료 Step 건너뛰기와 allowStartIfComplete.
 - [Batch 5.2 롤백](https://docs.spring.io/spring-batch/reference/5.2/step/chunk-oriented-processing/controlling-rollback.html) — reader buffering과 skip 예외.
-- [Batch 5 migration](https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-5.0-Migration-Guide) — 빌더 factory 폐기 및 API 전환.
+- [Batch 5.2 변경](https://docs.spring.io/spring-batch/reference/5.2/whatsnew.html) — Mongo와 Resourceless 저장소.
+- [Batch 5 migration](https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-5.0-Migration-Guide) — 빌더 factory 폐기와 API 전환.
+- [Batch 6 변경](https://docs.spring.io/spring-batch/reference/whatsnew.html) — 6의 저장소 구성·운영 인터페이스·새 청크 모델.
+- [Batch 6.0 Migration Guide](https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide) — JobParametersIncrementer 변경과 v5 실패 인스턴스의 재시작 제한. start/run 세부 동작은 고정 소스 기준.
+- [SimpleJobOperator 6.0.5](https://raw.githubusercontent.com/spring-projects/spring-batch/v6.0.5/spring-batch-core/src/main/java/org/springframework/batch/core/launch/support/SimpleJobOperator.java) — start의 incrementer 분기와 TaskExecutorJobOperator의 호출 경로.
+- [TaskExecutorJobLauncher 6.0.5](https://raw.githubusercontent.com/spring-projects/spring-batch/v6.0.5/spring-batch-core/src/main/java/org/springframework/batch/core/launch/support/TaskExecutorJobLauncher.java) — run의 전달 파라미터 사용.

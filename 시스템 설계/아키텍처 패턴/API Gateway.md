@@ -1,8 +1,7 @@
 ---
 category: "시스템 설계/아키텍처 패턴"
 tags: ["system-design", "api-gateway", "msa", "라우팅", "spring-cloud-gateway"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # API Gateway
@@ -101,13 +100,10 @@ A. 요청 헤더, 쿠키, 사용자 속성 등을 기준으로 트래픽을 비�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Gateway HttpHeadersFilters](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/httpheadersfilters.html) — Spring Cloud Gateway 5.0.3 trusted-proxies 활성화 범위.
 - [Gateway StripPrefix](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/stripprefix-factory.html) — 5.0.3 경로 prefix 제거 의미.
 - [Gateway CircuitBreaker](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/circuitbreaker-filter-factory.html) — 5.0.3 의존성·forward fallback·lb 라우트.
 - [Gateway HTTP Timeouts](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/http-timeouts-configuration.html) — 5.0.3 global/route timeout.
-- [Spring Security JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) — 열람 문서의 서명과 claims 검증.
-- [Istio Data Plane Modes](https://istio.io/latest/docs/overview/dataplane-modes/) — 열람 문서의 sidecar/ambient 구분.
-
-부분 재확인: 2026-09-23. [Spring Cloud Gateway Retry GatewayFilter](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html) — Server WebFlux 5.0.3에서 필터 활성화 시 기본 재시도 조건·횟수·timeout, 후속 필터 재실행, 요청 본문 캐시, `forward:` 응답 커밋 제약을 확인했다. 기존 필터·JWT·Istio 설명 전체를 재검증한 것은 아니므로 `verified`는 유지한다.
+- [Spring Security JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) — 서명과 claims 검증.
+- [Istio Data Plane Modes](https://istio.io/latest/docs/overview/dataplane-modes/) — sidecar/ambient 구분.
+- [Spring Cloud Gateway Retry GatewayFilter](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/gatewayfilter-factories/retry-factory.html) — Spring Cloud Gateway Server WebFlux 5.0.3의 재시도 기본 조건·횟수·timeout·후속 필터 재실행·요청 본문 캐시·forward 응답 커밋 제약.

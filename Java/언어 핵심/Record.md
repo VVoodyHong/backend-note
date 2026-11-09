@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 핵심"
 tags: ["java", "record", "불변객체", "값타입", "jep"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Record
@@ -99,20 +98,10 @@ A. 아니다. JLS 25는 접근자 호출 대신 컴포넌트 필드를 직접 �
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §8.10](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.10) — record 멤버·생성자·애노테이션 전파.
-- [Java SE 25 Record](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html) — equals와 복사 불변식.
+- [Java SE 25 Record](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html) — equals·NaN·부호 있는 0·배열 컴포넌트와 복사 불변식.
 - [JEP 395](https://openjdk.org/jeps/395) — Java 16 정식화.
 - [JEP 440](https://openjdk.org/jeps/440) — Java 21 record pattern.
 - [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 엔티티 제외 및 embeddable record 지원.
-
-### 2026-09-23 부분 재검증
-
-JLS 25 §8.10.3·8.10.4.2의 필드 기반 동등성·기본형 compare·컴팩트 생성자 후 자동 대입을 확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 컴팩트 생성자에서 접근자의 기본값·인자 정규화·NaN/부호 있는 0·배열 동일성을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 2026-10-22 부분 재검증
-
-[JLS 25 §8.10.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.10.3)·[§8.10.4](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.10.4)의 애노테이션 전파 범위를 확인했다. Temurin 25.0.4.1+1에서 FIELD/METHOD/PARAMETER 대상의 커스텀 RUNTIME 애노테이션으로 자동 멤버·컴팩트 생성자에는 전파되고, 명시적 접근자·일반 정규 생성자 파라미터에는 자동 전파되지 않음을 리플렉션으로 확인했다. Bean Validation·Jackson의 실제 통합 동작은 실행하지 않았으며 verified를 유지한다.
+- [JLS 25 §8.10.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.10.3) — 컴포넌트·필드·자동 접근자의 애노테이션 전파.
+- [JLS 25 §8.10.4](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.10.4) — 정규·compact 생성자 매개변수의 애노테이션 전파.

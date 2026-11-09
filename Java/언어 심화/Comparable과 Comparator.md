@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "comparable", "comparator", "정렬", "컬렉션"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Comparable과 Comparator
@@ -99,21 +98,9 @@ A. 아니다. 비교 기준이 바뀌어도 기존 트리 위치는 자동으로
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Comparable API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html) — Java SE 25 비교 계약과 equals 일관성.
-- [Comparator API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html) — Java SE 25 조합·null 처리·기본형 특화 비교.
+- [Comparator API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html) — Java SE 25 조합·null 처리·기본형 특화 비교와 역순 적용 범위.
 - [Arrays API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html) — Java SE 25 sort의 선택적 계약 위반 검출.
 - [TreeMap API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html) — Java SE 25 정렬과 로그 시간 계약.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 Comparator의 reversed·nullsFirst/nullsLast 조합과 TreeSet의 비교 기반 검색 계약을 확인했다. 가변 정렬 키의 문제는 해당 구조의 불변식에서 도출했다. 기존 전체 검증일은 유지한다.
-
 - [Java SE 25 TreeSet](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html) — 비교 기반 순서·중복·검색.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 nullsLast의 reversed 효과·가변 트리 키의 검색 실패을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 Comparator](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html)의 Function 기반 comparing과 ToIntFunction 기반 comparingInt, [JLS 25 §5.1.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.7)의 박싱 변환을 대조했다. Temurin 25.0.4.1+1에서 기존 Integer 참조 반환과 두 비교기의 예시 정렬 결과를 확인하고, javap로 int→Integer 어댑터의 valueOf와 기존 참조 반환의 getfield/areturn을 구분했다. JIT 이후 실제 할당률·속도는 측정하지 않았으며 null 순서·가변 트리 키 전체는 재검증하지 않아 verified를 유지한다.
+- [JLS 25 §5.1.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.7) — 박싱 변환과 할당 여부의 구분.

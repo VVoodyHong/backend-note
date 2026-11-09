@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "configmap", "secret", "configuration"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Kubernetes ConfigMap과 Secret
@@ -103,8 +102,7 @@ A. Kubernetes의 Secret/ConfigMap은 설계상 네임스페이스 스코프 리�
 
 ## 참고 자료
 
-- [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) — v1 API·1MiB·subPath·immutable·tmpfs. 확인: 2026-09-08.
-- [Kubernetes ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) — data/binaryData·크기·동기화. 확인: 2026-09-08.
-- [Kubernetes Encrypt data](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) — encryption provider·기존 데이터 다시 쓰기. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-23. [Kubernetes Secrets good practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)의 v1 Secret API에 대한 get/list/watch·Secret 참조 Pod 생성 권한·네임스페이스 경계를 확인했다. 클러스터별 admission 정책과 기존 크기·동기화 구현 전체는 이번 범위 밖이므로 `verified`는 유지했다.
+- [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) — v1 API·1MiB·subPath·immutable·tmpfs.
+- [Kubernetes ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) — data/binaryData·크기·동기화.
+- [Kubernetes Encrypt data](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) — encryption provider·기존 데이터 다시 쓰기.
+- [Kubernetes Secrets good practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/) — v1 Secret API의 get/list/watch·Secret 참조 Pod 생성 권한·네임스페이스 경계.

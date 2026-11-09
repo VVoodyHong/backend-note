@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/CI-CD"
 tags: ["operations", "배포전략", "kubernetes", "무중단배포", "devops"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 배포 전략 Blue-Green Canary Rolling
@@ -109,9 +108,7 @@ A. 제한적으로 가능하다. 동일 Service 셀렉터 아래 신구 버전 D
 
 ## 참고 자료
 
-- [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) — apps/v1 RollingUpdate 25% 기본·반올림·progress deadline. 확인: 2026-09-08.
-- [Argo CD sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) — 동기화와 rollback 정책. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [AWS ALB Blue/Green 안내](https://aws.amazon.com/blogs/devops/blue-green-deployments-with-application-load-balancer/)의 stickiness·connection draining과 [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)의 rollout·종료 Pod를 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Kubernetes Deployment의 rollback·history](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment) — 표시 버전 v1.37, apps/v1의 Pod template 복구 범위·ReplicaSet history 보존을 확인했다. 카나리 중단 조건은 이 경계에서 도출한 운영 설계 기준이다. 실제 rollout·트래픽 전환·DB 복구 시험과 그 외 기존 주장은 재검증하지 않아 `verified`를 유지했다.
+- [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) — apps/v1 RollingUpdate 25% 기본·반올림·progress deadline; rollout과 종료 중 Pod.
+- [Argo CD sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) — 동기화와 rollback 정책.
+- [AWS ALB Blue/Green 안내](https://aws.amazon.com/blogs/devops/blue-green-deployments-with-application-load-balancer/) — ALB stickiness·connection draining을 고려한 Blue/Green 전환.
+- [Kubernetes Deployment의 rollback·history](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment) — Kubernetes v1.37 apps/v1의 Pod template rollback·ReplicaSet history 보존 범위.

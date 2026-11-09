@@ -1,8 +1,7 @@
 ---
 category: "Java/예외 처리와 IO"
 tags: ["java", "예외처리", "exception", "설계원칙"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Checked와 Unchecked 예외
@@ -83,20 +82,9 @@ A. 인터럽트 가능한 대기 API는 InterruptedException을 던지며 상태
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §11](https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html) — 예외 계층, 컴파일 시점 검사와 런타임 처리.
 - [JLS 25 §14.20](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20) — multi-catch·finally·suppressed 예외.
 - [Spring Framework: Rolling Back](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/rolling-back.html) — 기본 롤백 규칙과 6.2+ ALL_EXCEPTIONS.
-
-### 2026-09-23 부분 재검증
-
-JLS 25 §14.20.2의 finally 완료 이유 대체와 Java SE 25 Thread의 InterruptedException·인터럽트 상태 계약을 확인했다. 기존 전체 검증일은 유지한다.
-
 - [Java SE 25 Thread](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html) — 인터럽트와 대기 API의 상태 처리.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 finally return의 기존 예외 유실을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.
-
-### 2026-10-22 부분 재검증
-
-[JLS 25 §11.1.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html#jls-11.1.1)로 unchecked 계층과 RuntimeException에서도 복구가 가능할 수 있다는 구분을, [Java SE 25 UncheckedIOException](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html)으로 I/O 실패의 unchecked 포장을 확인했다. Temurin 25.0.4.1+1에서 포장된 원인 객체가 유지됨을 확인했다. 재시도·오류 응답 정책은 이 계약에서 도출한 설계 기준이며 실제 네트워크·Spring 트랜잭션 장애를 실행한 것은 아니다. 기존 verified를 유지한다.
+- [JLS 25 §11.1.1](https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html#jls-11.1.1) — checked·unchecked 분류와 복구 가능성의 구분.
+- [Java SE 25 UncheckedIOException](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/UncheckedIOException.html) — I/O 실패의 unchecked 예외 포장.

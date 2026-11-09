@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "object", "tostring", "clone", "concurrency"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Object 클래스와 메서드 오버라이드
@@ -102,17 +101,7 @@ flowchart TD
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html) — toString·clone·wait/notify·finalize.
+- [Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html) — toString·clone·Cloneable, wait/notify의 모니터 소유권과 finalize.
 - [Java SE 25 Cleaner](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/Cleaner.html) — 액션의 강한 대상 참조 금지 책임·자동 실행 제약.
 - [JEP 421](https://openjdk.org/jeps/421) — Java 18 finalization for removal.
 - [SLF4J Manual](https://www.slf4j.org/manual.html) — 파라미터화 로그.
-
-### 2026-09-23 부분 재검증
-
-[Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html)의 toString·배열 clone·wait 소유권 범위를 확인했다. OpenJDK 25.0.2에서 hashCode만 재정의한 출력, 중첩 배열의 내부 공유, ThreadMXBean으로 wait 중 다른 모니터가 유지됨을 확인하고 시험 스레드를 정상 종료했다. 기존 finalization·로깅 설명 전체를 재검증한 것은 아니다.
-
-### 2026-11-04 부분 재검증
-
-[Java SE 25 Object](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html)의 clone 구현 조건과 wait/notify의 대상 모니터 소유 계약을 확인했다. Temurin 25.0.4.1+1에서 Cloneable 없는 직접 복사의 성공·super.clone의 거부, 동기화 인스턴스 메서드의 wait/notify 성공·모니터 소유권 없는 notify의 거부를 실행 확인했다. 기존 finalize·Cleaner·복사 성능 전체는 재검증하지 않아 verified를 유지한다.

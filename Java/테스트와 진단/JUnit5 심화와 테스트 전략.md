@@ -1,14 +1,13 @@
 ---
 category: "Java/테스트와 진단"
 tags: ["java", "junit5", "jupiter", "테스트전략", "확장모델"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JUnit5 심화와 테스트 전략
 
 ## 핵심 정의
-JUnit 5는 Platform·Jupiter·Vintage로 구성되는 테스트 프레임워크이며, Jupiter는 그 위의 프로그래밍 모델과 테스트 엔진(test engine)이다. JUnit 5는 JUnit 4의 단일 모놀리식 구조를 Platform(실행 인프라)·Jupiter(신규 프로그래밍/확장 모델)·Vintage(JUnit 3/4 하위 호환 엔진) 3개 모듈로 분리했다. 확장 모델을 클래스당 하나의 runner를 선택하는 `@RunWith` 중심 구성에서 `Extension` 인터페이스 조합 방식으로 바꿔, 여러 확장을 동시에 조립할 수 있게 한 것이 JUnit 4 대비 가장 큰 구조적 변화다. 이 노트는 JUnit 5.13.4 User Guide의 Jupiter 계약을 기준으로 대조했다. 2026-09-22에 확인한 JUnit 6.1.3(2026-08-07 릴리스)도 실행 Java 버전으로 17 이상을 요구한다. JUnit 6의 Jupiter·Platform·Vintage 구성은 이어지지만 Vintage는 폐기 예정(deprecated)이므로 레거시 테스트의 임시 이행 경로로 사용한다. 프로젝트에서는 Spring Boot·빌드 도구의 실제 BOM과 호환 버전을 확인해 적용한다.
+JUnit 5는 Platform·Jupiter·Vintage로 구성되는 테스트 프레임워크이며, Jupiter는 그 위의 프로그래밍 모델과 테스트 엔진(test engine)이다. JUnit 5는 JUnit 4의 단일 모놀리식 구조를 Platform(실행 인프라)·Jupiter(신규 프로그래밍/확장 모델)·Vintage(JUnit 3/4 하위 호환 엔진) 3개 모듈로 분리했다. 확장 모델을 클래스당 하나의 runner를 선택하는 `@RunWith` 중심 구성에서 `Extension` 인터페이스 조합 방식으로 바꿔, 여러 확장을 동시에 조립할 수 있게 한 것이 JUnit 4 대비 가장 큰 구조적 변화다. 이 노트의 Jupiter 계약은 JUnit 5.13.4 User Guide를 기준으로 한다. JUnit 6.1.3(2026-08-07 릴리스)도 실행 Java 버전으로 17 이상을 요구한다. JUnit 6의 Jupiter·Platform·Vintage 구성은 이어지지만 Vintage는 폐기 예정(deprecated)이므로 레거시 테스트의 임시 이행 경로로 사용한다. 프로젝트에서는 Spring Boot·빌드 도구의 실제 BOM과 호환 버전을 확인해 적용한다.
 
 ## 동작 원리 / 구조
 
@@ -106,24 +105,15 @@ A. BDD 스타일로 상황(context)별 테스트를 그룹화하는 데는 유�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JUnit 5.13.4 User Guide](https://docs.junit.org/5.13.4/user-guide/) — Platform/Jupiter/Vintage·확장 순서·생명주기·동적/파라미터화 테스트·병렬 설정·빌드 태그.
 - [JUnit 6.0.0 User Guide](https://docs.junit.org/6.0.0/user-guide/) — Java 17 실행 요구 사항.
 - [JUnit 4.13.2 TestRule](https://junit.org/junit4/javadoc/4.13.2/org/junit/rules/TestRule.html) — Statement 장식과 Rule 조합.
 - [Mockito 5.20.0 MockedStatic](https://raw.githubusercontent.com/mockito/mockito/v5.20.0/mockito-core/src/main/java/org/mockito/MockedStatic.java) — 스레드 범위와 종료.
-- [Spring TestContext Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — 열람한 Framework 문서의 캐시 키와 bean override.
+- [Spring TestContext Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — Spring TestContext의 캐시 키와 bean override.
 - [Testcontainers Jupiter Integration](https://java.testcontainers.org/test_framework_integration/junit_5/) — static/인스턴스 컨테이너 생명주기와 확장.
-
-부분 확인: 2026-09-22. JUnit 6.1.3의 릴리스 날짜·Java 요구 버전·Vintage 상태를 확인했다. 5.13.4 기준 본문의 전체 확장 계약을 6.1.3으로 재검증한 것은 아니다. Oracle JDK 27 + JUnit 6.1.3 실행에서 PER_METHOD 인스턴스·파라미터화 호출별 BeforeEach·DynamicTest별 BeforeEach 미실행을 확인했다.
-
 - [JUnit 6.1.3 Overview](https://docs.junit.org/6.1.3/overview.html) — Java 17 이상 실행 요구와 Vintage deprecation.
 - [JUnit 6.1.3 Release Notes](https://docs.junit.org/6.1.3/release-notes.html) — 2026-08-07 릴리스.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [JUnit 5.13.4 User Guide](https://docs.junit.org/5.13.4/user-guide/#writing-tests-assertions) — preemptive assertion의 ThreadLocal·Spring 트랜잭션 경계와 @Timeout thread mode. [5.13.4 AssertTimeoutPreemptively 소스](https://raw.githubusercontent.com/junit-team/junit5/r5.13.4/junit-jupiter-api/src/main/java/org/junit/jupiter/api/AssertTimeoutPreemptively.java) — Future 취소·실행기 shutdownNow 경로. JUnit Jupiter 5.13.4/Platform Console 1.13.4, Oracle JDK 25.0.4에서 스레드·ThreadLocal 차이, 비선점 timeout의 본문 완료, 인터럽트를 무시한 본문의 잔존과 명시적 종료를 확인했다. 실제 Spring DB 롤백은 재현하지 않았다.
-
-### 2026-11-04 부분 재검증
-
-[JUnit 5.13.4 User Guide §2.12](https://docs.junit.org/5.13.4/user-guide/#writing-tests-test-instance-lifecycle)의 인스턴스 생명주기·BeforeEach와 [Testcontainers 2.0.5 TestcontainersExtension](https://raw.githubusercontent.com/testcontainers/testcontainers-java/2.0.5/modules/junit-jupiter/src/main/java/org/testcontainers/junit/jupiter/TestcontainersExtension.java)의 static 공유·인스턴스 재시작 경로를 확인했다(Context7 JUnit 문서 검색 병행). 캐시된 JUnit Jupiter/Platform 6.0.3과 Temurin 25.0.4.1+1로 두 테스트를 실행해 생성자·BeforeAll 각 1회, BeforeEach·AfterEach 각 2회를 확인했다. JUnit 5.13.4 바이너리와 실제 Testcontainers/Docker는 실행하지 않았고, 버전 전체 호환성·기타 확장은 이번 검증 범위 밖이므로 verified를 유지한다.
+- [JUnit 5.13.4 User Guide](https://docs.junit.org/5.13.4/user-guide/#writing-tests-assertions) — preemptive assertion의 ThreadLocal·Spring 트랜잭션 경계와 @Timeout thread mode.
+- [JUnit 5.13.4 AssertTimeoutPreemptively 소스](https://raw.githubusercontent.com/junit-team/junit5/r5.13.4/junit-jupiter-api/src/main/java/org/junit/jupiter/api/AssertTimeoutPreemptively.java) — JUnit 5.13.4 preemptive timeout의 Future 취소와 실행기 종료 경로.
+- [JUnit 5.13.4 User Guide §2.12](https://docs.junit.org/5.13.4/user-guide/#writing-tests-test-instance-lifecycle) — PER_METHOD·PER_CLASS 인스턴스 생명주기와 BeforeEach.
+- [Testcontainers 2.0.5 TestcontainersExtension](https://raw.githubusercontent.com/testcontainers/testcontainers-java/2.0.5/modules/junit-jupiter/src/main/java/org/testcontainers/junit/jupiter/TestcontainersExtension.java) — Testcontainers 2.0.5 static 공유·인스턴스 컨테이너 재시작.

@@ -1,8 +1,7 @@
 ---
 category: "네트워크/네트워크 운영"
 tags: ["network", "nat", "방화벽", "security"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # NAT와 방화벽 기초
@@ -109,16 +108,14 @@ A. 로컬 소켓 주소만으로 NAT 매핑된 외부 IP:Port를 알 수는 없�
 
 ## 참고 자료
 
-- [RFC 4787: NAT UDP Requirements](https://www.rfc-editor.org/rfc/rfc4787.html) — 매핑/필터링 독립성. 확인: 2026-09-08.
-- [AWS NAT gateway basics](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html) — 고유 목적지별 포트 예산·프로토콜·MTU. 확인: 2026-09-08.
-- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — 연결 추적·네트워크 설정. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [AWS Security Group 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html)과 [NACL 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/nacl-rules.html)의 합집합/번호순 평가를 대조했다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
-
-부분 재확인: 2026-09-23. [AWS EC2 Security Group Connection Tracking](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html)의 추적/비추적 연결 규칙 변경, NACL 차단, ENA conntrack 지표를 확인했다. 특정 인스턴스의 추적 용량이나 timeout 기본값을 일반화하지 않았다. 기존 NAT 명세·한도 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [AWS NAT Gateway troubleshooting](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html)의 350초 유휴·재사용 시 RST와 [NAT gateway metrics](https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html)의 IdleTimeoutCount·ErrorPortAllocation 정의를 확인했다. 적용 범위는 조회일 AWS 관리형 NAT Gateway이며 일반 NAT 장비의 보편적인 timeout은 아니다. AWS 계정·실제 소켓·CloudWatch 지표를 실행 관측하지 않았고 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [RFC 5128 §3.2](https://www.rfc-editor.org/rfc/rfc5128.html#section-3.2)의 공개 피어로의 직접 연결 사례와 [RFC 8445 §2·§7.2.5.3.1](https://www.rfc-editor.org/rfc/rfc8445.html#section-7.2.5.3.1)의 ICE 후보 수집·연결 검사·피어 반사 후보 학습을 대조했다. RFC 5128은 정보 문서, RFC 8445는 UDP ICE 명세이며 모든 NAT 조합의 직접 연결을 보장하지 않는다. 실제 NAT·WebRTC·TURN 환경은 실행하지 않았고 기존 AWS 한도 전체도 재검증하지 않아 `verified`를 유지했다.
-
-같은 날 [RFC 4787 §4.1](https://www.rfc-editor.org/rfc/rfc4787.html#section-4.1)의 UDP 매핑 재사용 조건을 대조해 PAT Q&A의 목적지별 다른 포트 할당 단정을 본문과 맞췄다. TCP나 특정 장비의 포트 할당 정책 전체를 재검증한 것은 아니다.
+- [RFC 4787: NAT UDP Requirements](https://www.rfc-editor.org/rfc/rfc4787.html) — 매핑/필터링 독립성.
+- [AWS NAT gateway basics](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html) — 고유 목적지별 포트 예산·프로토콜·MTU.
+- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — 연결 추적·네트워크 설정.
+- [AWS Security Group 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html) — AWS Security Group 규칙의 합집합 평가.
+- [NACL 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/nacl-rules.html) — AWS NACL의 번호순 평가.
+- [AWS EC2 Security Group Connection Tracking](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html) — 2026-09-23 AWS EC2 정책: 추적/비추적 연결의 규칙 변경·NACL 차단·ENA conntrack 지표.
+- [AWS NAT Gateway troubleshooting](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html) — 2026-10-04 AWS NAT Gateway 정책: 350초 유휴 제한·재사용 시 RST.
+- [NAT gateway metrics](https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html) — AWS NAT Gateway의 IdleTimeoutCount·ErrorPortAllocation 정의.
+- [RFC 5128 §3.2](https://www.rfc-editor.org/rfc/rfc5128.html#section-3.2) — 정보 RFC의 공개 피어 직접 연결 사례; 모든 NAT 조합의 보장은 아님.
+- [RFC 8445 §2·§7.2.5.3.1](https://www.rfc-editor.org/rfc/rfc8445.html#section-7.2.5.3.1) — UDP ICE 후보 수집·연결 검사·피어 반사 후보 학습.
+- [RFC 4787 §4.1](https://www.rfc-editor.org/rfc/rfc4787.html#section-4.1) — UDP NAT 매핑 재사용 조건; TCP·장비별 포트 할당과 구분.

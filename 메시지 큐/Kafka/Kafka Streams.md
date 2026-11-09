@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/Kafka"
 tags: ["messaging", "kafka", "kafka-streams", "stream-processing", "state-store"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Kafka Streams
@@ -93,19 +92,11 @@ A. Kafka Connect는 외부 시스템(DB, 파일, 다른 메시지 시스템)과 
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [Kafka Streams Architecture](https://kafka.apache.org/43/streams/architecture/) — Kafka 4.3, 파티션 그룹·태스크·상태 복구.
 - [Streams DSL](https://kafka.apache.org/43/streams/developer-guide/dsl-api/) — Kafka 4.3, KTable·조인 예외·window와 grace.
 - [Configuring Streams](https://kafka.apache.org/43/streams/developer-guide/config-streams/) — Kafka 4.3, EOS·standby·커밋 간격.
 - [Streams Memory Management](https://kafka.apache.org/43/streams/developer-guide/memory-mgmt/) — Kafka 4.3, 레코드 캐시와 RocksDB 메모리.
 - [Streams Rebalance Protocol](https://kafka.apache.org/43/streams/developer-guide/streams-rebalance-protocol/) — Kafka 4.3 문서의 4.2+ 활성화·제약·그룹 설정.
-
-부분 재검증: 2026-10-04. Kafka 4.3 application reset 도구의 입력·내부·출력·로컬 상태 범위와 classic/streams 프로토콜별 도구 선택을 확인했다. 재발행 결과의 업무 중복 처리는 이 범위와 기존 EOS 계약에서 도출한 설계 판단이다. 토픽 삭제·reset·실제 재처리는 실행하지 않았고 기존 `verified`는 유지한다.
-
 - [Kafka 4.3 Application Reset Tool](https://kafka.apache.org/43/streams/developer-guide/app-reset-tool/) — 중지 조건·dry-run·출력과 로컬 환경 제외·Streams groups CLI 구분.
-
-부분 재검증: 2026-10-22. Kafka 4.3 Core Concepts와 4.3.1 Javadoc으로 스트림 시간·grace·최종 결과 suppression의 종료 조건을 확인했다. 입력 중단·미래 시각에 따른 운영 사례는 이 계약에서 도출했으며 실제 토폴로지 실행은 하지 않았다. 기존 `verified`는 유지한다.
-
 - [Kafka 4.3 Core Concepts](https://kafka.apache.org/43/streams/core-concepts/) — 레코드 기반 시간 전진과 윈도우의 지연 이벤트 제외.
 - [Kafka 4.3.1 Suppressed](https://kafka.apache.org/43/javadoc/org/apache/kafka/streams/kstream/Suppressed.html) — `untilWindowCloses`의 종료·grace 대기와 최종 결과 의미.

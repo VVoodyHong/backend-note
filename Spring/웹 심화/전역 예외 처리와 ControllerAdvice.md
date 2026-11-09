@@ -1,8 +1,7 @@
 ---
 category: "Spring/웹 심화"
 tags: ["spring", "spring-mvc", "controlleradvice", "exceptionhandler", "problemdetail"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 전역 예외 처리와 ControllerAdvice
@@ -91,18 +90,12 @@ A. 가능하다. WebFlux의 `@ExceptionHandler` 메서드는 `Mono<ResponseEntit
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Spring MVC 7.0.9의 메서드 입력·반환값 검증 예외를 구분하고 MockMvc로 기본 상태 코드 400·500을 실행 확인했다.
-
-- [HandlerMethodValidationException API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/method/annotation/HandlerMethodValidationException.html) — 입력·반환값의 HTTP 상태 차이.
-
-검증일: 2026-09-08. 적용 범위: Spring MVC 7.0, Boot 4.1.1 Problem Details, RFC 9457.
+적용 범위: Spring MVC 7.0·7.0.9, Boot 4.1.1 Problem Details 및 RFC 9457.
 
 - [MVC ExceptionHandler](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html) — 로컬·전역·원인 예외 우선순위.
 - [ExceptionHandlerExceptionResolver 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/7.0.x/spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/ExceptionHandlerExceptionResolver.java) — 핸들러 실패 후 원본 예외 처리.
-- [Boot 설정 속성](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — Problem Details 기본 false.
+- [HandlerMethodValidationException API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/method/annotation/HandlerMethodValidationException.html) — 입력·반환값 검증 실패의 HTTP 상태 차이.
+- [Boot 설정 속성](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — Problem Details 기본 설정.
 - [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) — Problem Details 필드와 보안 고려.
-
-부분 재검증: 2026-10-22. Framework 7.0.9의 표준 예외 헤더 전달과 405의 Allow 생성을 확인했다. 예제의 400·404는 애플리케이션이 정의한 업무 예외로 한정했다. 로그·알림 분리는 운영 설계 지침이며 프레임워크 기본 동작이 아니다. 새 예제의 HTTP 실행 검증 없이 전체 `verified`는 유지한다.
-
 - [ResponseEntityExceptionHandler 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/ResponseEntityExceptionHandler.java) — 상태·헤더·본문을 최종 ResponseEntity로 전달.
 - [HttpRequestMethodNotSupportedException 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-web/src/main/java/org/springframework/web/HttpRequestMethodNotSupportedException.java) — 지원 메서드가 있을 때 Allow 생성.

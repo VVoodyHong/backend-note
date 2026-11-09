@@ -2,8 +2,7 @@
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "threadlocal", "concurrency", "memory-leak"]
 aliases: ["스레드 로컬"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ThreadLocal
@@ -100,21 +99,9 @@ try {
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [Java SE 25 ThreadLocal](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — 바인딩·initialValue·remove.
-- [OpenJDK jdk-25-ga ThreadLocal](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/lang/ThreadLocal.java) — 약한 키·강한 값·stale 정리.
+- [Java SE 25 ThreadLocal](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — get·initialValue·set·remove와 제거 후 재초기화.
+- [OpenJDK jdk-25-ga ThreadLocal](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/lang/ThreadLocal.java) — 약한 키·강한 값과 접근 경로별 stale entry 정리.
 - [Java SE 25 ScopedValue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html) — 동적 바인딩·재바인딩·구조화된 상속.
 - [JEP 506](https://openjdk.org/jeps/506) — 버전 이력·Java 25 정식화.
-
-부분 재검증: 2026-09-22. 아래 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 27 ScopedValue](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.html) — 중첩 재바인딩과 예외 종료 시 복원, 일반 Thread의 비상속. 실행 예제로 확인했다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전·범위만 확인했으며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 ThreadLocal](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html) — get의 초기화, set·remove와 재초기화. 중첩 복원 예제는 null을 문맥 없음으로 쓰는 애플리케이션에 한정한다.
+- [Java SE 27 ScopedValue](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.html) — 중첩 재바인딩과 예외 종료 시 복원, 일반 Thread의 비상속.
 - [Java SE 25 ThreadPoolExecutor.CallerRunsPolicy](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.CallerRunsPolicy.html) — 호출 스레드 실행 시 기존 문맥이 있을 수 있는 경계.
-- [OpenJDK jdk-25-ga ThreadLocal](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/lang/ThreadLocal.java) — getEntry의 빠른 반환과 getEntryAfterMiss·set·remove의 stale 정리 경로. 모든 접근이 전체 정리를 실행하는 것은 아니다.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189에서 중첩 문맥의 정상·예외 후 복원, CallerRuns 실행, set(null)과 remove의 재초기화 차이. 실행 검사는 위 부분 재검증 범위에 한한다.

@@ -2,8 +2,7 @@
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "동시성", "scopedvalue", "가상스레드", "threadlocal"]
 aliases: ["범위 지정 값"]
-updated: 2026-10-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # ScopedValue
@@ -68,15 +67,9 @@ A. ScopedValue는 호출 문맥을 아래로 읽기 전달하는 용도다. 스�
 - [[인터럽트와 작업 취소]]
 
 ## 참고 자료
-확인: 2026-09-22. 정식화 시점과 Java SE 27 API의 바인딩·예외·재바인딩·상속 계약을 확인했다. Oracle JDK 27+35에서 중첩 값, 예외 후 복원, 종료 후 미바인딩, 일반 가상 스레드의 비상속을 실행 검사했다.
 
 - [Java SE 27 ScopedValue](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.html) — Since 25, 동적 스코프, 키 접근, 상속·값 동기화 조건.
-- [Java SE 27 ScopedValue.Carrier](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.Carrier.html) — where·run·call과 바인딩 복원.
+- [Java SE 27 ScopedValue.Carrier](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.Carrier.html) — 명시적 매핑·불변 Carrier·where·run·call과 현재 스레드 바인딩 복원.
 - [Java SE 27 Preview API 목록](https://docs.oracle.com/en/java/javase/27/docs/api/preview-list.html) — JEP 533 Structured Concurrency (Seventh Preview).
 - [Java SE 27 StructuredTaskScope](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/StructuredTaskScope.html) — 생성 시 캡처·자식 fork·수명 제약.
-
-부분 재검증: 2026-10-04. 아래 적용 버전·범위만 확인했으며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 ScopedValue.Carrier](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.Carrier.html)와 [Java SE 27 ScopedValue.Carrier](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/lang/ScopedValue.Carrier.html) — 명시적 매핑, where의 새 Carrier 반환, 불변·스레드 안전성, run/call의 현재 스레드 바인딩 복원. Carrier를 별도로 보관하는 수명 위험은 이 계약에서 도출했다.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189에서 Carrier.where의 비변경·새 매핑, 범위 종료 후 보관한 매핑, 명시한 키만 포함되는 점. 실행 검사는 위 부분 재검증 범위에 한한다.
+- [Java SE 25 ScopedValue.Carrier](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.Carrier.html) — 명시적 매핑, where의 새 Carrier 반환, 불변·스레드 안전성, run/call의 현재 스레드 바인딩 복원.

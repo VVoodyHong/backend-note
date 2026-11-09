@@ -2,8 +2,7 @@
 category: "메시지 큐/이벤트 기반 아키텍처"
 tags: ["messaging", "saga", "distributed-transaction", "microservices", "event-driven"]
 aliases: ["Saga Pattern", "사가 패턴"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # SAGA 패턴
@@ -119,12 +118,8 @@ SAGA 단계에서 DB 커밋 뒤 별도로 publish하면 커밋 성공·발행 �
 
 ## 참고 자료
 
-- [Chris Richardson: Saga pattern](https://microservices.io/patterns/data/saga.html) — 로컬 트랜잭션·조율 방식·격리 부재 및 메시지 발행 원자성. 확인: 2026-09-08.
-- [Azure Architecture: Compensating Transaction](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction) — 보상은 원상 복구가 아니며 역순 필수 아님; 동시 변경·재시도·복구 상태. 확인: 2026-09-08.
-- [AWS Prescriptive Guidance: Saga patterns](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-patterns.html) — 전진 복구와 보상 복구 선택; 제품 기본값 없는 패턴 설명. 확인: 2026-09-08.
-- [Apache Seata 2.5: TCC mode](https://seata.apache.org/docs/v2.5/user/mode/tcc/) — Try 자원 예약과 Confirm/Cancel; 비즈니스 수준 자원 제어. 확인: 2026-09-08.
-- [Chris Richardson: Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html) — DB 변경·이벤트 기록 원자성, 릴레이 재발행 및 순서 요구. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. 보상이 동시 변경을 보존해야 한다는 원칙, 보상 정보·진행 상태의 내구성 및 멱등성을 공식 패턴 문서와 대조했다. R1/R2 사례와 시도별 식별자는 이 원칙에서 도출한 설계 예시이며 특정 SAGA 엔진의 기능을 검증한 것이 아니다. 실제 분산 호출·장애 복구는 실행하지 않았고 기존 `verified`는 유지한다.
-
-- [Azure Architecture: Compensating Transaction](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction) — 2026-10-04 확인, 제품 버전 없는 패턴 지침: 동시 작업을 보존하는 보상, 원작업·보상의 연결 및 복구 정보 유지.
+- [Chris Richardson: Saga pattern](https://microservices.io/patterns/data/saga.html) — 로컬 트랜잭션·조율 방식·격리 부재 및 메시지 발행 원자성.
+- [Azure Architecture: Compensating Transaction](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction) — 동시 변경을 보존하는 보상·재시도·복구 정보 유지·원작업과의 연결; 원상 복구·역순 실행이 필수는 아님.
+- [AWS Prescriptive Guidance: Saga patterns](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-patterns.html) — 전진 복구와 보상 복구 선택; 패턴 지침.
+- [Apache Seata 2.5: TCC mode](https://seata.apache.org/docs/v2.5/user/mode/tcc/) — Try 자원 예약과 Confirm/Cancel; 비즈니스 수준 자원 제어.
+- [Chris Richardson: Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html) — DB 변경·이벤트 기록 원자성, 릴레이 재발행 및 순서 요구.

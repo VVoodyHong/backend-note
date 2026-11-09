@@ -2,8 +2,7 @@
 category: "Spring/웹 심화"
 tags: ["spring", "cors", "spring-mvc"]
 aliases: ["CORS", "Cross-Origin Resource Sharing"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CORS 설정
@@ -76,16 +75,11 @@ A. 프록시 레벨에서 별도로 CORS 헤더를 추가하거나 동일 헤더
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Fetch Living Standard와 Spring MVC/Security 7 계열 CORS.
+적용 범위: Fetch Living Standard와 Spring MVC/Security 7 계열 CORS. 서버 구현은 Framework 7.0.9 기준.
 
-- [Spring MVC CORS](https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html) — 전역·로컬 병합과 자격증명.
+- [Spring MVC CORS](https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html) — 전역·로컬 구성 병합·자격증명·요청 헤더 허용과 exposedHeaders 구분.
 - [Spring Security CORS](https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html) — 보안 필터 이전 처리와 MVC 구성 재사용.
-- [Fetch Standard](https://fetch.spec.whatwg.org/) — preflight·credentials mode·헤더 허용.
-
-부분 재검증: 2026-09-23. [DefaultCorsProcessor 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-web/src/main/java/org/springframework/web/cors/DefaultCorsProcessor.java)의 Origin 검사·403 거부·CORS가 아닌 요청의 통과 분기를 확인해 서버 측 검사와 브라우저 정책을 구분했다. [Fetch Standard](https://fetch.spec.whatwg.org/)의 credentials 모드와 명시적 Authorization 헤더의 구분에 맞춰 allowCredentials 설명도 좁혔다. 이 문단과 관련 설명만 확인했으며 실행 시험 없이 기존 verified를 유지했다.
-
-부분 재검증: 2026-10-22. 응답 헤더 공개와 캐시 변형 조건을 공식 자료로 확인했다. 브라우저·프록시 통합 실행은 하지 않았으며 전체 `verified`는 유지한다.
-
-- [Spring MVC CORS](https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html) — `exposedHeaders`와 요청 헤더 허용의 구분.
-- [Fetch Living Standard](https://fetch.spec.whatwg.org/#cors-protocol-and-credentials) — CORS 응답 헤더 공개·금지된 Set-Cookie 응답 헤더(2026-10-22 확인).
+- [Fetch Standard](https://fetch.spec.whatwg.org/) — preflight·credentials mode·명시적 Authorization 헤더.
+- [DefaultCorsProcessor 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-web/src/main/java/org/springframework/web/cors/DefaultCorsProcessor.java) — Origin 검사·403 거부·CORS가 아닌 요청의 통과 경로.
+- [Fetch Living Standard](https://fetch.spec.whatwg.org/#cors-protocol-and-credentials) — CORS 응답 헤더 공개와 Set-Cookie의 공개 제한.
 - [DefaultCorsProcessor 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-web/src/main/java/org/springframework/web/cors/DefaultCorsProcessor.java) — 설정이 있는 요청의 Vary 추가와 응답 헤더 설정.

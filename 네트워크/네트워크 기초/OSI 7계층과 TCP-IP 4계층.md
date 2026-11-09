@@ -2,8 +2,7 @@
 category: "네트워크/네트워크 기초"
 tags: ["network", "osi", "tcp-ip", "프로토콜"]
 aliases: ["OSI 모델", "TCP/IP 모델"]
-updated: 2026-09-08
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # OSI 7계층과 TCP-IP 4계층
@@ -78,6 +77,6 @@ A. HTTP 커넥션 풀(예: HikariCP는 DB 커넥션이지만 같은 원리, Apac
 
 ## 참고 자료
 
-- [ITU-T X.200 (1994)](https://www.itu.int/rec/T-REC-X.200-199407-I/en) — OSI 기본 참조 모델. 확인: 2026-09-08.
-- [RFC 1122: Internet Host Requirements](https://www.rfc-editor.org/rfc/rfc1122.html) — TCP/IP 계층. 확인: 2026-09-08.
-- [RFC 7348: VXLAN](https://www.rfc-editor.org/rfc/rfc7348.html) — 외부 Ethernet/IP/UDP/VXLAN 캡슐화. 확인: 2026-09-08.
+- [ITU-T X.200 (1994)](https://www.itu.int/rec/T-REC-X.200-199407-I/en) — OSI 기본 참조 모델.
+- [RFC 1122: Internet Host Requirements](https://www.rfc-editor.org/rfc/rfc1122.html) — TCP/IP 계층.
+- [RFC 7348: VXLAN](https://www.rfc-editor.org/rfc/rfc7348.html) — 외부 Ethernet/IP/UDP/VXLAN 캡슐화.

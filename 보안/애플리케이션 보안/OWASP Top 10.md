@@ -1,8 +1,7 @@
 ---
 category: "보안/애플리케이션 보안"
 tags: ["security", "owasp", "애플리케이션보안", "취약점"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # OWASP Top 10
@@ -88,12 +87,10 @@ A. 클라우드의 접근 정책, 서비스 기본값, 컨테이너·웹 서버 
 
 ## 참고 자료
 
-- [OWASP Top 10:2025](https://owasp.org/Top10/2025/) — 10개 범주 목록. 확인: 2026-09-08.
-- [OWASP 2025 Introduction](https://owasp.org/Top10/2025/0x00_2025-Introduction/) — 진단 데이터·CWE·CVSS·설문 방법론. 확인: 2026-09-08.
-- [OWASP 2025 A03](https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/) — 설문1위·평균 발생률 5.19%. 확인: 2026-09-08.
-- [OWASP 2025 A05](https://owasp.org/Top10/2025/A05_2025-Injection/) — Injection 상대 순위와 진단 결과. 확인: 2026-09-08.
-- [OWASP 2025 A02](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/) — Security Misconfiguration 범위. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [OWASP Top 10:2025 Introduction](https://top10.owasp.org/2025/0x00_2025-Introduction/)의 기여 애플리케이션 데이터·CWE 유병률·CVE 점수·설문 방법론을 대조했다. 그 외 서술은 이번 확인 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [OWASP Top 10:2025 A10](https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/)의 신설 배경·fail-open·인가 및 SQL Injection과 연결되는 예외 처리 시나리오를 확인했다. A01/A05를 정상 흐름에만 한정하던 Q&A 표현을 바로잡았으며, 범주별 전체 수치·순위는 재검증하지 않아 `verified`를 유지했다. 실제 취약점 진단이나 공격 시험은 수행하지 않았다.
+- [OWASP Top 10:2025](https://owasp.org/Top10/2025/) — 10개 범주 목록.
+- [OWASP 2025 Introduction](https://owasp.org/Top10/2025/0x00_2025-Introduction/) — 진단 데이터·CWE·CVSS·설문 방법론.
+- [OWASP 2025 A03](https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/) — 설문1위·평균 발생률 5.19%.
+- [OWASP 2025 A05](https://owasp.org/Top10/2025/A05_2025-Injection/) — Injection 상대 순위와 진단 결과.
+- [OWASP 2025 A02](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/) — Security Misconfiguration 범위.
+- [OWASP Top 10:2025 Introduction](https://top10.owasp.org/2025/0x00_2025-Introduction/) — 2025 진단 데이터·CWE 유병률·CVE 점수·설문 방법론.
+- [OWASP Top 10:2025 A10](https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/) — 2025 A10 신설 배경·fail-open·인가/SQL Injection과 예외 처리의 관계.

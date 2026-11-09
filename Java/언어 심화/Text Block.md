@@ -1,8 +1,7 @@
 ---
 category: "Java/언어 심화"
 tags: ["java", "textblock", "jep", "문자열"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Text Block
@@ -91,12 +90,7 @@ Java 컴파일러는 Unicode 이스케이프(`\uNNNN`)를 어휘 분석(lexical 
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [JLS 25 §3.10.6](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.6) — 텍스트 블록 어휘 규칙·정규화·이스케이프 순서.
+- [JLS 25 §3.10.6](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.6) — 텍스트 블록 어휘 규칙·닫는 구분자 앞 LF·정규화·이스케이프 순서.
 - [JEP 378](https://openjdk.org/jeps/378) — Java 15 정식화와 incidental whitespace.
 - [JEP 465](https://openjdk.org/jeps/465) — String Templates 세 번째 preview 제안의 Withdrawn 상태.
-
-### 2026-10-22 부분 재검증
-
-[JLS 25 §3.10.6](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.6)과 [Java SE 25 String.stripIndent](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#stripIndent())로 닫는 구분자 앞 LF·공백 문자 수 기준 제거를 확인했다. Temurin 25.0.4.1+1에서 마지막 LF 유무, 실제 탭과 스페이스를 섞은 내용의 차이, strip의 앞뒤 공백 제거를 확인했다. String Templates 이력·SQL 캐시 관련 기존 서술은 이번 범위 밖이므로 verified를 유지한다.
+- [Java SE 25 String.stripIndent](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#stripIndent()) — 공통 들여쓰기와 공백 문자 수를 기준으로 하는 제거.

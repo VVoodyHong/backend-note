@@ -1,8 +1,7 @@
 ---
 category: "Spring/AOP"
 tags: ["spring", "aop", "proxy", "jdk-dynamic-proxy", "cglib"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JDK Dynamic Proxy와 CGLIB
@@ -78,19 +77,11 @@ AOP 프록시 방식 선택과는 별개로, 인터페이스는 테스트 시 mo
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Framework 7.0.9 `ProxyFactory`·Objenesis 경로에서 동일 target의 일반 메서드는 초기화된 값을 반환하지만 final getter는 프록시의 null 필드를 읽고 어드바이스도 거치지 않는 것을 1건 실행했다. 모든 커스텀 프록시 생성 방식이나 AspectJ 위빙으로 일반화하지 않는다.
+적용 범위: Spring Framework 7.0·7.0.9의 프록시 AOP. Framework 기본값과 Boot 자동 구성은 구분.
 
-추가 실행 확인: 같은 버전에서 `@EnableTransactionManagement(proxyTargetClass=true)` 구성의 기본 빈은 CGLIB, `@Proxyable(INTERFACES)`로 지정한 final 구현체는 JDK 프록시로 동작하고 트랜잭션도 활성화됨을 확인했다. 트랜잭션 등 매칭 어드바이스가 없는 빈에는 Proxyable만 붙여도 프록시가 생성되지 않았다(JUnit 2건).
-
-- [CglibAopProxy 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-aop/src/main/java/org/springframework/aop/framework/CglibAopProxy.java) — final 메서드의 target 미위임과 미초기화 필드에 관한 진단.
-- [Proxyable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/annotation/Proxyable.html) — 빈별 프록시 방식·인터페이스 지정과 적용 전제. 아래 Proxying Mechanisms의 7.0 전역 기본값 설명도 재확인했다.
-
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 non-public 메서드 인터셉트, 인터페이스의 private/static 메서드 구분, Boot 4 테스트 애노테이션 변경을 확인했다. 전체 노트의 `verified`는 이전 검증일을 유지한다.
-
-- [Boot 4 마이그레이션](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — MockBean/SpyBean 제거와 MockitoBean/MockitoSpyBean 전환.
-- [Java 27 JLS 인터페이스 메서드](https://docs.oracle.com/javase/specs/jls/se27/html/jls-9.html#jls-9.4) — private/static 인터페이스 메서드의 선언과 상속 경계.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0; Framework 기본값과 Spring Boot 자동 구성은 구분.
-
-- [Proxying Mechanisms](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html) — 상속/가시성/Objenesis/모듈 제약과 프록시 선택.
+- [Proxying Mechanisms](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html) — 상속·가시성·Objenesis·모듈 제약과 프록시 선택.
 - [Declaring a Pointcut](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html) — CGLIB의 non-public 메서드 인터셉트 범위.
+- [CglibAopProxy 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-aop/src/main/java/org/springframework/aop/framework/CglibAopProxy.java) — final 메서드의 target 미위임과 프록시 필드 접근 경계.
+- [Proxyable 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/annotation/Proxyable.html) — 빈별 프록시 방식·인터페이스 지정과 어드바이스 적용 전제.
+- [Boot 4 마이그레이션](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — Boot 4의 MockBean/SpyBean 제거와 MockitoBean/MockitoSpyBean 전환.
+- [Java 27 JLS 인터페이스 메서드](https://docs.oracle.com/javase/specs/jls/se27/html/jls-9.html#jls-9.4) — private/static 인터페이스 메서드의 선언과 상속 경계.

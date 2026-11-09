@@ -1,8 +1,7 @@
 ---
 category: "Spring/웹 심화"
 tags: ["spring", "spring-mvc", "webclient", "resttemplate", "http-client"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # WebClient와 RestTemplate
@@ -97,21 +96,15 @@ A. `.retry(n)`은 오류 신호가 오면 간격 없이 최대 n번 재구독한
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Boot 4.1.1의 클라이언트 Builder·MVC 스타터, Reactor Netty 1.3.7의 타임아웃 범위, Reactor Core 3.8.7의 재시도 의미를 공식 문서로 확인했다.
-
-- [Boot Calling REST Services](https://docs.spring.io/spring-boot/reference/io/rest-client.html) — 자동 구성된 Builder와 클라이언트 설정.
-- [Boot 4 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — MVC 스타터 명칭 변경.
-- [Reactor Netty HTTP Client](https://projectreactor.io/docs/netty/release/reference/http-client.html#timeout-configuration) — 연결·풀·응답 타임아웃.
-- [Reactor Mono API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) — retry·timeout 연산자.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0 HTTP 클라이언트 및 Reactor Netty 자원 공유.
+적용 범위: Spring Framework 7.0·7.0.9 HTTP 클라이언트, Boot 4.1.1, Reactor Netty 1.3.7·Core 3.8.7.
 
 - [REST Clients](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html) — RestTemplate deprecation·팩토리 선택·RestClient.
-- [WebClient Builder](https://docs.spring.io/spring-framework/reference/web/webflux-webclient/client-builder.html) — 공유 풀·타임아웃.
+- [Boot Calling REST Services](https://docs.spring.io/spring-boot/reference/io/rest-client.html) — 자동 구성된 Builder와 클라이언트 설정.
+- [Boot 4 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — MVC 스타터 명칭 변경.
+- [WebClient Builder](https://docs.spring.io/spring-framework/reference/web/webflux-webclient/client-builder.html) — 공유 자원과 타임아웃.
 - [WebClient Exchange](https://docs.spring.io/spring-framework/reference/web/webflux-webclient/client-exchange.html) — exchangeToMono의 바디 해제.
 - [RestClient API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestClient.html) — RestTemplate 설정을 바탕으로 구성.
-
-부분 재검증: 2026-10-04. Framework 7.0.9·JDK 25.0.4의 HTTP 클라이언트와 루프백 HTTP 서버로 JUnit 3건을 실행했다. RestClient retrieve의 기본 상태 핸들러 호출과 exchange의 미호출, WebClient onStatus의 빈 결과 뒤 503 본문 반환, RestClient retrieve 단독의 요청 미전송과 toBodilessEntity 이후 전송을 확인했다. Reactor Netty 전송 계층·풀·재시도 동작은 이 시험에서 검증하지 않았다.
-
 - [RestClient RequestHeadersSpec 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/client/RestClient.RequestHeadersSpec.html) — retrieve 실행 시점과 exchange의 상태 핸들러 미적용.
 - [WebClient ResponseSpec 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/reactive/function/client/WebClient.ResponseSpec.html) — onStatus의 빈 Mono와 응답 전파 의미.
+- [Reactor Netty HTTP Client](https://projectreactor.io/docs/netty/release/reference/http-client.html#timeout-configuration) — 연결·풀·응답 타임아웃.
+- [Reactor Mono API](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) — retry·timeout 연산자.

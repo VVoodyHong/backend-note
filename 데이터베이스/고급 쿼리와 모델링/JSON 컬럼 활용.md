@@ -1,8 +1,7 @@
 ---
 category: "데이터베이스/고급 쿼리와 모델링"
 tags: ["database", "json", "jsonb", "mysql", "postgresql", "schema-design"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JSON 컬럼 활용
@@ -147,27 +146,14 @@ PostgreSQL 18의 `jsonb_set(..., create_if_missing=true)`는 마지막 경로 �
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. PostgreSQL 18 `jsonb_set`·동시 UPDATE와 MySQL 8.4 `JSON_SET`의 경로 갱신 의미를 대조해 부분 갱신 함수의 lost update 방지 범위를 보완했다. 기존 전체 확인일은 유지한다.
-
 - [MySQL 8.4 JSON Modification Functions](https://dev.mysql.com/doc/refman/8.4/en/json-modification-functions.html) — 현재 JSON 값의 경로 갱신과 반환값.
-- [PostgreSQL 18 JSON Functions](https://www.postgresql.org/docs/18/functions-json.html) — `jsonb_set`의 경로 갱신과 반환값.
+- [PostgreSQL 18 JSON Functions](https://www.postgresql.org/docs/18/functions-json.html) — jsonb_set의 경로·중간 경로 요구, 누락 경로의 SQL NULL·jsonb_typeof, jsonb_set_lax의 NULL 처리.
 - [PostgreSQL 18 Transaction Isolation](https://www.postgresql.org/docs/18/transaction-iso.html) — 동시 UPDATE의 대기·재평가·격리 수준별 재시도.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [MySQL 8.4 JSON Data Type](https://dev.mysql.com/doc/refman/8.4/en/json.html) — JSON 바이너리 저장·부분 갱신 조건.
 - [MySQL 8.4 CREATE INDEX](https://dev.mysql.com/doc/refman/8.4/en/create-index.html) — 생성/함수형/MVI 인덱스와 제약.
 - [PostgreSQL 18 JSON Types](https://www.postgresql.org/docs/18/datatype-json.html) — json/jsonb·GIN 연산자 클래스.
 - [PostgreSQL 17 Release Notes](https://www.postgresql.org/docs/17/release-17.html) — SQL/JSON 기능 도입.
 - [PostgreSQL 18 CREATE STATISTICS](https://www.postgresql.org/docs/18/sql-createstatistics.html) — 표현식 통계.
-
-부분 재검증: 2026-09-23. PostgreSQL 18 JSON 추출·타입 함수와 CHECK의 3값 논리 경계를 공식 문서 및 REL_18_STABLE JSON 소스로 대조했다. 해당 jsonb DDL의 PostgreSQL 실행 검증은 하지 않았다. 기존 전체 검증일은 유지한다.
-
-- [PostgreSQL 18 JSON Functions](https://www.postgresql.org/docs/18/functions-json.html) — 누락 경로의 SQL NULL과 jsonb_typeof.
 - [PostgreSQL 18 Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html) — CHECK의 NULL 통과와 NOT NULL의 별도 역할.
 - [PostgreSQL 18 jsonfuncs.c](https://github.com/postgres/postgres/blob/REL_18_STABLE/src/backend/utils/adt/jsonfuncs.c) — jsonb_object_field_text의 JSON null → SQL NULL 반환.
-
-부분 재검증: 2026-10-04. PostgreSQL 18의 jsonb_set 중간 경로·jsonb_set_lax NULL 정책을 확인했다. PostgreSQL 18.6·pgJDBC 42.7.13 격리 실행에서 strict 카탈로그 속성, 부모 누락 시 원문 유지·UPDATE 행 수 1, SQL NULL 문서 반환과 JSON null 필드 유지, lax 기본 변환·raise_exception의 22004를 실제 확인했다(10개 assertion). 기존 CHECK DDL·MySQL·동시 JSON 갱신은 이번 실행 범위가 아니며 전체 `verified`는 유지한다.
-
-- [PostgreSQL 18 JSON Functions](https://www.postgresql.org/docs/18/functions-json.html) — jsonb_set의 중간 경로 요구와 jsonb_set_lax의 네 가지 NULL 처리.
-- [PostgreSQL 18.6 pg_proc.dat](https://github.com/postgres/postgres/blob/REL_18_6/src/include/catalog/pg_proc.dat) — jsonb_set과 비엄격 함수 jsonb_set_lax 정의. 실제 서버의 pg_proc.proisstrict도 조회했다.
+- [PostgreSQL 18.6 pg_proc.dat](https://github.com/postgres/postgres/blob/REL_18_6/src/include/catalog/pg_proc.dat) — jsonb_set과 비엄격 함수 jsonb_set_lax 정의.

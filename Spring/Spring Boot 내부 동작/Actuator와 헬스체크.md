@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring Boot 내부 동작"
 tags: ["spring", "spring-boot", "actuator", "헬스체크", "모니터링", "kubernetes"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Actuator와 헬스체크
@@ -91,17 +90,11 @@ A. 헬스체크는 등록된 `HealthIndicator`가 검사하는 범위 내에서�
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Boot 4.1.1의 관리 포트 분리, add-additional-paths, 기본 프로브 그룹과 공유 외부 의존성의 장애 전파 범위를 공식 Endpoints 문서로 확인했다.
+적용 범위: Spring Boot 4.1.1. 프로브 기본 활성화는 3.x와 구분.
 
-검증일: 2026-09-08. 적용 범위: Spring Boot 4.1.1; 3.x 대비 프로브 기본 활성화 차이.
-
-- [Actuator Endpoints](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html) — 노출·상태 집계·프로브와 수명주기.
+- [Actuator Endpoints](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html) — 상태 집계·관리 포트 분리·추가 프로브 경로·프로브 그룹과 외부 의존성.
 - [Actuator 설정 속성](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — health 기본값과 캐시 TTL.
 - [AbstractHealthIndicator API](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/health/contributor/AbstractHealthIndicator.html) — 기본 헬스 검사 클래스.
-
-부분 재검증: 2026-09-23. Boot 4.1.1의 상태→HTTP 코드 기본값, 커스텀 매핑 대체와 그룹 상속 범위만 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [Boot 4.1.1 Endpoints 고정 문서](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/endpoints.adoc) — 커스텀 매핑 시 기본 DOWN/OUT_OF_SERVICE 매핑 제거, 그룹 상속·재정의.
-- [SimpleHttpCodeStatusMapper 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/module/spring-boot-health/src/main/java/org/springframework/boot/health/actuate/endpoint/SimpleHttpCodeStatusMapper.java) — 비어 있지 않은 사용자 매핑 선택과 미등록 상태의 200 반환.
-
-부분 재검증: 2026-10-22. [Boot 4.1.1 Endpoints 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/endpoints.adoc)에서 endpoint access·HTTP 노출·보안 체인의 분리, 사용자 체인 등록 시 기본 보안 구성의 후퇴, health 상세 정보와 info의 공개 범위를 확인했다. 실제 배포의 접근 제어는 실행 검증하지 않았으며 전체 `verified`는 유지한다.
+- [Boot 4.1.1 Endpoints 고정 문서](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/endpoints.adoc) — 사용자 HTTP 상태 매핑의 기본 매핑 대체와 그룹 상속·재정의.
+- [SimpleHttpCodeStatusMapper 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/module/spring-boot-health/src/main/java/org/springframework/boot/health/actuate/endpoint/SimpleHttpCodeStatusMapper.java) — 사용자 매핑 선택과 미등록 상태의 200 반환.
+- [Boot 4.1.1 Endpoints 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/endpoints.adoc) — endpoint access·HTTP 노출·보안 체인의 분리, 사용자 체인과 health/info 공개 범위.

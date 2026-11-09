@@ -2,8 +2,7 @@
 category: "인프라와 운영/오케스트레이션"
 tags: ["operations", "kubernetes", "resource-management", "qos", "autoscaling"]
 aliases: ["Kubernetes 리소스 요청과 제한"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 리소스 Requests와 Limits
@@ -121,14 +120,12 @@ A. 먼저 quota가 제한하는 리소스와 Pod에 최종 적용되는 requests
 
 ## 참고 자료
 
-- [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — 조회한 v1.37 문서·requests/limits·defaulting·Pod-level resources. 확인: 2026-09-08.
-- [Kubernetes Node pressure eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/) — requests 초과·priority·사용량 순서. 확인: 2026-09-08.
-- [Kubernetes In-place resize](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) — v1.35 stable·v1.37 제약·resizePolicy. 확인: 2026-09-08.
-- [VPA API source](https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/docs/api.md) — 2026-09-08 master·updateMode enum과 의미; 설치 release 지원 별도 대조. 확인: 2026-09-08.
-- [Kubernetes Pod QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/) — v1.37·Pod-level 조건·MemoryQoS 선택 설정. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)의 메모리 기반 emptyDir 집계·sizeLimit 미지정·언어 GC와 파일 수명 차이를 확인했다. JVM 전체 메모리 예산은 이 자원 경계를 적용한 운영 판단이다. 기존 QoS·resize·VPA 버전 계약 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [Kubernetes Local ephemeral storage](https://kubernetes.io/docs/concepts/storage/ephemeral-storage/)의 표시 v1.37 문서에서 집계 대상·컨테이너/Pod 한도·축출·지원 파일 시스템 배치·열린 삭제 파일의 스캔 제약을 확인했다. 같은 v1.37 공식 Resource Management·Pod QoS 문서에서 Linux cgroups 강제와 QoS 분류가 CPU·메모리 기준임도 대조해 정의의 적용 범위를 좁혔다. 메모리 기반 볼륨과 구분한 운영 진단 범위이며 실제 노드 디스크 고갈·축출·프로젝트 quota 실험은 수행하지 않았다. 기존 CPU·메모리·VPA 전체 계약은 재검증하지 않아 `verified`를 유지했다.
-
-부분 재검증: 2026-11-04. 표시 v1.37의 [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)·[네임스페이스 CPU 기본값](https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/)·[LimitRange admission](https://kubernetes.io/docs/concepts/policy/limit-range/#limitrange-and-admission-checks-for-pods)에서 requests/limits 기본값과 주입 후 충돌, quota 위반 403, Deployment 생성과 하위 Pod 생성의 차이를 확인했다. 적용 범위는 일반 컨테이너의 CPU·메모리 admission 판단이며 커스텀 admission webhook·실제 quota 거부·scheduler 실행은 검증하지 않았다. 기존 QoS·resize·스토리지 전체는 재검증하지 않아 `verified`를 유지했다.
+- [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — v1.37 문서·requests/limits·defaulting·Pod-level resources; 메모리 emptyDir 집계·sizeLimit·언어 GC와 파일 수명 구분.
+- [Kubernetes Node pressure eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/) — requests 초과·priority·사용량 순서.
+- [Kubernetes In-place resize](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) — v1.35 stable·v1.37 제약·resizePolicy.
+- [VPA API source](https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/docs/api.md) — 2026-09-08 master·updateMode enum과 의미; 설치 release 지원 별도 대조.
+- [Kubernetes Pod QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/) — v1.37·Pod-level 조건·MemoryQoS 선택 설정.
+- [Kubernetes Local ephemeral storage](https://kubernetes.io/docs/concepts/storage/ephemeral-storage/) — Kubernetes v1.37의 ephemeral storage 집계·한도·축출·파일 시스템 배치·열린 삭제 파일 스캔 제약.
+- [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/) — Kubernetes v1.37의 quota 위반 403·Deployment와 하위 Pod 생성 구분.
+- [네임스페이스 CPU 기본값](https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/) — Kubernetes v1.37 일반 컨테이너 CPU/메모리 requests/limits 기본값 주입.
+- [LimitRange admission](https://kubernetes.io/docs/concepts/policy/limit-range/#limitrange-and-admission-checks-for-pods) — Kubernetes v1.37 기본값 주입 후 requests/limits 충돌·admission 거부.

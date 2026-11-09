@@ -1,8 +1,7 @@
 ---
 category: "Spring/API 설계와 문서화"
 tags: ["spring", "openapi", "swagger", "springdoc", "api-docs"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # OpenAPI와 Swagger 문서화
@@ -91,11 +90,9 @@ A. `@Operation(summary = ...)` 같은 짧은 설명은 컨트롤러에 남기되
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. OpenAPI 3.1.1의 보안 요구 AND/OR와 연산 수준 재정의 의미를 공식 명세로 확인했다. springdoc 공식 페이지의 Boot 3.x/4.x 대응 계열도 재확인했으며, 표는 명세의 구조 예시다. Swagger UI나 실제 SecurityFilterChain의 통합 실행 검증은 이번 범위에 포함하지 않았다.
+적용 범위: OpenAPI 3.1.1, springdoc 3.1.1. 사용 프로젝트의 Boot minor 호환성은 별도 확인.
 
-- [OpenAPI 3.1.1 Security Requirement Object](https://spec.openapis.org/oas/v3.1.1.html#security-requirement-object), [Operation Object](https://spec.openapis.org/oas/v3.1.1.html#operation-object) — 한 객체의 AND, 배열의 OR, 익명 접근과 상위 요구 재정의.
-
-검증일: 2026-09-08. 적용 범위: OpenAPI 3.1.1 Schema Object, springdoc 3.1.1(사용 프로젝트의 Boot minor 호환성 별도 확인).
-
-- [springdoc 공식 문서](https://springdoc.org/) — 호환 계열·애노테이션·그룹·캐시와 엔드포인트.
+- [springdoc 공식 문서](https://springdoc.org/) — springdoc와 Boot 호환 계열·애노테이션·그룹·캐시·엔드포인트.
 - [OpenAPI 3.1.1 명세](https://spec.openapis.org/oas/v3.1.1.html) — JSON Schema·security 선언·다형성.
+- [OpenAPI 3.1.1 Security Requirement Object](https://spec.openapis.org/oas/v3.1.1.html#security-requirement-object) — 한 보안 요구 객체의 AND, 배열의 OR 및 익명 접근.
+- [Operation Object](https://spec.openapis.org/oas/v3.1.1.html#operation-object) — 연산 수준의 상위 보안 요구 재정의.

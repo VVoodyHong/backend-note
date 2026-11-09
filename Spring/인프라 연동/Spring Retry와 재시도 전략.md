@@ -1,8 +1,7 @@
 ---
 category: "Spring/인프라 연동"
 tags: ["spring", "spring-retry", "재시도", "회복탄력성", "aop", "resilience4j"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Retry와 재시도 전략
@@ -115,21 +114,14 @@ A. Framework 7.0.9 구현은 메서드 진입부터 반환까지 제한하고, �
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Framework 7.0.9 네이티브 재시도의 반환 타입별 실패 경계를 소스로 확인했다. 프록시 호출 JUnit 5개에서 동기 재호출, cold Mono 재구독, 이미 실패한 Future의 Mono 변환, Future 예외 완료, Publisher 생성 전 동기 예외를 재현했다. 기존 spring-retry·동시성 제한 설명의 전체 검증일은 유지한다.
+적용 범위: spring-retry 2.x와 Spring Framework 7.0의 별도 resilience API. 네이티브 재시도·동시성 제한 구현은 Framework 7.0.9 기준.
 
-- [AbstractRetryInterceptor 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/resilience/retry/AbstractRetryInterceptor.java) — Future 제외, Publisher 생성과 재구독 위치, 동기 예외 전파.
-- [Framework 7.0.9 Resilience](https://docs.spring.io/spring-framework/reference/core/resilience.html) — 리액티브 반환 타입에 대한 Reactor 재시도 적응.
-
-부분 재검증: 2026-09-22. Framework 7.0.9의 maxRetries 횟수, ConcurrencyLimit의 범위·기본 대기·REJECT 정책·Publisher 수명과의 차이를 소스와 실행 예제로 확인했다. 트랜잭션 재시도는 매 시도의 커밋까지 감싸는 경계로 구체화했다.
-
+- [Spring Retry 저장소](https://github.com/spring-attic/spring-retry) — Spring Retry의 유지보수 상태와 Retry/Recover 계약.
+- [Recover 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/annotation/Recover.java) — Recover의 선택적 Throwable 인자.
+- [Recovery handler 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/annotation/RecoverAnnotationRecoveryHandler.java) — 복구 메서드 미발견 시 예외.
+- [TimeoutRetryPolicy 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/policy/TimeoutRetryPolicy.java) — 후속 시도 허용 시간과 현재 호출 제한의 구분.
+- [Framework Resilience](https://docs.spring.io/spring-framework/reference/core/resilience.html) — 네이티브 애노테이션·maxRetries·리액티브 반환 타입의 Reactor 재시도 적응.
+- [AbstractRetryInterceptor 7.0.9 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/resilience/retry/AbstractRetryInterceptor.java) — Future 제외, Publisher 생성·재구독 위치와 동기 예외 경계.
 - [ConcurrencyLimit API 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/resilience/annotation/ConcurrencyLimit.html) — 타입·메서드 제한 범위와 7.0.3 이후 REJECT.
 - [ConcurrencyLimitBeanPostProcessor 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/resilience/annotation/ConcurrencyLimitBeanPostProcessor.java) — 프록시별 카운터와 인터셉터 선택.
 - [ConcurrencyThrottleInterceptor 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-aop/src/main/java/org/springframework/aop/interceptor/ConcurrencyThrottleInterceptor.java) — 메서드 반환 시 카운터 해제.
-
-검증일: 2026-09-08. 적용 범위: spring-retry 2.x와 Spring Framework 7.0의 별도 resilience API.
-
-- [Spring Retry 저장소](https://github.com/spring-attic/spring-retry) — 유지보수 종료와 Retry/Recover 계약.
-- [Framework Resilience](https://docs.spring.io/spring-framework/reference/core/resilience.html) — 네이티브 애노테이션과 maxRetries.
-- [Recover 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/annotation/Recover.java) — 선택적 Throwable 인자.
-- [Recovery handler 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/annotation/RecoverAnnotationRecoveryHandler.java) — 복구 메서드 미발견 시 예외.
-- [TimeoutRetryPolicy 소스](https://raw.githubusercontent.com/spring-attic/spring-retry/main/src/main/java/org/springframework/retry/policy/TimeoutRetryPolicy.java) — 후속 시도 허용 시간.

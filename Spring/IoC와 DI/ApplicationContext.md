@@ -1,8 +1,7 @@
 ---
 category: "Spring/IoC와 DI"
 tags: ["spring", "applicationcontext", "ioc", "container"]
-updated: 2026-09-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ApplicationContext
@@ -89,17 +88,13 @@ public class OrderCreatedListener {
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 TestContext 캐시 키·축출·프로세스 경계와 Boot 4의 MockBean 제거를 공식 문서로 확인했다.
-
-- [TestContext Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — 설정 키·customizer·DirtiesContext·JVM 경계.
-- [Boot 4 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — MockBean·SpyBean 제거.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0; Spring Boot 3.5의 서버 예시 및 3.4 이후 종료 기본값.
+적용 범위: Spring Framework 7.0·7.0.9, Boot 3.5의 서버 예시와 3.4 이후 종료 기본값.
 
 - [ApplicationContext API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) — 상속 관계와 getAutowireCapableBeanFactory.
 - [Additional Capabilities](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html) — 메시지·이벤트·리소스·계층 컨텍스트.
-- [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — 컨텍스트 캐시 키와 DirtiesContext.
+- [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — 설정 키·customizer·DirtiesContext·축출·JVM 프로세스 경계.
 - [Graceful Shutdown](https://docs.spring.io/spring-boot/3.5/reference/web/graceful-shutdown.html) — 종료 중 새 요청 처리와 유예 시간.
 - [Spring Boot 3.4 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes) — graceful shutdown 기본 활성화 시점.
-- [Common Application Properties](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — 종료 phase당 기본 30초 및 shutdown hook.
+- [Common Application Properties](https://docs.spring.io/spring-boot/appendix/application-properties/index.html) — 종료 phase당 기본 시간과 shutdown hook.
 - [Boot application events](https://docs.spring.io/spring-boot/reference/features/spring-application.html) — runner와 ReadyEvent 순서.
+- [Boot 4 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide) — Boot 4의 MockBean·SpyBean 제거.

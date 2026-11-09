@@ -2,8 +2,7 @@
 category: "시스템 설계/대규모 트래픽 설계"
 tags: ["system-design", "rate-limiting", "redis", "api-gateway", "resilience"]
 aliases: ["요청 제한", "Rate Limiting"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Rate Limiting 알고리즘
@@ -117,19 +116,15 @@ NAT(공유 IP) 환경에서는 여러 사용자가 같은 IP로 접근해 IP 기
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Redis Lua scripting](https://redis.io/docs/latest/develop/programmability/eval-intro/) — Redis 7 이상 예시의 스크립트 원자성·실행 경계.
 - [Redis TIME](https://redis.io/docs/latest/commands/time/) — 서버 시각의 초·마이크로초 반환.
 - [Redis HSET](https://redis.io/docs/latest/commands/hset/) — 해시 상태 갱신.
 - [Redis PEXPIRE](https://redis.io/docs/latest/commands/pexpire/) — 밀리초 TTL.
 - [Bucket4j Reference](https://bucket4j.com/8.14.0/toc.html) — 8.14.0 Token Bucket·분산 저장소 지원·만료 정책.
 - [Resilience4j RateLimiter](https://resilience4j.readme.io/docs/ratelimiter) — AtomicRateLimiter의 로컬 상태·주기별 permit 모델.
-- [NGINX limit_req](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html) — leaky bucket·burst·delay/nodelay.
+- [NGINX limit_req](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html) — leaky bucket·burst·delay/nodelay; 기본 503·설정 상속·빈 키 제외·nodelay·1.17.1+ dry-run.
 - [AWS API Gateway throttling](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html) — Token Bucket과 best-effort 한도.
 - [RFC 6585 §4](https://www.rfc-editor.org/rfc/rfc6585.html) — 429와 선택적인 Retry-After.
 - [RFC 9110 §10.2.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3) — Retry-After 형식.
-
-부분 재검증: 2026-09-23. [NGINX limit_req 공식 문서](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)의 기본 응답 503·설정 상속·빈 키 제외·nodelay·dry-run(1.17.1부터)을 확인했다. Redis Lua·Bucket4j·Resilience4j 전체는 이번 범위 밖이므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [Google SRE — Handling Overload](https://sre.google/sre-book/handling-overload/)의 요청별 비용 차이·QPS를 용량으로 취급하는 한계를 확인하고 [Resilience4j Bulkhead](https://resilience4j.readme.io/docs/bulkhead)의 동시 실행·대기 한도와 구분했다. 적용 범위는 요청률과 동시성의 운영 설계 비교이며 위 Redis Lua의 새 동작이나 보편적인 튜닝 수치를 주장하지 않는다. 실제 부하·분산 카운터·Redis 장애 시험은 실행하지 않았고 `verified`는 유지했다.
+- [Google SRE — Handling Overload](https://sre.google/sre-book/handling-overload/) — 요청별 비용 차이와 QPS를 용량으로 취급하는 한계.
+- [Resilience4j Bulkhead](https://resilience4j.readme.io/docs/bulkhead) — 동시 실행·대기 한도와 요청률 제한의 구분.

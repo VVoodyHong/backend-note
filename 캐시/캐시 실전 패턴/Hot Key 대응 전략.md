@@ -1,8 +1,7 @@
 ---
 category: "캐시/캐시 실전 패턴"
 tags: ["cache", "hot-key", "redis", "redis-cluster", "load-balancing"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Hot Key 대응 전략
@@ -113,14 +112,9 @@ Redis 클라이언트가 자체적으로 응답을 캐싱하고, 서버가 무�
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [HOTKEYS START](https://redis.io/docs/latest/commands/hotkeys-start/) — Redis 8.6+: METRICS·COUNT·SAMPLE 확률·SLOTS 구문.
 - [Client-side Caching Reference](https://redis.io/docs/latest/develop/reference/client-side-caching/) — Redis 6.0+: tracking·무효화·연결 단절 시 캐시 처리.
 - [Cluster Specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/) — 슬롯/노드 분배, 단일 키의 확장 제약.
 - [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 2013: hot key·클라이언트 부하 및 복제 설계.
-
-부분 재검증: 2026-10-04. Redis Cluster 사양과 Redis 8.10.2 고정 소스에서 해시 태그의 슬롯 계산을 확인했다. 사본 분산과 다중 키 원자성의 선택은 해당 슬롯 제약에서 도출했다. 실제 Cluster 배치·부하 테스트는 실행하지 않았고 HOTKEYS 명령 등 나머지 내용의 `verified`는 유지한다.
-
 - [Redis Cluster Specification: Hash tags](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) — 같은 태그의 같은 슬롯 배치와 multi-key 제약.
 - [Redis 8.10.2 cluster.h](https://github.com/redis/redis/blob/8.10.2/src/cluster.h) — keyHashSlot의 중괄호 내부 해싱 규칙.

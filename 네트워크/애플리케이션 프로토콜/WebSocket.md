@@ -1,8 +1,7 @@
 ---
 category: "네트워크/애플리케이션 프로토콜"
 tags: ["network", "websocket", "실시간통신", "stomp", "rfc6455"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # WebSocket
@@ -95,14 +94,13 @@ gRPC 스트리밍은 강타입 스키마(protobuf)와 서비스 간 RPC 의미�
 
 ## 참고 자료
 
-- [RFC 6455: WebSocket](https://www.rfc-editor.org/rfc/rfc6455.html) — HTTP/1.1 handshake·16바이트 nonce·masking·control frame. 확인: 2026-09-08.
-- [RFC 8441: WebSockets over HTTP/2](https://www.rfc-editor.org/rfc/rfc8441.html) — extended CONNECT. 확인: 2026-09-08.
-- [RFC 9220: WebSockets with HTTP/3](https://www.rfc-editor.org/rfc/rfc9220.html) — HTTP/3 extended CONNECT. 확인: 2026-09-08.
-- [Spring Framework STOMP Token Authentication](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/authentication-token-based.html) — 7.0 계열 ChannelInterceptor 인증 순서. 확인: 2026-09-08.
-- [Spring Framework WebSocket API](https://docs.spring.io/spring-framework/reference/web/websocket/server.html) — origin·handler 메시지 모델. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Spring Framework 외부 브로커](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/handle-broker-relay.html)와 [성능·확장 안내](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/configuration-performance.html)의 simple broker 다중 인스턴스 한계와 broker relay 역할을 대조해 본문을 기존 Q&A와 일치시켰다. 노트 전체의 버전 의존 서술을 재검증한 것은 아니므로 `verified`는 유지했다.
-
-부분 재검증: 2026-10-04. [OWASP WebSocket Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)의 세션 수명 관리·로그아웃 시 연결 종료·메시지별 인가 권고를 확인했다. 적용 범위는 WebSocket 애플리케이션의 인증·인가 설계이며 특정 Spring 버전이 이를 자동 제공한다는 의미가 아니다. 실제 세션 만료·권한 회수·다중 인스턴스 전파 시험은 수행하지 않았고, 기존 Spring 예제 전체를 재검증하지 않아 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [RFC 6455 §4.1·4.2.2](https://www.rfc-editor.org/rfc/rfc6455.html#section-4.1)의 HTTP/1.1 핸드셰이크 필수 헤더와 클라이언트 검증을 도식·본문에 반영했다. Temurin 25.0.4.1+1-LTS의 `HttpClient`와 loopback 서버에서 정상 101 수락, Connection 누락·Upgrade 누락·Accept 불일치 거부의 4조건을 재현했다. [WHATWG HTML §9.2.3–9.2.4](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header)의 재연결·Last-Event-ID 전달 범위를 대조했다. 서버 이벤트 보관·복구는 이 전달 기능을 이용한 애플리케이션 설계다. 실제 브라우저·프록시·SSE 재연결 시험이나 Spring 전체 재검증은 하지 않아 `verified`는 유지한다.
+- [RFC 6455: WebSocket](https://www.rfc-editor.org/rfc/rfc6455.html) — HTTP/1.1 handshake·16바이트 nonce·masking·control frame.
+- [RFC 8441: WebSockets over HTTP/2](https://www.rfc-editor.org/rfc/rfc8441.html) — extended CONNECT.
+- [RFC 9220: WebSockets with HTTP/3](https://www.rfc-editor.org/rfc/rfc9220.html) — HTTP/3 extended CONNECT.
+- [Spring Framework STOMP Token Authentication](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/authentication-token-based.html) — 7.0 계열 ChannelInterceptor 인증 순서.
+- [Spring Framework WebSocket API](https://docs.spring.io/spring-framework/reference/web/websocket/server.html) — origin·handler 메시지 모델.
+- [Spring Framework 외부 브로커](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/handle-broker-relay.html) — Spring의 외부 STOMP 브로커 릴레이.
+- [성능·확장 안내](https://docs.spring.io/spring-framework/reference/web/websocket/stomp/configuration-performance.html) — simple broker의 다중 인스턴스 한계·성능과 확장.
+- [OWASP WebSocket Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html) — 연결 인증 수명·로그아웃 시 종료·메시지별 인가 설계.
+- [RFC 6455 §4.1·4.2.2](https://www.rfc-editor.org/rfc/rfc6455.html#section-4.1) — HTTP/1.1 핸드셰이크 필수 헤더와 클라이언트 응답 검증.
+- [WHATWG HTML §9.2.3–9.2.4](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header) — EventSource 재연결·Last-Event-ID 전달; 서버 이벤트 보관·복구 계약과 구분.

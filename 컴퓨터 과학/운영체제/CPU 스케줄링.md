@@ -1,8 +1,7 @@
 ---
 category: "컴퓨터 과학/운영체제"
 tags: ["computer-science", "운영체제", "cpu스케줄링", "프로세스", "성능"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CPU 스케줄링
@@ -82,18 +81,11 @@ EEVDF의 가상 마감 시각(virtual deadline)은 실시간 완료 보장이나
 
 ## 참고 자료
 
-- [Linux EEVDF](https://docs.kernel.org/scheduler/sched-eevdf.html) — Linux6.6부터 fair scheduler 전환. 확인: 2026-09-08.
-- [Linux CFS](https://docs.kernel.org/scheduler/sched-design-CFS.html) — 이전 vruntime 기반 선택 구조. 확인: 2026-09-08.
-- [Linux cgroup v2](https://docs.kernel.org/admin-guide/cgroup-v2.html) — cpu.max·cpu.stat·throttled_usec. 확인: 2026-09-08.
-- [Linux sched(7)](https://man7.org/linux/man-pages/man7/sched.7.html) — 정책·nice·실시간 스케줄링. 확인: 2026-09-08.
-- [OSTEP CPU Scheduling](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf) — SJF 전제·response/turnaround·RR. 확인: 2026-09-08.
-
-### 2026-09-23 부분 재검증
-
-Linux 커널 EEVDF·CFS bandwidth 및 cgroup v2 문서의 가상 마감·CPU 시간 예산·계층적 제한을 확인했다. EEVDF 도입 범위는 Linux 6.6 이후이며 배포 커널의 세부 패치는 별도 확인 대상이다. 기존 전체 검증일은 유지한다.
-
+- [Linux EEVDF](https://docs.kernel.org/scheduler/sched-eevdf.html) — Linux 6.6부터 fair scheduler의 EEVDF 전환.
+- [Linux CFS](https://docs.kernel.org/scheduler/sched-design-CFS.html) — 이전 vruntime 기반 선택 구조.
+- [Linux cgroup v2](https://docs.kernel.org/admin-guide/cgroup-v2.html) — cpu.max·cpu.stat·throttled_usec.
+- [Linux sched(7)](https://man7.org/linux/man-pages/man7/sched.7.html) — 정책·nice·실시간 스케줄링.
+- [OSTEP CPU Scheduling](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf) — SJF 전제·response/turnaround·RR.
 - [Linux CFS Bandwidth Control](https://docs.kernel.org/scheduler/sched-bwc.html) — 다중 CPU에서 합산 쿼터 소비·계층적 throttle; 파일명 예시는 v1이고 본문의 cpu.max는 v2.
-
-### 2026-11-04 부분 재검증
-
-[Linux RT-mutex 문서](https://docs.kernel.org/locking/rt-mutex.html)의 높은 우선순위 대기자→락 소유자 우선순위 상속과 해제 시 복원, [OSTEP MLFQ §8.3](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf)의 우선순위 상향에 의한 기아 완화를 대조했다. 확인 기준은 2026-11-04 공개 공식 커널 문서와 저자 공개 교재이며, 두 문제의 대응을 표와 본문에서 구분했다. Linux 스케줄링·실시간 락 실험은 하지 않았고 EEVDF·cgroup 설명 전체도 재검증하지 않아 verified는 유지한다.
+- [Linux RT-mutex 문서](https://docs.kernel.org/locking/rt-mutex.html) — 락 소유자의 우선순위 상속과 해제 후 복원.
+- [OSTEP MLFQ §8.3](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf) — 우선순위 상향을 통한 기아 완화.

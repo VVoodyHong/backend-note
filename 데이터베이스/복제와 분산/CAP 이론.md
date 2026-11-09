@@ -2,8 +2,7 @@
 category: "데이터베이스/복제와 분산"
 tags: ["database", "cap-theorem", "분산시스템", "일관성", "가용성"]
 aliases: ["CAP Theorem"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # CAP 이론
@@ -79,19 +78,11 @@ A. 그렇다. 짧은 파티션이라도 그 순간 진행 중이던 요청의 �
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. Cassandra 공식 Guarantees 문서의 일반 쓰기·LWT 보장을 대조해 정족수 응답과 선형성을 구분했다. 기존 전체 확인일은 유지한다.
-
-- [Apache Cassandra Guarantees](https://cassandra.apache.org/doc/latest/cassandra/architecture/guarantees.html) — LWW 일반 쓰기와 Paxos 기반 조건부 연산의 보장 구분. 이번 확인은 이 개념 범위이며 특정 릴리스 기본값은 다루지 않는다.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
+- [Apache Cassandra Guarantees](https://cassandra.apache.org/doc/latest/cassandra/architecture/guarantees.html) — LWW 일반 쓰기와 Paxos 기반 조건부 연산의 보장 구분. 릴리스별 기본값은 범위에 포함하지 않는다.
 - [Gilbert & Lynch (2002) CAP proof](https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf) — C/A 정의·비동기 네트워크에서의 불가능성.
 - [Daniel Abadi — PACELC](https://dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-yahoos-little.html) — 원 제안자의 평상시 지연/일관성 논의.
-- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 문서: 읽기 및 MREC/MRSC.
+- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 기준: 읽기 및 MREC/MRSC.
 - [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 일관성 수준과 선형성 경계.
-- [Cosmos DB Consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — 5개 읽기 일관성 수준.
+- [Cosmos DB Consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — 2026-09-08 기준: 5개 읽기 일관성 수준.
 - [PostgreSQL 18 Standby](https://www.postgresql.org/docs/18/warm-standby.html) — 동기 복제·자동 failover 범위.
-
-부분 재검증: 2026-11-04. etcd 3.6의 기본 선형 KV 읽기와 선택적인 serializable 읽기의 stale 허용을 공식 API 보장 문서로 확인했다. 기존 "소수 쪽 읽기 전용" 표현이 CAP의 C를 유지하는 것처럼 해석되지 않도록 교정했다. 분단 이력은 선형성 정의와 이 API 계약을 적용한 예이며 실제 etcd 장애 실험은 하지 않았다. 다른 제품·PACELC의 기존 `verified`는 유지한다.
-
 - [etcd 3.6 API Guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) — 기본 linearizable 읽기, serializable 읽기의 오래된 데이터 허용과 합의 의존 차이.

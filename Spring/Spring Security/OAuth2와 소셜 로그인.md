@@ -1,8 +1,7 @@
 ---
 category: "Spring/Spring Security"
 tags: ["spring", "oauth2", "oidc", "social-login", "spring-security"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # OAuth2와 소셜 로그인
@@ -117,19 +116,16 @@ A. RFC 9700은 브라우저에 Access Token을 직접 발급하는 implicit 방�
 
 ## 참고 자료
 
-검증일: 2026-09-08. 적용 범위: Spring Security 7.1.1, OpenID Connect Core 1.0 및 RFC 9700.
+적용 범위: Spring Security 7.1.1, OpenID Connect Core 1.0, RFC 9700 및 Boot 4.1.1 starter 구성.
 
 - [OAuth2 Login Core](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html) — 로그인·클라이언트 설정.
 - [OAuth2 Client Core](https://docs.spring.io/spring-security/reference/servlet/oauth2/client/core.html) — Service/Repository 역할과 JDBC 저장.
 - [OIDC Core](https://openid.net/specs/openid-connect-core-1_0.html) — ID Token 검증과 iss/sub 식별자.
-- [OAuth 보안 권고](https://www.rfc-editor.org/rfc/rfc9700.html) — PKCE·CSRF·금지된 password grant.
+- [OAuth 보안 권고](https://www.rfc-editor.org/rfc/rfc9700.html) — PKCE·CSRF·password grant 금지.
 - [카카오 로그인](https://developers.kakao.com/docs/ko/kakaologin/common) — OIDC 지원과 제공자 엔드포인트.
-- [Boot 4.1.1 OAuth2 starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-security-oauth2-client/build.gradle) — 정식 스타터 이름.
-- [Boot 4.1.1 compatibility starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-oauth2-client/build.gradle) — 기존 스타터 deprecation.
+- [Boot 4.1.1 OAuth2 starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-security-oauth2-client/build.gradle) — OAuth2 정식 스타터 이름.
+- [Boot 4.1.1 compatibility starter](https://raw.githubusercontent.com/spring-projects/spring-boot/v4.1.1/starter/spring-boot-starter-oauth2-client/build.gradle) — 호환 스타터 deprecation.
 - [OidcUserService 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-client/src/main/java/org/springframework/security/oauth2/client/oidc/userinfo/OidcUserService.java) — 조건부 UserInfo 조회.
-
-부분 재검증: 2026-09-23. Security 7.1.1 공식 문서·소스로 PKCE 기본값과 인증 요청 저장소를 확인했다. 기본 resolver 실행에서 기밀 클라이언트의 기본 활성화·명시적 비활성화, 공개 클라이언트의 PKCE 유지 3건을 확인했다. 실제 제공자 로그인·토큰 교환은 실행하지 않았다.
-
-- [OAuth2 Authorization Grants](https://docs.spring.io/spring-security/reference/servlet/oauth2/client/authorization-grants.html) — 7.1.1, PKCE·인증 요청 저장소.
-- [ClientRegistration 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-client/src/main/java/org/springframework/security/oauth2/client/registration/ClientRegistration.java) — `ClientSettings.Builder`의 `requireProofKey=true` 기본값.
-- [DefaultOAuth2AuthorizationRequestResolver 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-client/src/main/java/org/springframework/security/oauth2/client/web/DefaultOAuth2AuthorizationRequestResolver.java) — 공개 클라이언트 또는 proof key 설정에 따른 적용 조건.
+- [OAuth2 Authorization Grants](https://docs.spring.io/spring-security/reference/servlet/oauth2/client/authorization-grants.html) — PKCE와 인증 요청 저장소.
+- [ClientRegistration 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-client/src/main/java/org/springframework/security/oauth2/client/registration/ClientRegistration.java) — ClientSettings.Builder의 requireProofKey 기본값.
+- [DefaultOAuth2AuthorizationRequestResolver 7.1.1](https://raw.githubusercontent.com/spring-projects/spring-security/7.1.1/oauth2/oauth2-client/src/main/java/org/springframework/security/oauth2/client/web/DefaultOAuth2AuthorizationRequestResolver.java) — 공개 클라이언트 또는 proof key 설정에 따른 PKCE 적용 조건.

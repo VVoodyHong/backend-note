@@ -1,8 +1,7 @@
 ---
 category: "Java/예외 처리와 IO"
 tags: ["java", "예외처리", "자원관리", "autocloseable"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # try-with-resources
@@ -119,21 +118,10 @@ A. 어떤 `DataSource`와 획득 API를 썼는지에 따라 다르다. `DataSour
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [JLS 25 §14.20.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20.3) — 자원 초기화·역순 종료·null·suppressed 변환과 예제.
+- [JLS 25 §14.20.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20.3) — 자원 초기화 실패·역순 종료·null·suppressed와 래퍼 생성 실패 시 자원 수명.
 - [Java SE 25 AutoCloseable](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/AutoCloseable.html) — close 계약 및 Closeable과의 차이.
 - [Spring Framework: Controlling Database Connections](https://docs.spring.io/spring-framework/reference/data-access/jdbc/connections.html) — 트랜잭션 인식 자원 획득·반납.
-
-부분 재검증: 2026-09-22. 아래 범위를 추가 확인했으며, 그 밖의 본문은 기존 검증 날짜를 유지한다.
-
 - [Spring Framework 7.0.9 DataSourceUtils](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/jdbc/datasource/DataSourceUtils.html) — 바인딩된 연결 획득과 releaseConnection.
-- [Spring Framework 7.0.9 TransactionAwareDataSourceProxy](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/jdbc/datasource/TransactionAwareDataSourceProxy.html) — 연결 프록시의 close와 트랜잭션 참여. Spring 7.0.9·H2 2.3.232·JDK 27에서 세 경로를 실행해 별도 연결의 자동 커밋, 바인딩 연결의 수명, 외부 롤백 결과를 확인했다. 이 예제 실행은 Spring의 JDK 27 공식 지원 인증을 뜻하지 않는다.
-
-### 2026-09-23 부분 재검증
-
-[JLS 25 §14.20.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20.3)의 자원 초기화/번역 규칙을 다시 확인했다. OpenJDK 25.0.2에서 실패한 중첩 Wrapper 생성자는 안쪽 자원을 닫지 않는 반례, 별도 자원 선언의 정리, 두 close가 실패해도 역순 실행되며 본문 예외의 suppressed에 붙는 순서를 확인했다. Spring 트랜잭션 경로는 이번에 다시 실행하지 않았다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [JLS 25 §14.20.3](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20.3), [Java SE 25 BufferedReader.lines](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html#lines()), [Files.lines](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html#lines(java.nio.file.Path)) — 스코프 종료와 지연 읽기·소유 자원의 정리 계약. Oracle JDK 25.0.4에서 reader를 닫고 반환한 lines의 findFirst 실패, 닫기 전 toList로 소비한 결과의 사용 가능성을 확인했다. 실제 JDBC 비동기 작업·Spring 자원 경로는 이번에 실행하지 않았다.
+- [Spring Framework 7.0.9 TransactionAwareDataSourceProxy](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/jdbc/datasource/TransactionAwareDataSourceProxy.html) — 연결 프록시의 close와 트랜잭션 참여.
+- [Java SE 25 BufferedReader.lines](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html#lines()) — 지연 읽기와 호출자가 소유하는 BufferedReader의 종료.
+- [Java SE 25 Files.lines](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html#lines(java.nio.file.Path)) — 스트림이 소유한 파일 자원과 close 계약.

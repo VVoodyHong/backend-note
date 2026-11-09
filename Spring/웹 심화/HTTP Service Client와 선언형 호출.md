@@ -2,8 +2,7 @@
 category: Spring/웹 심화
 tags: [spring, spring-boot, http-client]
 aliases: [HTTP Interface, HttpExchange, HTTP Service Client]
-updated: 2026-09-23
-verified: 2026-09-23
+updated: 2026-11-09
 ---
 
 # HTTP Service Client와 선언형 호출
@@ -96,10 +95,8 @@ A. 그룹은 클라이언트 구성과 프록시 생성 단위다. 필요한 장
 
 ## 참고 자료
 
-검증일: 2026-09-23. Framework 7.0.9·Boot 4.1.1 공식 문서와 API를 대조했다. Java 25.0.2의 로컬 HTTP 서버로 경로/본문/헤더 매핑, 기본 404 예외, 사용자 정의 상태 처리, Boot 그룹 등록과 base-url 바인딩 4건을 실행했다. WebClient의 리액티브 경로·실제 TLS/인증·시간 제한 발동·운영 서비스 호출은 실행하지 않았다.
-
-- [HTTP Service Clients](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-service-client) — Framework 7.0.9, 어댑터·반환 타입·오류 처리·그룹.
-- [Boot Calling REST Services](https://docs.spring.io/spring-boot/reference/io/rest-client.html) — Boot 4.1.1, `@ImportHttpServices`와 `spring.http.serviceclient` 설정.
+- [HTTP Service Clients](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-service-client) — Framework 7.0.9의 어댑터·반환 타입·오류 처리·그룹.
+- [Boot Calling REST Services](https://docs.spring.io/spring-boot/reference/io/rest-client.html) — Boot 4.1.1의 @ImportHttpServices와 spring.http.serviceclient 설정.
 - [HttpExchange 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/service/annotation/HttpExchange.html) — 타입/메서드 선언과 동적 URL 인자.
 - [RestClientAdapter 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/client/support/RestClientAdapter.html) — 동기 요청·응답 어댑터.
 - [ImportHttpServices 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/web/service/registry/ImportHttpServices.html) — 타입·패키지 선택과 그룹 등록.

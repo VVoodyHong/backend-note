@@ -1,8 +1,7 @@
 ---
 category: "컴퓨터 과학/알고리즘 심화"
 tags: ["computer-science", "알고리즘", "그래프", "bfs", "dfs"]
-updated: 2026-09-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # 그래프 탐색 BFS와 DFS
@@ -103,7 +102,5 @@ A. 허브 노드(팔로워가 매우 많은 계정 등)를 만나면 한 레벨�
 
 ## 참고 자료
 
-- [Algorithms 4판: Undirected Graphs](https://algs4.cs.princeton.edu/41graph/) — BFS 최단 간선 수, DFS 경로·연결 요소·인접 리스트 복잡도. 확인: 2026-09-08.
-- [Algorithms 4판: Directed Graphs](https://algs4.cs.princeton.edu/42digraph/) — 방향 사이클과 reverse postorder 위상 정렬. 확인: 2026-09-08.
-
-부분 재검증: 2026-09-22. [Princeton Undirected Graphs](https://algs4.cs.princeton.edu/41graph/)의 방문 표시·큐/재귀 원리를 다시 확인했다. 본문 Java BFS·DFS를 추출해 JDK 27에서 임의 방향 그래프 7,959개 출발점의 단위 가중치 최단 거리·도달 가능성을 Floyd-Warshall 결과와 대조했다. 양방향 BFS 등 미구현 변형 전체의 실행 검증은 아니다.
+- [Algorithms 4판: Undirected Graphs](https://algs4.cs.princeton.edu/41graph/) — BFS 최단 간선 수, DFS 경로·연결 요소·인접 리스트 복잡도.
+- [Algorithms 4판: Directed Graphs](https://algs4.cs.princeton.edu/42digraph/) — 방향 사이클과 reverse postorder 위상 정렬.

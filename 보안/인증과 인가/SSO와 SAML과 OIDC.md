@@ -2,8 +2,7 @@
 category: "보안/인증과 인가"
 tags: ["security", "sso", "saml", "oidc", "federation", "identity"]
 aliases: ["Single Sign-On", "SSO", "SAML", "OIDC"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # SSO와 SAML과 OIDC
@@ -126,14 +125,10 @@ A. SAML Web Browser SSO는 브라우저 중심 프로파일이라 모바일 앱�
 
 ## 참고 자료
 
-- [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html) — code flow·ID token 검증. 확인: 2026-09-08.
-- [RFC 9700: OAuth Security BCP](https://www.rfc-editor.org/rfc/rfc9700.html) — code·PKCE·redirect URI·CSRF. 확인: 2026-09-08.
-- [RFC 8252: OAuth for Native Apps](https://www.rfc-editor.org/rfc/rfc8252.html) — 외부 사용자 에이전트. 확인: 2026-09-08.
-- [OWASP SAML Security](https://cheatsheetseries.owasp.org/cheatsheets/SAML_Security_Cheat_Sheet.html) — 서명·Audience·Recipient·InResponseTo·재생 검증. 확인: 2026-09-08.
-- [Spring Security SAML2 Login](https://docs.spring.io/spring-security/reference/servlet/saml2/login/overview.html) — SP 자격증명과 메타데이터. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html) — §5.1·§5.7의 이메일과 iss/sub 식별자, §5.3.2의 UserInfo sub 일치, §8.1의 pairwise sector를 확인했다. 계정 연결 절차는 이 신원 계약을 적용한 설계 기준이다. 기존 SAML·Spring 설정 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html)의 §2 auth_time·acr, §3.1.2.1 max_age, §3.1.3.7 auth_time 확인, §12.2 refresh 후 iat/auth_time 의미를 대조했다. 적용 범위는 OIDC 재인증 계약이며 실제 IdP·MFA·Spring 로그인 흐름은 실행하지 않았다. 기존 SAML·키 회전 설명 전체를 재검증한 것은 아니므로 `verified`는 유지했다.
-
-부분 재검증: 2026-11-04. [OASIS SAML 2.0 Profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf)의 §4.1.4.2–5·§4.1.5와 [SAML Approved Errata 05](https://docs.oasis-open.org/security/saml/v2.0/errata05/os/saml-v2.0-errata05-os.html)의 관련 보정을 대조해 Audience의 SP 식별자와 Recipient의 ACS URL, SP 시작/unsolicited 요청 연계, POST 재사용 방지를 구분했다. 적용 범위는 SAML 2.0 Web Browser SSO bearer 프로파일이며 실제 IdP·OpenSAML·Spring 통합 시험은 하지 않았다. OIDC·설정 전체는 재검증하지 않아 `verified`는 유지했다.
+- [OIDC Core 1.0 errata set 2](https://openid.net/specs/openid-connect-core-1_0.html) — Core 1.0 errata 2의 code flow·ID token·iss/sub·UserInfo·pairwise sector·이메일 식별자·auth_time/acr/max_age·refresh 재인증 계약.
+- [RFC 9700: OAuth Security BCP](https://www.rfc-editor.org/rfc/rfc9700.html) — code·PKCE·redirect URI·CSRF.
+- [RFC 8252: OAuth for Native Apps](https://www.rfc-editor.org/rfc/rfc8252.html) — 외부 사용자 에이전트.
+- [OWASP SAML Security](https://cheatsheetseries.owasp.org/cheatsheets/SAML_Security_Cheat_Sheet.html) — 서명·Audience·Recipient·InResponseTo·재생 검증.
+- [Spring Security SAML2 Login](https://docs.spring.io/spring-security/reference/servlet/saml2/login/overview.html) — SP 자격증명과 메타데이터.
+- [OASIS SAML 2.0 Profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) — SAML 2.0 Web Browser SSO bearer 프로파일: Audience·Recipient·SP 시작/unsolicited 요청·POST 재사용 방지.
+- [SAML Approved Errata 05](https://docs.oasis-open.org/security/saml/v2.0/errata05/os/saml-v2.0-errata05-os.html) — SAML 2.0 Profiles 관련 Approved Errata 05 보정.

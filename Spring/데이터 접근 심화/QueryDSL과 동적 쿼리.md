@@ -1,8 +1,7 @@
 ---
 category: "Spring/데이터 접근 심화"
 tags: ["spring", "jpa", "querydsl", "동적쿼리"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # QueryDSL과 동적 쿼리
@@ -95,18 +94,13 @@ Q타입은 생성된 Java 소스이며 컴파일된 클래스는 쿼리 조립�
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. 원본 Querydsl JPA 5.1.0의 Jakarta 배포판·Hibernate 7.4.5.Final·H2 2.4.240에서 3건을 실행했다. 빈/null 조건 삭제가 3행 전체에 적용되는 경우, 필수 테넌트 조건이 다른 테넌트 2행을 보존하는 경우, 필수 범위 누락을 실행 전에 거부하는 경우를 확인했다. OpenFeign 포크와 APT 설정은 이번 시험 범위가 아니다.
+적용 범위: Spring Data JPA 4.1.1의 Querydsl 연동 및 원본 Querydsl 5·5.1.0 API. Hibernate 컬렉션 페이징은 7.1과 7.4를 구분.
 
-- [DefaultQueryMetadata 5.1.0 소스](https://raw.githubusercontent.com/querydsl/querydsl/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/DefaultQueryMetadata.java), [JPADeleteClause 5.1.0 소스](https://raw.githubusercontent.com/querydsl/querydsl/QUERYDSL_5_1_0/querydsl-jpa/src/main/java/com/querydsl/jpa/impl/JPADeleteClause.java) — null·빈 조건 제거와 삭제 쿼리 실행.
-
-검증일: 2026-09-08. 적용 범위: Spring Data JPA 4.1.1의 Querydsl 연동 및 원본 Querydsl 5 계열 API.
-
-- [Spring Data Querydsl 연동](https://docs.spring.io/spring-data/jpa/reference/repositories/core-extensions.html) — 원본과 OpenFeign 의존성 설정 및 best-effort 지원.
-- [BooleanExpression 소스](https://raw.githubusercontent.com/querydsl/querydsl/master/querydsl-core/src/main/java/com/querydsl/core/types/dsl/BooleanExpression.java) — and/or null 인자 처리.
+- [Spring Data Querydsl 연동](https://docs.spring.io/spring-data/jpa/reference/repositories/core-extensions.html) — 원본/OpenFeign 의존성 설정과 best-effort 지원.
+- [BooleanExpression 소스](https://raw.githubusercontent.com/querydsl/querydsl/master/querydsl-core/src/main/java/com/querydsl/core/types/dsl/BooleanExpression.java) — and/or의 null 인자 처리.
+- [DefaultQueryMetadata 5.1.0 소스](https://raw.githubusercontent.com/querydsl/querydsl/QUERYDSL_5_1_0/querydsl-core/src/main/java/com/querydsl/core/DefaultQueryMetadata.java) — null·빈 조건의 제거.
+- [JPADeleteClause 5.1.0 소스](https://raw.githubusercontent.com/querydsl/querydsl/QUERYDSL_5_1_0/querydsl-jpa/src/main/java/com/querydsl/jpa/impl/JPADeleteClause.java) — 조건으로 구성한 JPQL 삭제 실행.
 - [AbstractJPAQuery 소스](https://raw.githubusercontent.com/querydsl/querydsl/master/querydsl-jpa/src/main/java/com/querydsl/jpa/impl/AbstractJPAQuery.java) — 원본 fetchCount/fetchResults의 메모리 집계 제약.
-- [Hibernate ORM 7.1 User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — fetch join과 페이징.
-
-부분 재검증: 2026-09-23. 변경 범위는 Querydsl이 생성한 JPQL 이후 Hibernate의 컬렉션 페이징과 병렬 to-many fetch의 행 증폭이다. to-one·중첩 fetch와 구분해 공식 HQL 설명을 대조했다. Querydsl 배포판·APT 설정 전체를 다시 검증한 것은 아니다.
-
-- [Hibernate ORM 7.4 What's New](https://docs.hibernate.org/orm/7.4/whats-new/) — 지원 DB의 컬렉션 fetch 페이징 변경.
-- [Hibernate Query Language 7.4](https://docs.hibernate.org/orm/7.4/querylanguage/html_single/Hibernate_Query_Language.html) — Association fetching, 병렬 to-many와 중첩 fetch의 구분.
+- [Hibernate ORM 7.1 User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — 7.1의 fetch join과 페이징.
+- [Hibernate ORM 7.4 What's New](https://docs.hibernate.org/orm/7.4/whats-new/) — 7.4의 지원 DB별 컬렉션 fetch 페이징 변경.
+- [Hibernate Query Language 7.4](https://docs.hibernate.org/orm/7.4/querylanguage/html_single/Hibernate_Query_Language.html) — 병렬 to-many fetch의 행 증폭과 to-one·중첩 fetch 구분.

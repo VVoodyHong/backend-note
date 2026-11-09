@@ -1,8 +1,7 @@
 ---
 category: "Spring/인프라 연동"
 tags: ["spring", "spring-event", "applicationeventpublisher", "비동기", "transactionaleventlistener", "spring-modulith"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Spring Event와 비동기 처리
@@ -72,24 +71,17 @@ A. 컨텍스트는 refresh 초기에 발행된 일부 이벤트를 earlyApplicat
 
 ## 참고 자료
 
-부분 재검증: 2026-09-22. Spring Framework 7.0.9의 트랜잭션 이벤트 팩토리 소스와 팩토리 실행으로 BEFORE_COMMIT 예외, 직접 결합 가능한 전파 속성, Async가 해당 검사를 우회하지 않는 것을 확인했다. Boot 4.1.1의 기본 실행기 선택과 가상 스레드 활성화 조건도 구분했다.
-
-- [RestrictedTransactionalEventListenerFactory 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/annotation/RestrictedTransactionalEventListenerFactory.java) — 리스너 메서드·타입의 Transactional 검사.
-- [Boot Task Execution and Scheduling](https://docs.spring.io/spring-boot/reference/features/task-execution-and-scheduling.html) — 자동 구성 조건·실행기 선택·가상 스레드.
-- [EnableAsync 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/annotation/EnableAsync.html) — Framework 기본 실행기 탐색과 AsyncConfigurer.
-- [ApplicationEventPublisher 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/context/ApplicationEventPublisher.java) — void 발행 계약과 실행·완료 경계.
-
-검증일: 2026-09-08. 적용 범위: Spring Framework 7.0; 6.1 이후 리액티브 트랜잭션 이벤트 지원.
+적용 범위: Spring Framework 7.0·7.0.9, Boot 4.1.1. 리액티브 트랜잭션 이벤트는 Framework 6.1 이후 지원.
 
 - [Transaction-bound Events](https://docs.spring.io/spring-framework/reference/data-access/transaction/event.html) — phase·fallback·리액티브 컨텍스트.
+- [RestrictedTransactionalEventListenerFactory 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/annotation/RestrictedTransactionalEventListenerFactory.java) — 리스너 메서드·타입의 Transactional 검사와 허용 전파 속성.
+- [ApplicationEventPublisher 7.0.9](https://raw.githubusercontent.com/spring-projects/spring-framework/v7.0.9/spring-context/src/main/java/org/springframework/context/ApplicationEventPublisher.java) — void 발행 계약과 실행·완료 경계.
 - [SimpleApplicationEventMulticaster API](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/SimpleApplicationEventMulticaster.html) — 동기 호출과 오류 정책.
 - [AbstractApplicationContext 소스](https://raw.githubusercontent.com/spring-projects/spring-framework/7.0.x/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java) — 초기 이벤트 보류와 리스너 등록.
-- [Spring Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — Async void/Future 예외.
+- [Spring Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — Async void/Future 예외와 실행기 정책.
+- [EnableAsync 7.0.9](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/scheduling/annotation/EnableAsync.html) — Framework 기본 실행기 탐색과 AsyncConfigurer.
+- [Boot Task Execution and Scheduling](https://docs.spring.io/spring-boot/reference/features/task-execution-and-scheduling.html) — Boot 자동 구성 조건·실행기 선택·가상 스레드.
 - [Spring Modulith events](https://docs.spring.io/spring-modulith/reference/events.html) — 이벤트 발행 기록과 재전송.
-
-부분 재검증: 2026-10-04. Framework 7.0.9·DataSourceTransactionManager·H2 2.4.240에서 BEFORE_COMMIT 리스너 예외의 전파·DB 롤백, AFTER_COMMIT 리스너 예외의 로그 기록·원본 커밋 유지·다음 리스너 실행을 JUnit 2건으로 확인했다. 리액티브·비동기·분산 이벤트의 예외 계약으로 일반화하지 않는다.
-
-추가 실행 확인: 같은 Framework·DB 조합에서 `@Async` 실행기의 워커 여유/포화 2건을 비교했다. 1개 워커·대기 큐 0·CallerRunsPolicy 구성에서 미커밋 행은 워커에서 0개, 호출자에서 1개로 보였고 트랜잭션 활성 여부도 달랐다. 일반 Async 호출 시험이며 트랜잭션 이벤트의 모든 단계 조합을 실행한 것은 아니다.
-
 - [TransactionPhase 7.0.9 API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/transaction/event/TransactionPhase.html) — AFTER_COMMIT의 afterCompletion 실행 단계.
-- [TransactionalApplicationListenerSynchronization 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/event/TransactionalApplicationListenerSynchronization.java) / [TransactionSynchronizationUtils 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/support/TransactionSynchronizationUtils.java) — 명령형 리스너 호출과 예외 전파·기록의 차이.
+- [TransactionalApplicationListenerSynchronization 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/event/TransactionalApplicationListenerSynchronization.java) — 명령형 트랜잭션 리스너의 단계별 호출.
+- [TransactionSynchronizationUtils 7.0.9](https://github.com/spring-projects/spring-framework/blob/v7.0.9/spring-tx/src/main/java/org/springframework/transaction/support/TransactionSynchronizationUtils.java) — 트랜잭션 동기화 콜백 예외의 전파·기록 경계.

@@ -1,8 +1,7 @@
 ---
 category: "네트워크/TCP와 UDP"
 tags: ["network", "tcp", "재전송", "ack", "sack", "신뢰성"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # TCP 신뢰성 보장 메커니즘
@@ -88,10 +87,10 @@ RTO 만료까지 기다리면 복구가 늦어질 수 있다. 빠른 재전송�
 
 ## 참고 자료
 
-- [RFC 9293: TCP](https://www.rfc-editor.org/rfc/rfc9293.html) — 바이트 순서·ACK·checksum·TCP 상태. 확인: 2026-09-08.
-- [RFC 8985: RACK-TLP](https://www.rfc-editor.org/rfc/rfc8985.html) — tail loss·시간 기반 손실 탐지. 확인: 2026-09-08.
-- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — tcp_sack·tcp_retries2 운영 의미. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [RFC 9293 §3.7](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.7)의 TCP 세그먼트·애플리케이션 읽기/쓰기 경계 비보장을 확인했다. 프레임 상한·부분 수신·완성 기한은 그 계약을 적용한 디코더 설계 기준이다. 기존 OS 기본값과 혼잡·재전송 확장 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-11-04. [RFC 5681 §3.2](https://www.rfc-editor.org/rfc/rfc5681.html#section-3.2)의 중복 ACK·재정렬·유실 추정과 [RFC 8985 §1.1–1.2](https://www.rfc-editor.org/rfc/rfc8985.html#section-1.1)의 tail loss·RTO·불필요한 fast recovery를 대조했다. 빠른 재전송 Q&A를 같은 노트의 재정렬 설명과 맞췄다. [RFC 5682 §1–2](https://www.rfc-editor.org/rfc/rfc5682.html#section-1)의 F-RTO도 불필요한 timeout 탐지와 혼잡 원인 판별을 구분했다. 적용 범위는 명세상 손실 탐지 원리이며 실제 패킷 손실·OS 구현별 재전송 시험과 기존 기본값 전체는 재검증하지 않아 `verified`를 유지했다.
+- [RFC 9293: TCP](https://www.rfc-editor.org/rfc/rfc9293.html) — 바이트 순서·ACK·checksum·TCP 상태.
+- [RFC 8985: RACK-TLP](https://www.rfc-editor.org/rfc/rfc8985.html) — tail loss·시간 기반 손실 탐지.
+- [Linux IP sysctl](https://docs.kernel.org/networking/ip-sysctl.html) — tcp_sack·tcp_retries2 운영 의미.
+- [RFC 9293 §3.7](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.7) — TCP 세그먼트와 애플리케이션 읽기·쓰기 경계의 비일치.
+- [RFC 5681 §3.2](https://www.rfc-editor.org/rfc/rfc5681.html#section-3.2) — 중복 ACK·재정렬·유실 추정.
+- [RFC 8985 §1.1–1.2](https://www.rfc-editor.org/rfc/rfc8985.html#section-1.1) — tail loss·RTO·불필요한 fast recovery.
+- [RFC 5682 §1–2](https://www.rfc-editor.org/rfc/rfc5682.html#section-1) — F-RTO의 불필요한 timeout 탐지; 혼잡 원인 판별과 구분.

@@ -2,8 +2,7 @@
 category: "메시지 큐/메시지 큐 운영"
 tags: ["messaging", "dead-letter-queue", "error-handling", "kafka", "rabbitmq", "sqs"]
 aliases: ["DLQ", "데드 레터 큐"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Dead Letter Queue
@@ -61,7 +60,7 @@ public void handleDlt(ConsumerRecord<?, ?> record, @Header(KafkaHeaders.EXCEPTIO
 
 역직렬화 자체가 실패하는 메시지(poison message)는 리스너 메서드까지 도달하지 못하므로, `ErrorHandlingDeserializer`와 `DefaultErrorHandler`의 조합으로 역직렬화 단계 실패도 DLT로 보내도록 별도 처리해야 한다. 위 예제의 DLT 처리기는 실패 원문 byte[]도 받을 수 있는 레코드 형식을 쓴다. DLT 발행 Serializer도 정상 객체와 원문 byte[]를 모두 지원해야 하며 non-blocking retry의 원본 순서 변경·배치/컨테이너 트랜잭션 제약을 확인한다.
 
-**AWS SQS (redrive policy)**: 큐 속성에 `RedrivePolicy`로 `deadLetterTargetArn`과 `maxReceiveCount`(확인일 SetQueueAttributes API 문서는 기본값 10을 명시한다. 운영 정책에서는 원하는 값을 명시한다. 값이 낮을수록(예: 1) 일시적 오류에도 바로 DLQ로 이동하므로 충분한 재시도를 허용할 만큼 여유 있게 설정하는 것이 권장된다)를 지정한다. 메시지의 수신 횟수(`ApproximateReceiveCount`)가 `maxReceiveCount`를 초과하면 SQS가 자동으로 DLQ로 이동시킨다. Standard 큐의 DLQ는 Standard 큐여야 하고 FIFO 큐의 DLQ는 FIFO 큐여야 한다. 별도로 `RedriveAllowPolicy`를 설정해 어떤 소스 큐가 이 DLQ를 사용할 수 있는지 제한할 수 있다(`allowAll`/`denyAll`/`byQueue`). DLQ에 쌓인 메시지를 원본 큐로 되돌리는 것은 `StartMessageMoveTask` API(콘솔의 DLQ 재구동 기능)로 지원한다. 이동 속도는 `MaxNumberOfMessagesPerSecond`로 초당 최대 500건까지 제한할 수 있고 값을 비우면 SQS가 백로그 크기에 맞춰 속도를 자동 조절한다. 단, 하나의 큐(DLQ)당 동시에 활성화할 수 있는 이동 작업은 1개뿐이며, 진행 상태는 `ListMessageMoveTasks`로 조회하고 `CancelMessageMoveTask`로 중단할 수 있다.
+**AWS SQS (redrive policy)**: 큐 속성에 `RedrivePolicy`로 `deadLetterTargetArn`과 `maxReceiveCount`(SetQueueAttributes API 문서는 기본값 10을 명시한다. 운영 정책에서는 원하는 값을 명시한다. 값이 낮을수록(예: 1) 일시적 오류에도 바로 DLQ로 이동하므로 충분한 재시도를 허용할 만큼 여유 있게 설정하는 것이 권장된다)를 지정한다. 메시지의 수신 횟수(`ApproximateReceiveCount`)가 `maxReceiveCount`를 초과하면 SQS가 자동으로 DLQ로 이동시킨다. Standard 큐의 DLQ는 Standard 큐여야 하고 FIFO 큐의 DLQ는 FIFO 큐여야 한다. 별도로 `RedriveAllowPolicy`를 설정해 어떤 소스 큐가 이 DLQ를 사용할 수 있는지 제한할 수 있다(`allowAll`/`denyAll`/`byQueue`). DLQ에 쌓인 메시지를 원본 큐로 되돌리는 것은 `StartMessageMoveTask` API(콘솔의 DLQ 재구동 기능)로 지원한다. 이동 속도는 `MaxNumberOfMessagesPerSecond`로 초당 최대 500건까지 제한할 수 있고 값을 비우면 SQS가 백로그 크기에 맞춰 속도를 자동 조절한다. 단, 하나의 큐(DLQ)당 동시에 활성화할 수 있는 이동 작업은 1개뿐이며, 진행 상태는 `ListMessageMoveTasks`로 조회하고 `CancelMessageMoveTask`로 중단할 수 있다.
 
 ## 실무 관점
 
@@ -77,7 +76,7 @@ public void handleDlt(ConsumerRecord<?, ?> record, @Header(KafkaHeaders.EXCEPTIO
 ## 심화 Q&A
 
 ### Q. SQS redrive 후 MessageId로 중복을 제거해도 되는가?
-A. 2026-10-04 확인한 SQS 문서에 따르면 DLQ 재구동 메시지는 새 메시지로 취급되어 `messageID`와 `enqueueTime`이 새로 부여되고 보존 기간도 다시 시작한다. 따라서 최초 처리 때 저장한 SQS MessageId만으로는 재구동된 동일 업무를 식별하지 못한다. 본문 등에 안정적인 업무 이벤트 ID를 남기고 재구동에도 유지한다. 이는 원본 큐에서 DLQ로 처음 이동할 때의 Standard/FIFO 보존 시간 규칙과 다른 단계다.
+A. SQS의 DLQ 재구동 메시지는 새 메시지로 취급되어 `messageID`와 `enqueueTime`이 새로 부여되고 보존 기간도 다시 시작한다. 따라서 최초 처리 때 저장한 SQS MessageId만으로는 재구동된 동일 업무를 식별하지 못한다. 본문 등에 안정적인 업무 이벤트 ID를 남기고 재구동에도 유지한다. 이는 원본 큐에서 DLQ로 처음 이동할 때의 Standard/FIFO 보존 시간 규칙과 다른 단계다.
 
 기본 redrive 작업은 이동 중 메시지 필터링·수정을 지원하지 않는다. 특정 스키마나 실패 원인만 골라 보정해야 한다면 별도 재처리 절차를 설계해야 한다. `CancelMessageMoveTask`도 이미 목적지로 이동한 메시지를 되돌리지 않으므로 취소 이후 목적지의 처리와 재실패를 계속 관측한다. 재구동 성공은 메시지 이동의 성공이며 업무 처리 성공은 소비자 결과로 따로 확인한다.
 
@@ -110,24 +109,13 @@ DLQ도 결국 큐/토픽이므로 용량, 보존 기간, 파티션/샤드 한계
 
 ## 참고 자료
 
-부분 재확인: 2026-09-22. RabbitMQ 4.3 quorum queue의 지연 재시도 설정, nack·reject별 카운터와 delivery-limit의 관계를 공식 Quorum Queues 문서로 확인했다. Spring Kafka·SQS 서술 전체의 재검증은 아니므로 기존 `verified`를 유지했다.
-
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
-- [Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — RabbitMQ 4.3, 트리거·x-death·전송 유실 범위.
+- [Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — RabbitMQ 4.3: DLX 트리거·x-death·전송 유실 범위. 4.4: 큐 전체 만료 시 잔여 메시지의 dead-letter 제외.
 - [Quorum Queues](https://www.rabbitmq.com/docs/quorum-queues) — RabbitMQ 4.3, delivery count·기본 한도·at-least-once DLX.
 - [Non-Blocking Retries](https://docs.spring.io/spring-kafka/reference/retrytopic.html) — Spring Kafka 4.1, DLT 패턴·제약.
 - [Handling Exceptions](https://docs.spring.io/spring-kafka/reference/kafka/annotation-error-handling.html) — Spring Kafka 4.1, 역직렬화 실패 원문·DLT Serializer.
-- [SQS SetQueueAttributes](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html) — 확인일 API, redrive·maxReceiveCount 기본 10·큐 타입.
-- [SQS StartMessageMoveTask](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_StartMessageMoveTask.html) — 확인일 API, 이동 속도 500·동시 작업 1.
-- [SQS Dead Letter Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — 확인일 서비스 문서, Standard/FIFO 보존 시간.
-- [SQS Visibility Timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html) — 확인일 서비스 문서, 재노출·12시간 제한.
-
-부분 재검증: 2026-10-04. SQS의 DLQ 재구동 시 식별자·보존 시간 초기화, 필터링·수정 제한, 취소 범위를 확인했다. 업무 이벤트 ID 보존은 해당 계약에서 도출한 멱등성 설계다. AWS API 호출·실제 메시지 이동은 수행하지 않았으며 RabbitMQ·Spring Kafka 전체의 `verified`는 유지한다.
-
-- [SQS Configuring Dead-Letter Queue Redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html) — 2026-10-04 서비스 문서: 새 messageID/enqueueTime, 보존 기간 재시작, 필터링·수정 불가, 이미 이동한 메시지의 취소 제외.
-
-부분 재검증: 2026-11-04. 확인일 RabbitMQ 4.4의 메시지 TTL과 큐 만료, quorum queue 선두에서의 dead-letter 시점을 공식 문서로 확인했다. 혼합 TTL retry queue의 지연은 이 제거 조건에서 도출했다. 실제 만료·메시지 이동은 실행하지 않았고 RabbitMQ 4.3의 재시도 설정·SQS·Spring Kafka의 기존 `verified`는 유지한다.
-
+- [SQS SetQueueAttributes](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html) — 2026-09-08 기준: redrive·maxReceiveCount 기본 10·큐 타입.
+- [SQS StartMessageMoveTask](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_StartMessageMoveTask.html) — 2026-09-08 기준: 이동 속도 500·동시 작업 1.
+- [SQS Dead Letter Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — 2026-09-08 기준: Standard/FIFO 보존 시간.
+- [SQS Visibility Timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html) — 2026-09-08 기준: 재노출·12시간 제한.
+- [SQS Configuring Dead-Letter Queue Redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html) — 2026-10-04 기준: 새 messageID/enqueueTime, 보존 기간 재시작, 필터링·수정 불가, 이미 이동한 메시지의 취소 제외.
 - [RabbitMQ 4.4 Time-To-Live and Expiration](https://www.rabbitmq.com/docs/ttl) — x-message-ttl/expiration과 x-expires/expires의 차이, quorum queue의 선두 제거.
-- [RabbitMQ 4.4 Dead Letter Exchanges](https://www.rabbitmq.com/docs/dlx) — 큐 전체 만료 시 잔여 메시지를 dead-letter하지 않는 경계.

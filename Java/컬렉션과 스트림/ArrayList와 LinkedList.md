@@ -1,8 +1,7 @@
 ---
 category: "Java/컬렉션과 스트림"
 tags: ["java", "arraylist", "linkedlist", "자료구조", "jcf"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ArrayList와 LinkedList
@@ -80,17 +79,9 @@ A. OpenJDK 25 clear는 요소 참조를 null로 지우고 size를 0으로 만들
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
-- [ArrayList API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html) — Java SE 25 분할 상환 삽입·fail-fast.
+- [ArrayList API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html) — Java SE 25 분할 상환 삽입·fail-fast·subList 뷰와 구조 변경.
 - [LinkedList API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html) — Java SE 25 양방향 탐색·Deque.
 - [Collections API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html) — Java SE 25 sort 위임·binarySearch 비용.
 - [List API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html) — Java SE 25 기본 sort 구현.
-- [OpenJDK 25 ArrayList 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/ArrayList.java) — 지연 할당·grow·직접 배열 정렬.
+- [OpenJDK 25 ArrayList 소스](https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/java.base/share/classes/java/util/ArrayList.java) — 지연 할당·grow·직접 배열 정렬과 SubList.root·clear·trimToSize.
 - [ArrayDeque API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html) — Java SE 25 배열 기반 Deque와 성능 비교의 조건.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 ArrayList.subList의 뷰 계약과 OpenJDK jdk-25-ga SubList.root·clear·trimToSize 구현을 확인했다. 기존 전체 검증일은 유지한다.
-
-실행 확인: 2026-09-23, OpenJDK 25.0.2+10-69에서 subList의 원본 연결·독립 복사·원본 구조 변경 감지을 재현했다. 구현 관측은 해당 버전 범위로 한정한다.

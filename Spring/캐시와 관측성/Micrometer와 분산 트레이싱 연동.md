@@ -1,8 +1,7 @@
 ---
 category: "Spring/캐시와 관측성"
 tags: ["spring", "spring-boot", "micrometer", "observability", "tracing", "opentelemetry"]
-updated: 2026-11-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Micrometer와 분산 트레이싱 연동
@@ -134,25 +133,22 @@ Sleuth의 마지막 마이너 계열은 3.1이며 Boot 3을 지원하지 않는�
 
 ## 참고 자료
 
-부분 재검증: 2026-10-04. Micrometer 1.17.1·SimpleMeterRegistry·MockClock으로 Supplier의 Future 반환 시 측정 종료, 같은 sample의 중복 stop, 시간 창 만료 시 max만 0이 되고 누적 count/sum은 유지되는 경우를 3건 실행했다. 백분위 집계 제약은 공식 문서로 확인했으며 Prometheus exporter·실제 서버 수집은 이번 시험에 포함하지 않았다.
-
-- [Micrometer Timers](https://docs.micrometer.io/micrometer/reference/concepts/timers.html), [Histograms and Percentiles](https://docs.micrometer.io/micrometer/reference/concepts/histogram-quantiles.html) — 1.17.1, 시간 창과 백분위 집계 범위.
-- [AbstractTimer 1.17.1 소스](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/AbstractTimer.java), [Timer.Sample 1.17.1 소스](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/Timer.java) — Supplier 실행 경계와 stop 호출마다 기록하는 동작.
-
-검증일: 2026-09-08. 적용 범위: Spring Boot 3.5와 4.1 설정 차이, Micrometer Observation/Tracing.
+적용 범위: Boot 3.5와 4.1의 설정 차이, Micrometer Observation/Tracing. 고정 구현은 Boot 4.1.1·Micrometer 1.17.1·Context Propagation 1.2.1 기준.
 
 - [Micrometer Observation Components](https://docs.micrometer.io/micrometer/reference/observation/components.html) — 핸들러·카디널리티·ObservedAspect.
+- [Micrometer Timers](https://docs.micrometer.io/micrometer/reference/concepts/timers.html) — 시간 창과 Timer 집계.
+- [Histograms and Percentiles](https://docs.micrometer.io/micrometer/reference/concepts/histogram-quantiles.html) — 히스토그램·백분위 집계 범위.
+- [AbstractTimer 1.17.1 소스](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/AbstractTimer.java) — Supplier 반환까지의 측정 경계.
+- [Timer.Sample 1.17.1 소스](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/Timer.java) — stop 호출마다 기록하는 동작.
+- [Micrometer Gauges](https://docs.micrometer.io/micrometer/reference/concepts/gauges.html) — 관측 객체 수명·순간값·같은 meter 재등록.
+- [DefaultGauge 1.17.1](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/internal/DefaultGauge.java) — 약한 참조와 대상 소멸 시 값.
+- [Context Propagation Purpose](https://docs.micrometer.io/context-propagation/reference/purpose.html) — accessor·캡처·scope의 역할.
+- [Examples](https://docs.micrometer.io/context-propagation/reference/usage.html) — ContextSnapshot 캡처와 scope 복원.
 - [Boot 4.1 Tracing](https://docs.spring.io/spring-boot/reference/actuator/tracing.html) — 자동 구성 builder·sampling·OTLP.
 - [Boot 3.5 Tracing](https://docs.spring.io/spring-boot/3.5/reference/actuator/tracing.html) — 3.5 OTLP 설정 키.
 - [Boot Observability](https://docs.spring.io/spring-boot/reference/actuator/observability.html) — 애너테이션 계측·컨텍스트 전파.
-- [OpenTelemetry Sampling](https://opentelemetry.io/docs/concepts/sampling/) — head와 tail 결정 시점·운영 비용.
+- [OpenTelemetry Sampling](https://opentelemetry.io/docs/concepts/sampling/) — head/tail 결정 시점과 운영 비용.
 - [B3 Propagation](https://github.com/openzipkin/b3-propagation) — 64/128비트 trace ID와 전파 형식.
-- [Kafka Observation](https://docs.spring.io/spring-kafka/reference/kafka/micrometer.html) — 관측 활성화 및 배치 제약.
-
-부분 재검증: 2026-09-23. Boot 4.1.1 관리 Micrometer 1.17.1과 Context Propagation 1.2.1에서 Gauge의 순간값·같은 meter 재등록·snapshot 캡처와 scope 복원 3건을 실행했다. 약한 참조는 고정 버전 소스로 확인했으며 실제 GC 시점이나 exporter 전송은 이 시험에서 검증하지 않았다.
-
-- [Micrometer Gauges](https://docs.micrometer.io/micrometer/reference/concepts/gauges.html) — 관측 객체 수명·순간값·재등록 계약.
-- [DefaultGauge 1.17.1](https://raw.githubusercontent.com/micrometer-metrics/micrometer/v1.17.1/micrometer-core/src/main/java/io/micrometer/core/instrument/internal/DefaultGauge.java) — 약한 참조와 대상 소멸 시 값.
-- [Context Propagation Purpose](https://docs.micrometer.io/context-propagation/reference/purpose.html) 및 [Examples](https://docs.micrometer.io/context-propagation/reference/usage.html) — 1.2.1, accessor·캡처·scope 복원.
-
-부분 재검증: 2026-11-04. [Boot 4.1.1 Tracing 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/tracing.adoc)와 [OpenTelemetryTracingAutoConfiguration 4.1.1](https://github.com/spring-projects/spring-boot/blob/v4.1.1/module/spring-boot-micrometer-tracing-opentelemetry/src/main/java/org/springframework/boot/micrometer/tracing/opentelemetry/autoconfigure/OpenTelemetryTracingAutoConfiguration.java)의 sampler 구성을 대조했다. 기본 parent-based 결정과 로컬 root 확률만 확인했으며 실제 HTTP 전파·exporter·사용자 정의 Sampler 빈은 실행 검증하지 않았다. 기존 메트릭·브리지 서술의 `verified`는 유지한다.
+- [Kafka Observation](https://docs.spring.io/spring-kafka/reference/kafka/micrometer.html) — Kafka 관측 활성화와 배치 제약.
+- [Boot 4.1.1 Tracing 고정 문서](https://github.com/spring-projects/spring-boot/blob/v4.1.1/documentation/spring-boot-docs/src/docs/antora/modules/reference/pages/actuator/tracing.adoc) — 부모 기반 샘플링과 로컬 루트의 확률 설정.
+- [OpenTelemetryTracingAutoConfiguration 4.1.1](https://github.com/spring-projects/spring-boot/blob/v4.1.1/module/spring-boot-micrometer-tracing-opentelemetry/src/main/java/org/springframework/boot/micrometer/tracing/opentelemetry/autoconfigure/OpenTelemetryTracingAutoConfiguration.java) — 기본 parent-based sampler 구성.

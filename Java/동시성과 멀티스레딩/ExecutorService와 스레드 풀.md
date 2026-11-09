@@ -2,8 +2,7 @@
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "executorservice", "threadpool", "concurrency", "spring"]
 aliases: ["ExecutorService", "Thread Pool"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ExecutorService와 스레드 풀
@@ -100,20 +99,10 @@ Java SE 25의 `ExecutorService.close()`는 기다리던 스레드가 인터럽�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [Java SE 25 ThreadPoolExecutor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html) — 스레드 생성 순서·큐·거부 정책.
 - [Java SE 25 ExecutorService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ExecutorService.html) — shutdownNow 비강제·Java 19 close.
 - [Java SE 25 Executors](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Executors.html) — 팩토리 구성·Java 21 가상 스레드.
-
-부분 재검증: 2026-09-22. 아래 범위를 추가 확인했으며, 그 밖의 본문은 기존 검증 날짜를 유지한다.
-
-- [Java SE 27 ThreadPoolExecutor](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html) — 큐와 풀 크기의 상호작용. 하류 자원 병목 시 대기 위치에 관한 실무 설명을 바로잡았다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전·범위만 확인했으며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 ExecutorService.close](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ExecutorService.html#close()) — 인터럽트 후 종료까지 계속 대기·상태 복원. 자기 실행기의 종료를 기다리는 교착 위험은 이 계약에서 도출했다.
+- [Java SE 27 ThreadPoolExecutor](https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html) — 큐와 풀 크기의 상호작용.
+- [Java SE 25 ExecutorService.close](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ExecutorService.html#close()) — 인터럽트 후 종료까지 계속 대기·상태 복원.
 - [Java SE 25 ThreadPoolExecutor.afterExecute](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html#afterExecute(java.lang.Runnable,java.lang.Throwable)) — 일반 Runnable과 FutureTask 실패 관측 경계.
 - [Java SE 25 ScheduledThreadPoolExecutor](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ScheduledThreadPoolExecutor.html) — 주기 작업 예외 후 억제, 취소된 작업의 큐 보존, remove-on-cancel 기본값.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189에서 인터럽트된 close의 대기 지속·상태 복원, 주기 작업 예외와 취소 작업 큐 제거 정책. 실행 검사는 위 부분 재검증 범위에 한한다.

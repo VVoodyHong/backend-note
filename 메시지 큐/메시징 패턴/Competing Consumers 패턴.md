@@ -1,8 +1,7 @@
 ---
 category: "메시지 큐/메시징 패턴"
 tags: ["messaging", "메시지큐", "competingconsumers", "rabbitmq", "kafka"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # Competing Consumers 패턴
@@ -86,8 +85,6 @@ ack를 아직 보내지 않았다면 브로커는 해당 연결이 끊기는 시
 
 ## 참고 자료
 
-확인일: 2026-09-08. 아래 적용 범위에서 본문·Q&A·예제를 재검증했다. 예제는 문서와 대조했으며 별도 실행 검증은 하지 않았다.
-
 - [RabbitMQ Consumers](https://www.rabbitmq.com/docs/consumers) — RabbitMQ 4.3, 경쟁 소비·prefetch·생명주기.
 - [RabbitMQ ACK and Confirms](https://www.rabbitmq.com/docs/confirms) — RabbitMQ 4.3, ACK·prefetch 상한.
 - [Quorum Queues](https://www.rabbitmq.com/docs/quorum-queues) — RabbitMQ 4.3, consumer-timeout·delivery-limit.
@@ -95,7 +92,4 @@ ack를 아직 보내지 않았다면 브로커는 해당 연결이 끊기는 시
 - [Spring AMQP Listener Concurrency](https://docs.spring.io/spring-amqp/reference/amqp/listener-concurrency.html) — Spring AMQP 4.1, min/max 소비자 설정.
 - [Spring AMQP Asynchronous Consumer](https://docs.spring.io/spring-amqp/reference/amqp/receiving-messages/async-consumer.html) — Spring AMQP 2.0+ prefetch 기본 250.
 - [Competing Consumers Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/competing-consumers) — 패턴 범위·처리량·순서·멱등성.
-
-부분 재검증: 2026-10-04. RabbitMQ 4.3 소비 취소의 신규 전달·in-flight·unacked 처리 범위를 확인했다. 종료 순서와 이전 작업의 늦은 커밋 사례는 브로커 취소가 애플리케이션 업무 취소와 다르다는 계약에서 도출했다. RabbitMQ·Spring AMQP 종료를 실행하지 않았고 기존 `verified`는 유지한다.
-
 - [RabbitMQ 4.3 Consumers: Cancelling a Consumer](https://www.rabbitmq.com/docs/consumers#cancelling) — basic.cancel의 전달 중단과 미확인 메시지 유지, 채널 종료를 통한 재큐잉.

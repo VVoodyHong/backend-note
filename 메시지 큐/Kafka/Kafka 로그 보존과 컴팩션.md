@@ -2,8 +2,7 @@
 category: "메시지 큐/Kafka"
 tags: ["messaging", "kafka", "retention", "log-compaction", "운영"]
 aliases: ["Kafka Retention", "Log Compaction"]
-updated: 2026-11-04
-verified: 2026-09-22
+updated: 2026-11-09
 ---
 
 # Kafka 로그 보존과 컴팩션
@@ -97,17 +96,9 @@ A. 아니다. 정리 대상 선정과 실제 cleaner 실행·파일 교체는 �
 
 ## 참고 자료
 
-확인일: 2026-09-22. Kafka 4.3 보존·컴팩션 정책과 설정 기본값, 소비 위치 초기화 동작을 공식 문서와 대조했다. 예시는 개념 설명이며 브로커에서 실행하지 않았다.
-
-- [Topic Configs](https://kafka.apache.org/43/configuration/topic-configs/) — cleanup·retention·tombstone·정리 지연 설정과 기본값.
-- [Design: Log Compaction](https://kafka.apache.org/43/design/design/) — 파티션 내 키 기준 정리, 오프셋 유지, 표식 유실·cleaner 완료 시한의 한계.
-- [Consumer Configs](https://kafka.apache.org/43/configuration/consumer-configs/) — 유효한 시작 위치가 없을 때의 `latest`·`earliest`·`none`.
-- [Monitoring](https://kafka.apache.org/43/operations/monitoring/) — 파티션 크기와 전체·로컬 보존 크기 비율.
-
-부분 재검증: 2026-10-04. Kafka 4.3 cleaner가 키의 마지막 오프셋과 이후 출현을 기준으로 정리하는 동작을 확인했다. v8→삭제→v7 사례는 이 계약에서 도출한 재처리 위험이며 실제 브로커에서 실행하지 않았다. 설정 기본값 전체의 기존 `verified`는 유지한다.
-
+- [Topic Configs](https://kafka.apache.org/43/configuration/topic-configs/) — Kafka 4.3: cleanup·retention·tombstone·정리 지연 설정과 기본값.
+- [Design: Log Compaction](https://kafka.apache.org/43/design/design/) — Kafka 4.3: 파티션 내 키 기준 정리, 오프셋 유지, 표식 유실·cleaner 완료 시한의 한계.
+- [Consumer Configs](https://kafka.apache.org/43/configuration/consumer-configs/) — Kafka 4.3: 유효한 시작 위치가 없을 때의 `latest`·`earliest`·`none`.
+- [Monitoring](https://kafka.apache.org/43/operations/monitoring/) — Kafka 4.3: 파티션 크기와 전체·로컬 보존 크기 비율.
 - [Kafka 4.3 Log Compaction Details](https://kafka.apache.org/43/design/design/#log-compaction-details) — 키별 마지막 오프셋 요약과 뒤에 같은 키가 있는 이전 레코드 제거.
-
-부분 재검증: 2026-11-04. Kafka 4.3.1 고정 소스에서 compactedTopic의 record.hasKey 검사와 INVALID_RECORD 반환을 확인했다. 정책 전환 전 생산자 점검·고정 키 위험은 이 검사와 키별 정리 계약을 적용한 운영 판단이다. 실제 토픽 변경·브로커 발행 시험은 하지 않았으며 설정 기본값 전체의 기존 `verified`는 유지한다.
-
 - [Kafka 4.3.1 LogValidator.validateKey](https://github.com/apache/kafka/blob/4.3.1/storage/src/main/java/org/apache/kafka/storage/internals/log/LogValidator.java) — 컴팩션 토픽의 키 없는 레코드 거부. payload 내부 ID는 검사 대상이 아니다.

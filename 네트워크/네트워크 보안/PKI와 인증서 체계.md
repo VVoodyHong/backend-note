@@ -1,8 +1,7 @@
 ---
 category: "네트워크/네트워크 보안"
 tags: ["network", "pki", "인증서", "tls", "암호화"]
-updated: 2026-10-22
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # PKI와 인증서 체계
@@ -103,14 +102,12 @@ ECDSA는 동일 보안 강도에서 키와 서명 크기가 작아 핸드셰이�
 
 ## 참고 자료
 
-- [RFC 5280: X.509 PKI](https://www.rfc-editor.org/rfc/rfc5280.html) — 경로 검증·확장·CRL. 확인: 2026-09-08.
-- [RFC 8555: ACME](https://www.rfc-editor.org/rfc/rfc8555.html) — newOrder·authorization·finalize CSR 순서. 확인: 2026-09-08.
-- [CA/Browser Forum TLS Baseline Requirements](https://cabforum.org/working-groups/server/baseline-requirements/requirements/) — §6.3.2 공개 신뢰 subscriber 인증서 유효기간. 확인: 2026-09-08.
-- [Let’s Encrypt Ending OCSP Support](https://letsencrypt.org/2024/12/05/ending-ocsp/) — 2025 OCSP 종료·CRL 사용. 확인: 2026-09-08.
-- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — signature_algorithms·인증서 체인. 확인: 2026-09-08.
-
-부분 재확인: 2026-09-23. [RFC 9525 §1.3·§6](https://www.rfc-editor.org/rfc/rfc9525.html)의 SAN·CN 배제·와일드카드·IP 식별자 검증을 확인했다. TLS 서버 이름 검증 범위이며 클라이언트 인증서의 업무 신원 매핑 규칙은 별도다. 기존 CA 정책·발급/폐기·라이브러리 구현 전체는 재검증하지 않아 `verified`는 유지한다.
-
-부분 재검증: 2026-10-04. [Java SE 25 JSSE Guide](https://docs.oracle.com/en/java/javase/25/security/java-secure-socket-extension-jsse-reference-guide.html)와 [SSLParameters endpoint identification](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/net/ssl/SSLParameters.html#setEndpointIdentificationAlgorithm(java.lang.String))의 raw TLS 신원 검증 책임을 확인했다. JDK 25.0.4+7·SunJSSE 25의 loopback TLS 1.3에서 임시 CA가 서명한 DNS SAN localhost 인증서를 사용했다. 기본 SSLSocket은 다른 이름도 연결됐고 HTTPS 이름 검증을 켜면 거부했으며, HttpClient 기본 경로는 localhost를 허용하고 IP SAN이 없는 127.0.0.1 접속을 거부했다. SSLEngine·공개 CA·폐기 확인·프록시·다른 TLS 구현은 실행하지 않았고 기존 `verified`는 유지한다.
-
-부분 재검증: 2026-10-22. [RFC 6960 §2.4·§2.5·§3.2](https://www.rfc-editor.org/rfc/rfc6960.html)에서 OCSP 응답 사전 생성, thisUpdate·nextUpdate·producedAt 의미와 수락 조건을 확인했다. 적용 범위는 OCSP 명세이며 특정 브라우저·JVM의 폐기 확인 기본 정책은 재검증하지 않았다. 실제 응답 만료·누락 시험 및 CA 유효기간 정책 전체를 확인한 것은 아니므로 `verified`를 유지했다.
+- [RFC 5280: X.509 PKI](https://www.rfc-editor.org/rfc/rfc5280.html) — 경로 검증·확장·CRL.
+- [RFC 8555: ACME](https://www.rfc-editor.org/rfc/rfc8555.html) — newOrder·authorization·finalize CSR 순서.
+- [CA/Browser Forum TLS Baseline Requirements](https://cabforum.org/working-groups/server/baseline-requirements/requirements/) — §6.3.2 공개 신뢰 subscriber 인증서 유효기간.
+- [Let’s Encrypt Ending OCSP Support](https://letsencrypt.org/2024/12/05/ending-ocsp/) — 2025 OCSP 종료·CRL 사용.
+- [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — signature_algorithms·인증서 체인.
+- [RFC 9525 §1.3·§6](https://www.rfc-editor.org/rfc/rfc9525.html) — TLS 서버 이름 검증: SAN·CN 배제·와일드카드·IP 식별자; 클라이언트 업무 신원 매핑과 구분.
+- [Java SE 25 JSSE Guide](https://docs.oracle.com/en/java/javase/25/security/java-secure-socket-extension-jsse-reference-guide.html) — Java SE 25 raw TLS의 신원 검증 책임.
+- [SSLParameters endpoint identification](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/net/ssl/SSLParameters.html#setEndpointIdentificationAlgorithm(java.lang.String)) — Java SE 25 SSLParameters의 HTTPS endpoint identification 설정.
+- [RFC 6960 §2.4·§2.5·§3.2](https://www.rfc-editor.org/rfc/rfc6960.html) — OCSP 응답 사전 생성·thisUpdate/nextUpdate/producedAt 의미·수락 조건.

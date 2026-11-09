@@ -1,8 +1,7 @@
 ---
 category: "인프라와 운영/모니터링과 로깅"
 tags: ["operations", "elk", "elasticsearch", "prometheus", "grafana", "logging"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # ELK와 Prometheus Grafana
@@ -111,11 +110,12 @@ Filebeat도 자체 필터(ingest node processor 연계 등)로 간단한 파싱�
 
 ## 참고 자료
 
-- [Prometheus Query functions](https://prometheus.io/docs/prometheus/latest/querying/functions/) — rate/increase의 reset 보정과 집계 순서. 확인: 2026-09-08.
-- [Prometheus Pushgateway](https://prometheus.io/docs/practices/pushing/) — service-level batch와 stale series 삭제. 확인: 2026-09-08.
-- [Elasticsearch Data streams](https://www.elastic.co/docs/manage-data/data-store/data-streams) — append-only 로그·rollover. 확인: 2026-09-08.
-- [Grafana Loki Overview](https://grafana.com/docs/loki/latest/get-started/overview/) — label index·chunk 저장. 확인: 2026-09-08.
-
-부분 재검증: 2026-10-04. [Prometheus naming 지침](https://prometheus.io/docs/practices/naming/#labels)의 조합별 시계열·무제한 ID 라벨 경고와 [Prometheus v3.5.0 고정 configuration 문서](https://raw.githubusercontent.com/prometheus/prometheus/v3.5.0/docs/configuration/configuration.md)의 `metric_relabel_configs`·`sample_limit`·`labeldrop` 제약을 확인하고 [조회 시점 configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)과 대조했다. 원천 계측 메모리와 저장 후 집계 구분은 수집 경계에 따른 운영 판단이다. Prometheus 부하 시험·Elasticsearch 설정 재검증은 하지 않아 `verified`를 유지했다.
-
-실행 확인: 2026-10-04, [Prometheus v3.5.0 공식 배포](https://github.com/prometheus/prometheus/releases/tag/v3.5.0)의 darwin/arm64 바이너리와 loopback exporter로 검증했다. 두 샘플에 `sample_limit: 1`을 적용하자 `up=0`, `sample limit exceeded`, 해당 scrape의 애플리케이션 샘플 0개를 확인했다. relabel로 한 샘플을 먼저 제외하면 같은 한도에서 `up=1`과 남은 샘플 1개가 저장됐고, `up` 제외 relabel 규칙은 자동 생성 `up`에 적용되지 않았다. 추가 job에서 값 1·2인 두 gauge의 구분 라벨을 labeldrop하자 `up=1`과 값 1 하나가 남아 합산이 아님을 확인했다. [v3.5.0 scrape 소스](https://raw.githubusercontent.com/prometheus/prometheus/v3.5.0/scrape/scrape.go)의 중복 timestamp 샘플 오류 처리도 대조했다. 이 시험은 격리 job의 단순 gauge 수집이며 고카디널리티 부하·histogram·원격 저장·운영 클러스터는 실행하지 않았다.
+- [Prometheus Query functions](https://prometheus.io/docs/prometheus/latest/querying/functions/) — rate/increase의 reset 보정과 집계 순서.
+- [Prometheus Pushgateway](https://prometheus.io/docs/practices/pushing/) — service-level batch와 stale series 삭제.
+- [Elasticsearch Data streams](https://www.elastic.co/docs/manage-data/data-store/data-streams) — append-only 로그·rollover.
+- [Grafana Loki Overview](https://grafana.com/docs/loki/latest/get-started/overview/) — label index·chunk 저장.
+- [Prometheus naming 지침](https://prometheus.io/docs/practices/naming/#labels) — 라벨 조합별 시계열과 무제한 ID 라벨의 위험.
+- [Prometheus v3.5.0 고정 configuration 문서](https://raw.githubusercontent.com/prometheus/prometheus/v3.5.0/docs/configuration/configuration.md) — Prometheus 3.5.0의 metric_relabel_configs·sample_limit·labeldrop 제약.
+- [Prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) — metric relabel과 샘플 제한의 수집 경계.
+- [Prometheus v3.5.0 공식 배포](https://github.com/prometheus/prometheus/releases/tag/v3.5.0) — Prometheus 3.5.0 배포본; 수집 동작의 적용 버전.
+- [v3.5.0 scrape 소스](https://raw.githubusercontent.com/prometheus/prometheus/v3.5.0/scrape/scrape.go) — Prometheus 3.5.0의 중복 timestamp 샘플 오류 처리; labeldrop을 합산으로 해석하지 않는 근거.

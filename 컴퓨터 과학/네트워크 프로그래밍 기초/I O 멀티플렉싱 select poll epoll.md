@@ -2,8 +2,7 @@
 category: "컴퓨터 과학/네트워크 프로그래밍 기초"
 tags: ["computer-science", "network", "io멀티플렉싱", "epoll", "논블로킹"]
 aliases: ["I/O 멀티플렉싱", "I/O Multiplexing"]
-updated: 2026-09-23
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # I/O 멀티플렉싱 (select/poll/epoll)
@@ -118,11 +117,7 @@ A. 아니다. 한 번 통지한 뒤에는 `epoll_ctl(EPOLL_CTL_MOD)`로 다시 �
 
 ## 참고 자료
 
-- [Linux select(2)](https://man7.org/linux/man-pages/man2/select.2.html) — glibc FD_SETSIZE·준비상태. 확인: 2026-09-08.
-- [Linux epoll(7)](https://man7.org/linux/man-pages/man7/epoll.7.html) — LT/ET·ready list·per-UID watches. 확인: 2026-09-08.
-- [Linux epoll_ctl(2)](https://man7.org/linux/man-pages/man2/epoll_ctl.2.html) — EPOLLEXCLUSIVE4.5+·등록제약. 확인: 2026-09-08.
-- [Linux io_uring_setup(2)](https://man7.org/linux/man-pages/man2/io_uring_setup.2.html) — completion model. 확인: 2026-09-08.
-
-### 2026-09-23 부분 재검증
-
-Linux man-pages 6.19의 epoll(7) ET 기아 방지·준비 목록과 epoll_ctl(2)의 EPOLLONESHOT 재활성화 계약을 확인했다. 기존 전체 검증일은 유지한다.
+- [Linux select(2)](https://man7.org/linux/man-pages/man2/select.2.html) — glibc FD_SETSIZE와 준비 상태.
+- [Linux man-pages 6.19 epoll(7)](https://man7.org/linux/man-pages/man7/epoll.7.html) — LT/ET·ready list·per-UID watches와 ET의 기아 방지.
+- [Linux man-pages 6.19 epoll_ctl(2)](https://man7.org/linux/man-pages/man2/epoll_ctl.2.html) — EPOLLONESHOT 재등록과 Linux 4.5+ EPOLLEXCLUSIVE의 등록 제약.
+- [Linux io_uring_setup(2)](https://man7.org/linux/man-pages/man2/io_uring_setup.2.html) — 완료 통지 모델과 링 설정.

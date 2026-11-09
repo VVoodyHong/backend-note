@@ -2,8 +2,7 @@
 category: "Java/테스트와 진단"
 tags: ["java", "jfr", "프로파일링", "jdk-mission-control", "성능진단"]
 aliases: ["Java Flight Recorder", "자바 플라이트 레코더"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # JFR과 프로파일링
@@ -102,25 +101,15 @@ A. 파일 덤프는 진행 중인 레코딩에서도 스냅샷을 저장해 오�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JEP 328](https://openjdk.org/jeps/328) — OpenJDK 11 공개 구현·버퍼·1% 성능 목표 범위.
 - [JEP 518](https://openjdk.org/jeps/518) — JDK 25 cooperative sampling의 정지·요청·재구성 및 남는 편향.
 - [JEP 509](https://openjdk.org/jeps/509) — JDK 25 Linux 실험적 CPU-time 표집과 기본 비활성.
 - [JEP 349](https://openjdk.org/jeps/349) — JDK 14 스트리밍·외부 소비·flush 지연.
-- [JDK 25 jcmd](https://docs.oracle.com/en/java/javase/25/docs/specs/man/jcmd.html) — JFR 명령·profile/default 설정·보관 한도.
+- [JDK 25 jcmd](https://docs.oracle.com/en/java/javase/25/docs/specs/man/jcmd.html) — JFR.check·dump·녹화 명령, profile/default 설정과 보관 한도.
 - [JMC 9 Flight Recorder](https://docs.oracle.com/en/java/java-components/jdk-mission-control/9/user-guide/using-jdk-flight-recorder.html) — 자동 분석과 이벤트 탐색.
-- [async-profiler 공식 저장소](https://github.com/async-profiler/async-profiler) — 열람 시 4.5 지원 플랫폼·CPU/할당/네이티브 프로파일 기능.
-
-부분 재검증: 2026-09-22. 아래 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
+- [async-profiler 공식 저장소](https://github.com/async-profiler/async-profiler) — async-profiler 4.5 지원 플랫폼과 CPU·할당·네이티브 프로파일.
 - [JDK 27 Release Notes](https://www.oracle.com/java/technologies/javase/27-relnote-issues.html) — JEP 536 기본 가림 기능 도입.
-- [JDK 27 java: FlightRecorderOptions](https://docs.oracle.com/en/java/javase/27/docs/specs/man/java.html) — redact-key/argument 필터 추가·교체·적용 이벤트. 실제 JFR 파일을 기록한 뒤 jfr print로 결과를 확인했다. 기존 JDK 25 표집 구현 설명 전체의 재검증은 아니다.
-
-### 2026-09-23 부분 재검증
-
-[Java SE 25 SettingControl.combine](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/SettingControl.html#combine(java.util.Set))의 동시 녹화 합성 계약과 [JDK 25 jcmd](https://docs.oracle.com/en/java/javase/25/docs/specs/man/jcmd.html)의 JFR.check/dump를 확인했다. OpenJDK 25.0.2에서 하루 threshold·스택 비활성 녹화와 0 threshold·스택 활성 녹화를 동시에 실행한 뒤 두 파일 모두에 짧은 사용자 이벤트가 들어가고 앞쪽 파일에도 스택이 저장됨을 확인했다. Java 27 가림 기능·Linux CPU-Time 표집은 이번 재검증 범위 밖이다.
-
-부분 재검증: 2026-10-04. 아래 적용 버전과 확인 범위에 한하며 노트 전체의 기존 verified는 유지한다.
-
-- [Java SE 25 EventStream](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/consumer/EventStream.html), [RecordingStream.setReuse](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/consumer/RecordingStream.html#setReuse(boolean)) — 기본 재사용 허용·콜백 수명·별도 단일 처리 스레드. Oracle JDK 25.0.4에서 사용자 이벤트 3개를 파일로 기록하고 EventStream의 ordered=false/reuse=true로 읽어 같은 객체 참조와 마지막 값 재사용을 관찰했다. reuse=false의 개별 객체 보존과 콜백 안 값 복사도 확인했다. 모든 녹화·스트림 설정에서 같은 재사용 빈도를 보장하지 않으며 실제 운영 큐 포화는 재현하지 않았다.
+- [JDK 27 java: FlightRecorderOptions](https://docs.oracle.com/en/java/javase/27/docs/specs/man/java.html) — redact-key/argument 필터 추가·교체·적용 이벤트.
+- [Java SE 25 SettingControl.combine](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/SettingControl.html#combine(java.util.Set)) — 여러 녹화의 이벤트 설정 결합.
+- [Java SE 25 EventStream](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/consumer/EventStream.html) — 콜백의 이벤트 수명·재사용 허용과 처리 스레드.
+- [Java SE 25 RecordingStream.setReuse](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/consumer/RecordingStream.html#setReuse(boolean)) — 이벤트 객체 재사용 설정.

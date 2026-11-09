@@ -1,8 +1,7 @@
 ---
 category: "Java/동시성과 멀티스레딩"
 tags: ["java", "synchronized", "lock", "concurrency", "jmm"]
-updated: 2026-10-04
-verified: 2026-09-08
+updated: 2026-11-09
 ---
 
 # synchronized와 Lock
@@ -90,26 +89,10 @@ Java SE 25의 `Condition.await()`는 연결된 락을 놓고 기다린 뒤, 반�
 
 ## 참고 자료
 
-확인 날짜: 2026-09-08. 아래 버전과 범위의 공식 문서·소스로 본문을 대조했다. 성능 비교와 운영 선택은 워크로드에 따라 달라지는 판단 기준이다.
-
 - [JLS 25 §17](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) — 모니터·자동 해제·wait set.
 - [Java SE 25 ReentrantLock](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html) — 공정성·tryLock 예외·인터럽트·Condition.
 - [JVMS 25 §2.11.10](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.11.10) — synchronized 메서드와 블록 바이트코드 차이.
 - [JEP 491](https://openjdk.org/jeps/491) — JDK 24+ 모니터 구현과 가상 스레드.
-
-### 2026-09-23 부분 재검증
-
-Java SE 25 ReentrantLock·Condition의 공정성·재획득과 JEP 491(JDK 24 도입)의 모니터 핀닝 변경을 확인했다. 기존 전체 검증일은 유지한다.
-
-- [Java SE 25 Condition](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Condition.html) — await의 락 해제·재획득·조건 반복 검사.
-
-### 부분 재검증: 2026-10-04
-
-Java SE 25 Condition/Object의 시간 제한 후 재획득, 남은 대기 예산, 다른 락을 해제하지 않는 범위를 확인했다. 기존 전체 `verified`는 유지한다.
-
-- [Java SE 25 Condition](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Condition.html) — awaitNanos·시간 제한 await의 반환 전 재획득과 남은 시간.
+- [Java SE 25 Condition](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Condition.html) — await의 락 해제·재획득·허위 깨어남과 awaitNanos의 남은 시간.
 - [Java SE 25 Object.wait](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long,int)) — 대상 모니터만 해제, 타임아웃 후 재획득.
-
-실행 확인: Oracle JDK 25.0.4+7-LTS-189(macOS AArch64)에서 50ms await 중 다른 스레드가 연결된 락을 250ms 보유하도록 하여 반환까지 254ms 걸림을 관찰했다. 반환 시 락 재획득과 별도로 잡은 락의 유지도 확인했다. 관측 시간은 스케줄러 상한 보장이 아니며, Object.wait 또는 운영 환경 교착을 직접 실행한 것은 아니다.
-
-- 도식·표 대조(2026-10-04): [Java SE 25 Object.wait](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long)) — 표의 불가능 항목을 모니터 진입 대기로 한정해 시간 제한·인터럽트 가능한 wait 조건 대기와 구분했다. 실행 시험 추가 없이 명세·소스와 기존 본문을 대조했으며 verified는 유지한다.
+- [Java SE 25 Object.wait](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long)) — 시간 제한·인터럽트 가능한 wait 조건 대기와 모니터 진입 대기의 구분.
