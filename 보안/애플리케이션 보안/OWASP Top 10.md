@@ -87,10 +87,10 @@ A. 클라우드의 접근 정책, 서비스 기본값, 컨테이너·웹 서버 
 
 ## 참고 자료
 
-- [OWASP Top 10:2025](https://owasp.org/Top10/2025/) — 10개 범주 목록.
-- [OWASP 2025 Introduction](https://owasp.org/Top10/2025/0x00_2025-Introduction/) — 진단 데이터·CWE·CVSS·설문 방법론.
-- [OWASP 2025 A03](https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/) — 설문1위·평균 발생률 5.19%.
-- [OWASP 2025 A05](https://owasp.org/Top10/2025/A05_2025-Injection/) — Injection 상대 순위와 진단 결과.
-- [OWASP 2025 A02](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/) — Security Misconfiguration 범위.
-- [OWASP Top 10:2025 Introduction](https://top10.owasp.org/2025/0x00_2025-Introduction/) — 2025 진단 데이터·CWE 유병률·CVE 점수·설문 방법론.
-- [OWASP Top 10:2025 A10](https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/) — 2025 A10 신설 배경·fail-open·인가/SQL Injection과 예외 처리의 관계.
+- [OWASP Top 10](https://owasp.org/Top10/2025/) — 10개 범주 목록.
+- [OWASP Top 10 Introduction](https://owasp.org/Top10/2025/0x00_2025-Introduction/) — 진단 데이터·CWE·CVSS·설문 방법론.
+- [OWASP Top 10 A03](https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/) — 설문1위·평균 발생률 5.19%.
+- [OWASP Top 10 A05](https://owasp.org/Top10/2025/A05_2025-Injection/) — Injection 상대 순위와 진단 결과.
+- [OWASP Top 10 A02](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/) — Security Misconfiguration 범위.
+- [OWASP Top 10 Introduction](https://top10.owasp.org/2025/0x00_2025-Introduction/) — 진단 데이터·CWE 유병률·CVE 점수·설문 방법론.
+- [OWASP Top 10 A10](https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/) — A10 신설 배경·fail-open·인가/SQL Injection과 예외 처리의 관계.

@@ -123,7 +123,7 @@ A. 먼저 quota가 제한하는 리소스와 Pod에 최종 적용되는 requests
 - [Kubernetes Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — v1.37 문서·requests/limits·defaulting·Pod-level resources; 메모리 emptyDir 집계·sizeLimit·언어 GC와 파일 수명 구분.
 - [Kubernetes Node pressure eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/) — requests 초과·priority·사용량 순서.
 - [Kubernetes In-place resize](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) — v1.35 stable·v1.37 제약·resizePolicy.
-- [VPA API source](https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/docs/api.md) — 2026-09-08 master·updateMode enum과 의미; 설치 release 지원 별도 대조.
+- [VPA API source](https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/docs/api.md) — master 브랜치의 updateMode 값과 의미.
 - [Kubernetes Pod QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/) — v1.37·Pod-level 조건·MemoryQoS 선택 설정.
 - [Kubernetes Local ephemeral storage](https://kubernetes.io/docs/concepts/storage/ephemeral-storage/) — Kubernetes v1.37의 ephemeral storage 집계·한도·축출·파일 시스템 배치·열린 삭제 파일 스캔 제약.
 - [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/) — Kubernetes v1.37의 quota 위반 403·Deployment와 하위 Pod 생성 구분.

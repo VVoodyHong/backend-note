@@ -118,7 +118,7 @@ Redis는 시작 시 AOF 파일의 무결성을 검사하며, 마지막 명령이
 - [Diagnosing Latency](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/) — fork·CoW·THP·AOF I/O 경합.
 - [BACKUP START](https://redis.io/docs/latest/commands/backup-start/) — Redis Open Source 8.10.0+, 임시 AOF·BASE 생성·단일 백업·빈 디렉터리.
 - [BACKUP SEAL](https://redis.io/docs/latest/commands/backup-seal/) — Redis Open Source 8.10.0+, immutable 파일 집합과 seal 시점 복원.
-- [Redis 8.10.2 release](https://github.com/redis/redis/releases/tag/8.10.2) — 2026-09-17 릴리스.
+- [Redis 8.10.2 release](https://github.com/redis/redis/releases/tag/8.10.2)
 - [Redis 8.4 server.c](https://github.com/redis/redis/blob/8.4/src/server.c) — `writeCommandsDeniedByDiskError()`와 쓰기/PING 거부 조건.
 - [Redis 8.4 redis.conf](https://github.com/redis/redis/blob/8.4/redis.conf) — `stop-writes-on-bgsave-error` 기본값과 저장 재개 정책.
 - [Redis BGREWRITEAOF](https://redis.io/docs/latest/commands/bgrewriteaof/) — rewrite 실패가 기존 AOF를 훼손하지 않는 경계.

@@ -90,7 +90,7 @@ A. `@Operation(summary = ...)` 같은 짧은 설명은 컨트롤러에 남기되
 
 ## 참고 자료
 
-적용 범위: OpenAPI 3.1.1, springdoc 3.1.1. 사용 프로젝트의 Boot minor 호환성은 별도 확인.
+적용 범위: OpenAPI 3.1.1, springdoc 3.1.1.
 
 - [springdoc 공식 문서](https://springdoc.org/) — springdoc와 Boot 호환 계열·애노테이션·그룹·캐시·엔드포인트.
 - [OpenAPI 3.1.1 명세](https://spec.openapis.org/oas/v3.1.1.html) — JSON Schema·security 선언·다형성.

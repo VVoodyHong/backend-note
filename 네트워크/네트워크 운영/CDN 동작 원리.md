@@ -94,5 +94,5 @@ A. CDN 사업자의 IP 허용목록은 그 사업자에서 온 트래픽을 제�
 - [RFC 9111: HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111.html) — 공유 캐시·Vary·Cache-Control.
 - [CloudFront expiration](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) — min/default/max TTL·origin 헤더 우선 관계.
 - [CloudFront cache policies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html) — cache key·Minimum TTL 예외.
-- [CloudFront: Control origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html) — 2026-10-04 CloudFront 정책: cache policy 값의 자동 전달과 origin request policy 값의 캐시 키 제외.
-- [CloudFront의 ALB 접근 제한](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html) — 2026-10-22 CloudFront 정책: 관리형 prefix list 범위·ALB 비밀 헤더 검사·HTTPS·헤더 교체·VPC origin.
+- [CloudFront: Control origin requests](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html) — cache policy 값의 자동 전달과 origin request policy 값의 캐시 키 제외.
+- [CloudFront의 ALB 접근 제한](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html) — 관리형 prefix list 범위·ALB 비밀 헤더 검사·HTTPS·헤더 교체·VPC origin.

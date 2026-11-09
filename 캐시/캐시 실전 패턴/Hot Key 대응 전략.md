@@ -115,6 +115,6 @@ Redis 클라이언트가 자체적으로 응답을 캐싱하고, 서버가 무�
 - [HOTKEYS START](https://redis.io/docs/latest/commands/hotkeys-start/) — Redis 8.6+: METRICS·COUNT·SAMPLE 확률·SLOTS 구문.
 - [Client-side Caching Reference](https://redis.io/docs/latest/develop/reference/client-side-caching/) — Redis 6.0+: tracking·무효화·연결 단절 시 캐시 처리.
 - [Cluster Specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/) — 슬롯/노드 분배, 단일 키의 확장 제약.
-- [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 2013: hot key·클라이언트 부하 및 복제 설계.
+- [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 원 논문, hot key·클라이언트 부하 및 복제 설계.
 - [Redis Cluster Specification: Hash tags](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) — 같은 태그의 같은 슬롯 배치와 multi-key 제약.
 - [Redis 8.10.2 cluster.h](https://github.com/redis/redis/blob/8.10.2/src/cluster.h) — keyHashSlot의 중괄호 내부 해싱 규칙.

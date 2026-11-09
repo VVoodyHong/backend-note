@@ -99,8 +99,8 @@ Snowflake ID는 타임스탬프가 상위 비트에 그대로 드러나므로 �
 
 ## 참고 자료
 
-- [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562.html) — 2024 UUID v4/v7 비트 구조·단조성 선택·정렬·보안 고려; UUIDv7 밀리초 내 추가 단조성 선택·카운터 overflow.
-- [Twitter Snowflake IdWorker](https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/src/main/scala/com/twitter/service/snowflake/IdWorker.scala) — snowflake-2010 브랜치의 비트 배치·시계 역행·동기화·시퀀스 넘침.
+- [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562.html) — UUID v4/v7 비트 구조·단조성 선택·정렬·보안 고려; UUIDv7 밀리초 내 추가 단조성 선택·카운터 overflow.
+- [Twitter Snowflake IdWorker](https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/src/main/scala/com/twitter/service/snowflake/IdWorker.scala) — IdWorker 구현의 비트 배치·시계 역행·동기화·시퀀스 넘침.
 - [Meituan Leaf](https://github.com/Meituan-Dianping/Leaf) — segment 모드의 DB 구간 할당 및 Snowflake 모드 구분.
 - [PostgreSQL UUID Functions](https://www.postgresql.org/docs/18/functions-uuid.html) — 18 uuidv7 생성 함수.
 - [PostgreSQL Sequence Functions](https://www.postgresql.org/docs/18/functions-sequence.html) — 18 시퀀스 gap·롤백 시 번호 비회수.

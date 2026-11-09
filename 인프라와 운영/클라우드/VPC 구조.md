@@ -109,7 +109,7 @@ A. EKS의 기본 VPC CNI(Container Network Interface)는 파드(pod)마다 VPC �
 - [AWS Internet gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) — IPv4 public주소·routing·SG.
 - [AWS Regional NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html) — regional/zonal·자동AZ확장·최대60분.
 - [AWS NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) — public/private NAT.
-- [Lambda VPC](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — subnet+SG 조합 Hyperplane ENI 공유; 2026-11-04 Lambda VPC 정책: public subnet의 public IP 미할당·IPv4 인터넷 접근 경계.
+- [Lambda VPC](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html) — subnet+SG 조합별 Hyperplane ENI 공유·public subnet의 public IP 미할당·IPv4 인터넷 접근 경계.
 - [AWS Gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) — S3/DynamoDB·endpoint 자체 추가요금없음.
 - [VPC Security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html) — stateful allow·ENI.
 - [VPC NACL](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html) — stateless·번호순.
@@ -117,4 +117,4 @@ A. EKS의 기본 VPC CNI(Container Network Interface)는 파드(pod)마다 VPC �
 - [Direct Connect Encryption](https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html) — 기본비암호화·MACsec/VPN.
 - [AWS Interface Endpoint 설정](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html) — AWS Interface Endpoint의 private DNS 전제.
 - [Endpoint policy](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html) — AWS endpoint policy 기본 허용·서비스별 지원·다른 인가 정책과의 관계.
-- [인터넷 접근](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html) — 2026-11-04 Lambda VPC의 private subnet NAT/IGW 경로·선택적 dual-stack IPv6 송신.
+- [인터넷 접근](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc-internet.html) — Lambda VPC의 private subnet NAT/IGW 경로·선택적 dual-stack IPv6 송신.

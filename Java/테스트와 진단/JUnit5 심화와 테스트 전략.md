@@ -112,7 +112,7 @@ A. BDD 스타일로 상황(context)별 테스트를 그룹화하는 데는 유�
 - [Spring TestContext Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) — Spring TestContext의 캐시 키와 bean override.
 - [Testcontainers Jupiter Integration](https://java.testcontainers.org/test_framework_integration/junit_5/) — static/인스턴스 컨테이너 생명주기와 확장.
 - [JUnit 6.1.3 Overview](https://docs.junit.org/6.1.3/overview.html) — Java 17 이상 실행 요구와 Vintage deprecation.
-- [JUnit 6.1.3 Release Notes](https://docs.junit.org/6.1.3/release-notes.html) — 2026-08-07 릴리스.
+- [JUnit 6.1.3 Release Notes](https://docs.junit.org/6.1.3/release-notes.html)
 - [JUnit 5.13.4 User Guide](https://docs.junit.org/5.13.4/user-guide/#writing-tests-assertions) — preemptive assertion의 ThreadLocal·Spring 트랜잭션 경계와 @Timeout thread mode.
 - [JUnit 5.13.4 AssertTimeoutPreemptively 소스](https://raw.githubusercontent.com/junit-team/junit5/r5.13.4/junit-jupiter-api/src/main/java/org/junit/jupiter/api/AssertTimeoutPreemptively.java) — JUnit 5.13.4 preemptive timeout의 Future 취소와 실행기 종료 경로.
 - [JUnit 5.13.4 User Guide §2.12](https://docs.junit.org/5.13.4/user-guide/#writing-tests-test-instance-lifecycle) — PER_METHOD·PER_CLASS 인스턴스 생명주기와 BeforeEach.

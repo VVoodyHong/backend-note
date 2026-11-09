@@ -116,5 +116,5 @@ A. 두 시스템 모두 "주체(principal)-액션-리소스"를 명시적으로 
 - [AWS Organizations SCP](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) — management account·service-linked role 제외.
 - [ECS 역할 구분](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html) — ECS task role과 execution role 구분.
 - [task execution role](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html) — ECS task execution role의 권한 범위.
-- [AWS STS AssumeRole — DurationSeconds](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) — 2026-10-04 STS AssumeRole 정책: 역할 체인 CLI/API 세션 최대 1시간·초과 요청 실패.
-- [AWS IAM aws:MultiFactorAuthPresent](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-multifactorauthpresent) — 2026-11-04 IAM 정책: 장기 키/연합 신원의 MFA 키 부재·Deny Bool/BoolIfExists·Allow BoolIfExists; 조건 미적용과 최종 Allow 구분.
+- [AWS STS AssumeRole — DurationSeconds](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) — 역할 체인 CLI/API 세션 최대 1시간·초과 요청 실패.
+- [AWS IAM aws:MultiFactorAuthPresent](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-multifactorauthpresent) — 장기 키/연합 신원의 MFA 키 부재·Deny Bool/BoolIfExists·Allow BoolIfExists; 조건 미적용과 최종 Allow 구분.

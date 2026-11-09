@@ -94,7 +94,7 @@ ECH(Encrypted Client Hello)는 ClientHello의 민감한 부분(SNI 포함)을 �
 ## 참고 자료
 
 - [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — §2·4·7·8 인증서 handshake·(EC)DHE/PSK·0-RTT.
-- [RFC 9849: TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html) — 2026-03 표준·ClientHelloInner/Outer.
+- [RFC 9849: TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html) — ECH의 ClientHelloInner/Outer 구조.
 - [RFC 8470: Using Early Data in HTTP](https://www.rfc-editor.org/rfc/rfc8470.html) — 재생 안전성·425.
 - [RFC 8446 §4.6.3·§7.2·Appendix E.2](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.6.3) — TLS 1.3 KeyUpdate·트래픽 비밀 유출 후 보호 한계; 새 인증서 검증과 구분.
 - [RFC 8446 §4.1.1·§4.2.8](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.8) — 공통 지원 그룹과 HelloRetryRequest의 selected_group 조건.

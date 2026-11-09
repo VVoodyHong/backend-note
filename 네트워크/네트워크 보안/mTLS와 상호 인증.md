@@ -115,5 +115,5 @@ AWS ALB의 `mutual TLS passthrough`는 TLS 암호문을 그대로 백엔드로 �
 - [Istio Security](https://istio.io/latest/docs/concepts/security/) — peer authentication·인증서 회전; SPIFFE 신원·PeerAuthentication 정책.
 - [Spring Boot Web Servers](https://docs.spring.io/spring-boot/how-to/webserver.html) — SSL key/trust store 구성.
 - [Linkerd Automatic mTLS](https://linkerd.io/docs/features/automatic-mtls/) — ServiceAccount 신원·비메시 평문 기본 허용.
-- [AWS ALB Mutual authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html) — 2026-10-04 AWS ALB 정책: passthrough/verify 책임·X-Amzn-Mtls-Clientcert 형식; L4 TLS passthrough와 구분.
+- [AWS ALB Mutual authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html) — passthrough/verify 책임·X-Amzn-Mtls-Clientcert 형식; L4 TLS passthrough와 구분.
 - [RFC 8446 §2.2·§4.3.2·§4.6.1](https://www.rfc-editor.org/rfc/rfc8446.html#section-2.2) — TLS 1.3 PSK 재개·주 핸드셰이크의 인증서 요청 생략·이전 인증 상태 연결.

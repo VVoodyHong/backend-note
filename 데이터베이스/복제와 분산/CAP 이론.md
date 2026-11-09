@@ -79,10 +79,10 @@ A. 그렇다. 짧은 파티션이라도 그 순간 진행 중이던 요청의 �
 ## 참고 자료
 
 - [Apache Cassandra Guarantees](https://cassandra.apache.org/doc/latest/cassandra/architecture/guarantees.html) — LWW 일반 쓰기와 Paxos 기반 조건부 연산의 보장 구분. 릴리스별 기본값은 범위에 포함하지 않는다.
-- [Gilbert & Lynch (2002) CAP proof](https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf) — C/A 정의·비동기 네트워크에서의 불가능성.
+- [Gilbert & Lynch CAP proof](https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf) — C/A 정의·비동기 네트워크에서의 불가능성.
 - [Daniel Abadi — PACELC](https://dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-yahoos-little.html) — 원 제안자의 평상시 지연/일관성 논의.
-- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 기준: 읽기 및 MREC/MRSC.
+- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 읽기 및 MREC/MRSC.
 - [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 일관성 수준과 선형성 경계.
-- [Cosmos DB Consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — 2026-09-08 기준: 5개 읽기 일관성 수준.
+- [Cosmos DB Consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — 5개 읽기 일관성 수준.
 - [PostgreSQL 18 Standby](https://www.postgresql.org/docs/18/warm-standby.html) — 동기 복제·자동 failover 범위.
 - [etcd 3.6 API Guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) — 기본 linearizable 읽기, serializable 읽기의 오래된 데이터 허용과 합의 의존 차이.

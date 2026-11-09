@@ -113,9 +113,9 @@ DLQ도 결국 큐/토픽이므로 용량, 보존 기간, 파티션/샤드 한계
 - [Quorum Queues](https://www.rabbitmq.com/docs/quorum-queues) — RabbitMQ 4.3, delivery count·기본 한도·at-least-once DLX.
 - [Non-Blocking Retries](https://docs.spring.io/spring-kafka/reference/retrytopic.html) — Spring Kafka 4.1, DLT 패턴·제약.
 - [Handling Exceptions](https://docs.spring.io/spring-kafka/reference/kafka/annotation-error-handling.html) — Spring Kafka 4.1, 역직렬화 실패 원문·DLT Serializer.
-- [SQS SetQueueAttributes](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html) — 2026-09-08 기준: redrive·maxReceiveCount 기본 10·큐 타입.
-- [SQS StartMessageMoveTask](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_StartMessageMoveTask.html) — 2026-09-08 기준: 이동 속도 500·동시 작업 1.
-- [SQS Dead Letter Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — 2026-09-08 기준: Standard/FIFO 보존 시간.
-- [SQS Visibility Timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html) — 2026-09-08 기준: 재노출·12시간 제한.
-- [SQS Configuring Dead-Letter Queue Redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html) — 2026-10-04 기준: 새 messageID/enqueueTime, 보존 기간 재시작, 필터링·수정 불가, 이미 이동한 메시지의 취소 제외.
+- [SQS SetQueueAttributes](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html) — redrive·maxReceiveCount 기본 10·큐 타입.
+- [SQS StartMessageMoveTask](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_StartMessageMoveTask.html) — 이동 속도 500·동시 작업 1.
+- [SQS Dead Letter Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — Standard/FIFO 보존 시간.
+- [SQS Visibility Timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html) — 재노출·12시간 제한.
+- [SQS Configuring Dead-Letter Queue Redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html) — 새 messageID/enqueueTime, 보존 기간 재시작, 필터링·수정 불가, 이미 이동한 메시지의 취소 제외.
 - [RabbitMQ 4.4 Time-To-Live and Expiration](https://www.rabbitmq.com/docs/ttl) — x-message-ttl/expiration과 x-expires/expires의 차이, quorum queue의 선두 제거.

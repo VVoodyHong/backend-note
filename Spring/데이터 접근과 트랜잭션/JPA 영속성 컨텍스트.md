@@ -99,7 +99,7 @@ AUTO 모드의 쿼리가 변경된 데이터의 영향을 받으면 provider가 
 
 ## 참고 자료
 
-적용 범위: Jakarta Persistence 3.2, Hibernate ORM 7.1 문서 및 Spring의 트랜잭션 범위 EntityManager. JDBC savepoint 재현 예시는 본문에 명시한 Framework 7.0.9·Hibernate 7.4.5.Final 환경으로 한정.
+적용 범위: Jakarta Persistence 3.2, Hibernate ORM 7.1 문서 및 Spring의 트랜잭션 범위 EntityManager. JDBC savepoint 예시의 Spring Framework·Hibernate ORM 버전은 각각 7.0.9·7.4.5.Final.
 
 - [Jakarta Persistence 3.2](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html) — 엔티티 생명주기·merge·flush·EntityManager 범위.
 - [Hibernate ORM User Guide](https://docs.hibernate.org/orm/7.1/userguide/html_single/) — 영속 상태·flushing·식별자 생성과 배치.

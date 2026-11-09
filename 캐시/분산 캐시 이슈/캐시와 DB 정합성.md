@@ -103,7 +103,7 @@ Redis의 client-side caching 문서는 조회 중임을 나타내는 표시를 �
 ## 참고 자료
 
 - [Cache-Aside Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside) — 패턴 정의·정합성 비보장·DB 갱신 후 무효화.
-- [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 2013 원논문: stale set 경쟁과 lease.
+- [Scaling Memcache at Facebook](https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf) — NSDI 원 논문, stale set 경쟁과 lease.
 - [Transaction-bound Events](https://docs.spring.io/spring-framework/reference/data-access/transaction/event.html) — Spring Framework: AFTER_COMMIT와 트랜잭션 이벤트.
 - [Transactional Outbox Pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html) — DB·이벤트 이중 쓰기, 재시도와 멱등 소비.
 - [Redis Replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/) — 비동기 복제와 failover 유실.

@@ -86,11 +86,11 @@ REST는 파일 업로드를 `multipart/form-data`로 처리하지만 진행 중 
 
 ## 참고 자료
 
-- [GraphQL September 2025 Specification](https://spec.graphql.org/September2025/) — 타입·검증·실행·subscription.
+- [GraphQL Specification](https://spec.graphql.org/September2025/) — 타입·검증·실행·subscription.
 - [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — 4가지 RPC 방식·기본 protobuf.
 - [Protocol Buffers proto3 guide](https://protobuf.dev/programming-guides/proto3/#updating) — wire-safe 변경과 reserved.
 - [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) — 캐싱·메서드와 리소스.
 - [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html) — OpenAPI 3.1.1 Schema Object와 도구를 통한 계약 검증.
-- [GraphQL September 2025 §6.4.4](https://spec.graphql.org/September2025/#sec-Handling-Execution-Errors) — GraphQL September 2025의 실행 오류·부분 data·Non-Null 전파·errors.path.
-- [§7.1 응답 형식](https://spec.graphql.org/September2025/#sec-Response-Format) — GraphQL September 2025의 응답 형식과 실행 전 오류의 data 부재.
+- [GraphQL Specification §6.4.4](https://spec.graphql.org/September2025/#sec-Handling-Execution-Errors) — GraphQL 명세의 실행 오류·부분 data·Non-Null 전파·errors.path.
+- [§7.1 응답 형식](https://spec.graphql.org/September2025/#sec-Response-Format) — GraphQL 명세의 응답 형식과 실행 전 오류의 data 부재.
 - [graphql-js v16.11.0 execute 소스](https://raw.githubusercontent.com/graphql/graphql-js/v16.11.0/src/execution/execute.ts) — graphql-js 16.11.0 메모리 내 실행기의 오류 전파·응답 경로 처리; HTTP 바인딩과 구분.

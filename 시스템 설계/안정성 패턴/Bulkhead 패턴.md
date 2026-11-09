@@ -117,6 +117,6 @@ Resilience4j 2.3.0의 직접 함수 데코레이터에서 `decorateSupplier`는 
 - [Resilience4j Micrometer](https://resilience4j.readme.io/docs/micrometer) — bulkhead metric 이름과 계측.
 - [Azure Bulkhead Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead) — 격리 경계와 자원 효율 trade-off.
 - [Kubernetes Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/) — namespace 할당량과 적용 한계.
-- [John D. C. Little — A Proof for the Queuing Formula](https://pubsonline.informs.org/doi/abs/10.1287/opre.9.3.383?journalCode=opre) — 1961 논문 초록의 평균 관계 L=λW와 정상 상태 전제.
-- [Little 원논문의 MIT 공개 사본](https://fisherp.scripts.mit.edu/wordpress/wp-content/uploads/2015/11/ContentServer.pdf) — Little의 1961 원논문 pp.383·387: 평균 관계·정상성·시스템 경계 일치.
+- [John D. C. Little — A Proof for the Queuing Formula](https://pubsonline.informs.org/doi/abs/10.1287/opre.9.3.383?journalCode=opre) — 논문 초록의 평균 관계 L=λW와 정상 상태 전제.
+- [Little 원논문의 MIT 공개 사본](https://fisherp.scripts.mit.edu/wordpress/wp-content/uploads/2015/11/ContentServer.pdf) — 원논문 pp. 383·387의 평균 관계·정상성·시스템 경계 일치.
 - [Resilience4j v2.3.0 Bulkhead 고정 소스](https://raw.githubusercontent.com/resilience4j/resilience4j/v2.3.0/resilience4j-bulkhead/src/main/java/io/github/resilience4j/bulkhead/Bulkhead.java) — Resilience4j 2.3.0의 Supplier finally와 CompletionStage whenComplete에서 permit 반환; 실제 I/O 종료와 구분.

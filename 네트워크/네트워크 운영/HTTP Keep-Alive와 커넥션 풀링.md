@@ -116,7 +116,7 @@ A. FIFO(First In First Out)는 가장 오래 쉰 커넥션을 우선 재사용�
 - [Reactor Netty HTTP Client](https://projectreactor.io/docs/netty/release/reference/http-client.html) — release 문서 §7 shared pool 500/1000·custom provider·eviction.
 - [RFC 9000: QUIC](https://www.rfc-editor.org/rfc/rfc9000.html) — 스트림별 순서 전달.
 - [Tomcat 11.0.26 HTTP Connector](https://tomcat.apache.org/tomcat-11.0-doc/config/http.html) — Tomcat 11.0.26 NIO/NIO2의 다음 요청 대기·maxConnections/maxThreads 구분.
-- [AWS ALB attributes](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-load-balancer-attributes.html) — 2026-10-04 AWS ALB 정책: idle timeout/client keepalive duration·기존 연결 값 유지·HTTP/2 PING·정상 종료.
+- [AWS ALB attributes](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-load-balancer-attributes.html) — idle timeout/client keepalive duration·기존 연결 값 유지·HTTP/2 PING·정상 종료.
 - [RFC 9112 §9.3.2](https://www.rfc-editor.org/rfc/rfc9112.html#section-9.3.2) — HTTP/1.1 pipelining 허용과 응답 순서 제약.
 - [Reactor Netty 1.3.8 HTTP Client reference §17](https://projectreactor.io/docs/netty/release/reference/http-client.html#timeout-configuration) — Reactor Netty 1.3.8의 responseTimeout·pool/connection/TLS timeout 구분.
 - [v1.3.8 HttpClient 고정 소스](https://raw.githubusercontent.com/reactor/reactor-netty/v1.3.8/reactor-netty-http/src/main/java/reactor/netty/http/client/HttpClient.java) — v1.3.8의 responseTimeout 읽기 간격·설치/제거 시점.

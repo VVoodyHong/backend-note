@@ -147,7 +147,7 @@ A. 빠르고 결정적인 검증(컴파일, 단위 테스트, 린트, 정적 분
 - [actions/setup-java](https://github.com/actions/setup-java) — v5 README.
 - [Argo CD auto sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) — selfHeal/prune 명시 설정.
 - [GitHub Actions Secure Use](https://docs.github.com/en/actions/reference/security/secure-use) — 특권 트리거·비신뢰 checkout/아티팩트/캐시·스크립트 주입 방어.
-- [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) — 2026-10-04 GitHub.com Actions 정책: single/max 대기·cancel-in-progress 제약·대기 시작 시각; GHES 지원과 구분.
+- [GitHub Actions concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) — GitHub.com의 single/max 대기·cancel-in-progress 제약·대기 시작 시각; GHES 지원과 구분.
 - [Workflow cancellation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation) — 러너 프로세스 종료 절차와 외부 배포 복구 경계.
 - [actions/checkout v6 README](https://github.com/actions/checkout/blob/v6/README.md) — checkout v6 major ref의 persist-credentials·RUNNER_TEMP 저장·후속 Git 인증·post-job 정리.
 - [v6 action.yml](https://github.com/actions/checkout/blob/v6/action.yml) — checkout v6 major ref의 persist-credentials 기본 true 및 false 선택; 불변 커밋 고정과 구분.

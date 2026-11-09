@@ -105,7 +105,7 @@ ECDSA는 동일 보안 강도에서 키와 서명 크기가 작아 핸드셰이�
 - [RFC 5280: X.509 PKI](https://www.rfc-editor.org/rfc/rfc5280.html) — 경로 검증·확장·CRL.
 - [RFC 8555: ACME](https://www.rfc-editor.org/rfc/rfc8555.html) — newOrder·authorization·finalize CSR 순서.
 - [CA/Browser Forum TLS Baseline Requirements](https://cabforum.org/working-groups/server/baseline-requirements/requirements/) — §6.3.2 공개 신뢰 subscriber 인증서 유효기간.
-- [Let’s Encrypt Ending OCSP Support](https://letsencrypt.org/2024/12/05/ending-ocsp/) — 2025 OCSP 종료·CRL 사용.
+- [Let’s Encrypt Ending OCSP Support](https://letsencrypt.org/2024/12/05/ending-ocsp/) — OCSP 종료와 CRL 사용.
 - [RFC 8446: TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html) — signature_algorithms·인증서 체인.
 - [RFC 9525 §1.3·§6](https://www.rfc-editor.org/rfc/rfc9525.html) — TLS 서버 이름 검증: SAN·CN 배제·와일드카드·IP 식별자; 클라이언트 업무 신원 매핑과 구분.
 - [Java SE 25 JSSE Guide](https://docs.oracle.com/en/java/javase/25/security/java-secure-socket-extension-jsse-reference-guide.html) — Java SE 25 raw TLS의 신원 검증 책임.

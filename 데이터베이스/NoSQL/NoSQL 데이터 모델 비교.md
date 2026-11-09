@@ -81,7 +81,7 @@ Cassandra는 리더가 없는(leaderless) 구조로 설계되어 있어 파티�
 
 ## 참고 자료
 
-- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 2026-09-08 기준: 테이블·LSI·GSI 및 global tables 일관성.
+- [DynamoDB Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) — 테이블·LSI·GSI 및 global tables 일관성.
 - [Cassandra Dynamo Architecture](https://cassandra.apache.org/doc/stable/cassandra/architecture/dynamo.html) — Cassandra stable 문서: 토큰 분산·쿼럼·last-write-wins.
 - [Cassandra Guarantees](https://cassandra.apache.org/doc/stable/cassandra/architecture/guarantees.html) — 일관성 수준 및 LWT 보장.
 - [Cassandra Data Modeling](https://cassandra.apache.org/doc/stable/cassandra/developing/data-modeling/intro.html) — query-first 모델링과 CQL 스키마.

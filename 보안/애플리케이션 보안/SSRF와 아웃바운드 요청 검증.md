@@ -90,7 +90,7 @@ A. IMDSv2가 요청의 애플리케이션 업무 의도를 검증하지는 않�
 ## 참고 자료
 
 - [CWE-918](https://cwe.mitre.org/data/definitions/918.html) — CWE 4.20의 정의·신뢰 경계·영향.
-- [OWASP API7:2023](https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/) — fetch 격리·scheme/port 허용 목록·redirect·응답 노출 방어; redirect 비활성화·목적지 검증 원칙.
+- [OWASP API Security Top 10 API7](https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/) — fetch 격리·scheme/port 허용 목록·redirect·응답 노출 방어; redirect 비활성화·목적지 검증 원칙.
 - [OWASP SSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html) — 주소·도메인 검증, A/AAAA, DNS 변경과 네트워크 통제.
 - [OWASP URL Parser 연구 자료](https://cheatsheetseries.owasp.org/assets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet_Orange_Tsai_Talk.pdf) — 검증 후 재해석과 URL 파서 불일치의 원리.
 - [AWS IMDS 사용](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html) — IMDSv2 세션 토큰과 요청 흐름.
