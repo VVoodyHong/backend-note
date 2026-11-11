@@ -1,5 +1,6 @@
 filters:
   and:
+    - file.inFolder(this.file.folder)
     - file.ext == "md"
     - note.category != null
 properties:
